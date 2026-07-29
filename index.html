@@ -90,6 +90,15 @@ header{border-bottom:1px solid var(--line); position:sticky; top:0; z-index:30; 
 .icon-sms{background:var(--sms);} .icon-call{background:var(--call);} .icon-insta{background:var(--insta);} .icon-wa{background:var(--wa);}
 .disclaimer{font-size:11px; opacity:0.5; margin-top:18px; max-width:560px; line-height:1.6;}
 .back-link{display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; opacity:0.7; margin-top:20px; cursor:pointer;}
+.gallery{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:24px;}
+.gallery-item{aspect-ratio:1; border-radius:10px; background-size:cover; background-position:center; background-color:var(--line);}
+.owner-actions{display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;}
+.owner-actions button{font-size:13px; font-weight:700; padding:9px 16px; border-radius:10px; border:1px solid var(--line); background:var(--card-bg); cursor:pointer;}
+.owner-actions .delete-action{color:var(--danger); border-color:rgba(176,67,47,0.3);}
+input[type="file"]{font-family:'Tajawal', sans-serif; font-size:13px; padding:9px 10px; border-radius:10px; border:1px dashed var(--line); background:#fff;}
+.preview-row{display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;}
+.preview-thumb{width:56px; height:56px; border-radius:8px; background-size:cover; background-position:center; border:1px solid var(--line);}
+.upload-status{font-size:12px; opacity:0.6; margin-top:6px;}
 
 /* MODAL */
 .modal-overlay{position:fixed; inset:0; background:rgba(33,31,26,0.55); display:flex; align-items:center; justify-content:center; z-index:100; padding:20px;}
@@ -241,8 +250,18 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
 <div class="modal-overlay hidden" id="businessModal">
   <div class="modal">
     <button class="modal-close" id="closeBusinessModal">×</button>
-    <h2 data-t="nav_add">Add your business</h2>
+    <h2 data-t="nav_add" id="businessModalTitle">Add your business</h2>
     <form id="businessForm">
+      <div class="field">
+        <label data-t="field_logo">Logo — optional</label>
+        <input type="file" id="bizLogo" accept="image/*">
+        <div id="logoPreviewWrap"></div>
+      </div>
+      <div class="field">
+        <label data-t="field_gallery">Photos — optional (up to 4)</label>
+        <input type="file" id="bizGallery" accept="image/*" multiple>
+        <div id="galleryPreviewWrap"></div>
+      </div>
       <div class="field">
         <label data-t="field_bizname">Business name</label>
         <input type="text" id="bizName" required placeholder="Layla's Home Bakery">
@@ -320,6 +339,8 @@ import {
   getFirestore,
   collection,
   addDoc,
+  updateDoc,
+  deleteDoc,
   getDocs,
   doc,
   getDoc,
@@ -391,6 +412,7 @@ const translations = {
     auth_submit_login: "تسجيل الدخول", auth_submit_signup: "إنشاء الحساب",
     field_name: "الاسم", field_email: "البريد الإلكتروني", field_password: "كلمة المرور",
     field_bizname: "اسم المشروع", field_desc: "الوصف", field_desc_ph: "إيه اللي بتقدمه أو بتصنعه؟",
+    field_logo: "الشعار — اختياري", field_gallery: "صور المشروع — اختياري (حتى 4 صور)",
     field_category: "التصنيف", select_category: "اختر تصنيف",
     field_city: "المدينة", field_state: "الولاية", select_state: "اختر ولاية",
     field_sms: "رقم الرسائل النصية — اختياري",
@@ -400,6 +422,12 @@ const translations = {
     publish_btn: "نشر المشروع",
     biz_error_contact: "من فضلك ضيف وسيلة تواصل واحدة على الأقل.",
     biz_error_generic: "تعذّر نشر مشروعك. حاول مرة أخرى.",
+    edit_business_title: "تعديل المشروع",
+    edit_btn: "✎ تعديل المشروع",
+    delete_btn: "🗑 حذف المشروع",
+    confirm_delete: "متأكد إنك عايز تحذف المشروع ده؟ الإجراء ده نهائي.",
+    uploading_text: "جاري رفع الصور…",
+    update_btn: "حفظ التعديلات",
     auth_err_email_in_use: "البريد الإلكتروني ده متسجل بالفعل — جرّب تسجيل الدخول.",
     auth_err_invalid_email: "البريد الإلكتروني مش صحيح.",
     auth_err_weak_password: "كلمة المرور لازم تكون 6 حروف/أرقام على الأقل.",
@@ -434,6 +462,7 @@ const translations = {
     auth_submit_login: "Log in", auth_submit_signup: "Create account",
     field_name: "Your name", field_email: "Email", field_password: "Password",
     field_bizname: "Business name", field_desc: "Description", field_desc_ph: "What do you make or offer?",
+    field_logo: "Logo — optional", field_gallery: "Photos — optional (up to 4)",
     field_category: "Category", select_category: "Select a category",
     field_city: "City", field_state: "State", select_state: "Select a state",
     field_sms: "Text (SMS) number — optional",
@@ -443,6 +472,12 @@ const translations = {
     publish_btn: "Publish business",
     biz_error_contact: "Please add at least one way for people to reach you.",
     biz_error_generic: "Couldn't publish your business. Please try again.",
+    edit_business_title: "Edit your business",
+    edit_btn: "✎ Edit business",
+    delete_btn: "🗑 Delete business",
+    confirm_delete: "Are you sure you want to delete this business? This can't be undone.",
+    uploading_text: "Uploading photos…",
+    update_btn: "Save changes",
     auth_err_email_in_use: "That email is already registered — try logging in instead.",
     auth_err_invalid_email: "That email doesn't look right.",
     auth_err_weak_password: "Password should be at least 6 characters.",
@@ -499,6 +534,9 @@ document.documentElement.dir = currentLang === "ar" ? "rtl" : "ltr";
 let currentUser = null;
 let allBusinesses = [];
 let activeCategory = "";
+let editingBusinessId = null;
+let existingLogoUrl = "";
+let existingImages = [];
 
 const CATEGORY_KEYS = {
   "Food & Baking": "f_food",
@@ -531,9 +569,16 @@ const authSubmitBtn = document.getElementById("authSubmitBtn");
 let authMode = "login";
 
 const businessModal = document.getElementById("businessModal");
+const businessModalTitle = document.getElementById("businessModalTitle");
 const closeBusinessModal = document.getElementById("closeBusinessModal");
 const businessForm = document.getElementById("businessForm");
 const bizError = document.getElementById("bizError");
+const bizSubmitBtn = businessForm.querySelector("button[type=submit]");
+
+const bizLogoInput = document.getElementById("bizLogo");
+const bizGalleryInput = document.getElementById("bizGallery");
+const logoPreviewWrap = document.getElementById("logoPreviewWrap");
+const galleryPreviewWrap = document.getElementById("galleryPreviewWrap");
 
 const searchInput = document.getElementById("searchInput");
 const stateSelect = document.getElementById("stateSelect");
@@ -614,6 +659,10 @@ function friendlyAuthError(code) {
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
   renderHeader();
+  // Re-render the open detail view (if any) so owner actions appear/disappear correctly.
+  if (!detailView.classList.contains("hidden") && detailCard.dataset.currentId) {
+    showDetail(detailCard.dataset.currentId);
+  }
 });
 
 function renderHeader() {
@@ -624,63 +673,148 @@ function renderHeader() {
       <button class="btn btn-primary" id="addBusinessBtn2">${t("nav_add")}</button>
     `;
     document.getElementById("logoutBtn").addEventListener("click", () => signOut(auth));
-    document.getElementById("addBusinessBtn2").addEventListener("click", openBusinessModal);
+    document.getElementById("addBusinessBtn2").addEventListener("click", () => openBusinessModal());
   } else {
     headerActions.innerHTML = `
       <button class="btn btn-ghost" id="loginBtn2">${t("nav_login")}</button>
       <button class="btn btn-primary" id="addBusinessBtn2">${t("nav_add")}</button>
     `;
     document.getElementById("loginBtn2").addEventListener("click", () => openAuthModal("login"));
-    document.getElementById("addBusinessBtn2").addEventListener("click", openBusinessModal);
+    document.getElementById("addBusinessBtn2").addEventListener("click", () => openBusinessModal());
   }
 }
 
-/* ---------------- ADD BUSINESS ---------------- */
-function openBusinessModal() {
+/* ---------------- ADD / EDIT BUSINESS ---------------- */
+function openBusinessModal(business = null) {
   if (!currentUser) {
     openAuthModal("login");
     return;
   }
   bizError.classList.add("hidden");
   businessForm.reset();
+  logoPreviewWrap.innerHTML = "";
+  galleryPreviewWrap.innerHTML = "";
+
+  if (business) {
+    editingBusinessId = business.id;
+    existingLogoUrl = business.logoUrl || "";
+    existingImages = business.images || [];
+    businessModalTitle.textContent = t("edit_business_title");
+    bizSubmitBtn.textContent = t("update_btn");
+
+    document.getElementById("bizName").value = business.name || "";
+    document.getElementById("bizDesc").value = business.description || "";
+    document.getElementById("bizCategory").value = business.category || "";
+    document.getElementById("bizCity").value = business.city || "";
+    document.getElementById("bizState").value = business.state || "";
+    document.getElementById("bizSms").value = business.contact?.sms || "";
+    document.getElementById("bizCall").value = business.contact?.call || "";
+    document.getElementById("bizInsta").value = business.contact?.instagram || "";
+    document.getElementById("bizWhatsapp").value = business.contact?.whatsapp || "";
+
+    if (existingLogoUrl) {
+      logoPreviewWrap.innerHTML = `<div class="preview-row"><div class="preview-thumb" style="background-image:url('${existingLogoUrl}')"></div></div>`;
+    }
+    if (existingImages.length) {
+      galleryPreviewWrap.innerHTML = `<div class="preview-row">${existingImages.map(u => `<div class="preview-thumb" style="background-image:url('${u}')"></div>`).join("")}</div>`;
+    }
+  } else {
+    editingBusinessId = null;
+    existingLogoUrl = "";
+    existingImages = [];
+    businessModalTitle.textContent = t("nav_add");
+    bizSubmitBtn.textContent = t("publish_btn");
+  }
+
   businessModal.classList.remove("hidden");
 }
-addBusinessBtn.addEventListener("click", openBusinessModal);
+addBusinessBtn.addEventListener("click", () => openBusinessModal());
 closeBusinessModal.addEventListener("click", () => businessModal.classList.add("hidden"));
+
+// Live thumbnail previews when the user picks new files.
+bizLogoInput.addEventListener("change", () => {
+  logoPreviewWrap.innerHTML = "";
+  const file = bizLogoInput.files[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  logoPreviewWrap.innerHTML = `<div class="preview-row"><div class="preview-thumb" style="background-image:url('${url}')"></div></div>`;
+});
+bizGalleryInput.addEventListener("change", () => {
+  galleryPreviewWrap.innerHTML = "";
+  const files = Array.from(bizGalleryInput.files).slice(0, 4);
+  if (!files.length) return;
+  galleryPreviewWrap.innerHTML = `<div class="preview-row">${files.map(f => `<div class="preview-thumb" style="background-image:url('${URL.createObjectURL(f)}')"></div>`).join("")}</div>`;
+});
+
+async function uploadImage(file, pathPrefix) {
+  const path = `${pathPrefix}/${Date.now()}-${file.name}`;
+  const storageRef = ref(storage, path);
+  await uploadBytes(storageRef, file);
+  return getDownloadURL(storageRef);
+}
 
 businessForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   bizError.classList.add("hidden");
 
-  const data = {
-    ownerId: currentUser.uid,
-    ownerName: currentUser.displayName || currentUser.email,
-    name: document.getElementById("bizName").value.trim(),
-    description: document.getElementById("bizDesc").value.trim(),
-    category: document.getElementById("bizCategory").value,
-    city: document.getElementById("bizCity").value.trim(),
-    state: document.getElementById("bizState").value,
-    contact: {
-      sms: document.getElementById("bizSms").value.trim(),
-      call: document.getElementById("bizCall").value.trim(),
-      instagram: document.getElementById("bizInsta").value.trim().replace(/^@/, ""),
-      whatsapp: document.getElementById("bizWhatsapp").value.trim()
-    },
-    createdAt: serverTimestamp()
+  const contact = {
+    sms: document.getElementById("bizSms").value.trim(),
+    call: document.getElementById("bizCall").value.trim(),
+    instagram: document.getElementById("bizInsta").value.trim().replace(/^@/, ""),
+    whatsapp: document.getElementById("bizWhatsapp").value.trim()
   };
 
-  if (!data.contact.sms && !data.contact.call && !data.contact.instagram && !data.contact.whatsapp) {
+  if (!contact.sms && !contact.call && !contact.instagram && !contact.whatsapp) {
     bizError.textContent = t("biz_error_contact");
     bizError.classList.remove("hidden");
     return;
   }
 
+  bizSubmitBtn.disabled = true;
+  const originalBtnText = bizSubmitBtn.textContent;
+  bizSubmitBtn.textContent = t("uploading_text");
+
   try {
-    await addDoc(collection(db, "businesses"), data);
+    let logoUrl = existingLogoUrl;
+    if (bizLogoInput.files[0]) {
+      logoUrl = await uploadImage(bizLogoInput.files[0], `businesses/${currentUser.uid}/logo`);
+    }
+
+    let images = existingImages;
+    const galleryFiles = Array.from(bizGalleryInput.files).slice(0, 4);
+    if (galleryFiles.length) {
+      images = await Promise.all(galleryFiles.map(f => uploadImage(f, `businesses/${currentUser.uid}/gallery`)));
+    }
+
+    const data = {
+      ownerId: currentUser.uid,
+      ownerName: currentUser.displayName || currentUser.email,
+      name: document.getElementById("bizName").value.trim(),
+      description: document.getElementById("bizDesc").value.trim(),
+      category: document.getElementById("bizCategory").value,
+      city: document.getElementById("bizCity").value.trim(),
+      state: document.getElementById("bizState").value,
+      contact,
+      logoUrl,
+      images
+    };
+
+    if (editingBusinessId) {
+      data.updatedAt = serverTimestamp();
+      await updateDoc(doc(db, "businesses", editingBusinessId), data);
+    } else {
+      data.createdAt = serverTimestamp();
+      await addDoc(collection(db, "businesses"), data);
+    }
+
     businessModal.classList.add("hidden");
   } catch (err) {
     bizError.textContent = t("biz_error_generic");
     bizError.classList.remove("hidden");
+    console.error(err);
+  } finally {
+    bizSubmitBtn.disabled = false;
+    bizSubmitBtn.textContent = originalBtnText;
   }
 });
 
@@ -689,6 +823,10 @@ const businessesQuery = query(collection(db, "businesses"), orderBy("createdAt",
 onSnapshot(businessesQuery, (snapshot) => {
   allBusinesses = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
   renderGrid();
+  // Keep an open detail view in sync with live data (e.g. after an edit).
+  if (!detailView.classList.contains("hidden") && detailCard.dataset.currentId) {
+    showDetail(detailCard.dataset.currentId);
+  }
 }, (err) => {
   businessGrid.innerHTML = `<div class="empty-state">${t("load_error")}</div>`;
   console.error(err);
@@ -713,9 +851,13 @@ function renderGrid() {
     return;
   }
 
-  businessGrid.innerHTML = filtered.map(b => `
+  businessGrid.innerHTML = filtered.map(b => {
+    const mediaStyle = b.logoUrl
+      ? `background-image:url('${b.logoUrl}'); background-size:cover; background-position:center;`
+      : `background:${CATEGORY_GRADIENTS[b.category] || CATEGORY_GRADIENTS["Services"]};`;
+    return `
     <div class="card" data-id="${b.id}">
-      <div class="card-media" style="background:${CATEGORY_GRADIENTS[b.category] || CATEGORY_GRADIENTS["Services"]};">
+      <div class="card-media" style="${mediaStyle}">
         <span class="card-tag">${escapeHtml(t(CATEGORY_KEYS[b.category] || "f_services"))}</span>
       </div>
       <div class="card-body">
@@ -726,7 +868,8 @@ function renderGrid() {
         </div>
       </div>
     </div>
-  `).join("");
+  `;
+  }).join("");
 
   document.querySelectorAll(".card").forEach(card => {
     card.addEventListener("click", () => showDetail(card.dataset.id));
@@ -753,8 +896,11 @@ catGrid.addEventListener("click", (e) => {
 function showDetail(id) {
   const b = allBusinesses.find(x => x.id === id);
   if (!b) return;
+  detailCard.dataset.currentId = id;
 
-  detailHero.style.background = CATEGORY_GRADIENTS[b.category] || CATEGORY_GRADIENTS["Services"];
+  detailHero.style.background = b.logoUrl
+    ? `url('${b.logoUrl}') center/cover`
+    : (CATEGORY_GRADIENTS[b.category] || CATEGORY_GRADIENTS["Services"]);
 
   const contactButtons = [];
   if (b.contact?.sms) {
@@ -771,8 +917,20 @@ function showDetail(id) {
     contactButtons.push(`<a class="contact-btn icon-wa" target="_blank" rel="noopener" href="https://wa.me/${digits}">${t("contact_wa")}</a>`);
   }
 
+  const galleryHtml = (b.images && b.images.length)
+    ? `<div class="gallery">${b.images.map(u => `<div class="gallery-item" style="background-image:url('${u}')"></div>`).join("")}</div>`
+    : "";
+
+  const isOwner = currentUser && currentUser.uid === b.ownerId;
+  const ownerActionsHtml = isOwner
+    ? `<div class="owner-actions">
+         <button id="editBizBtn">${t("edit_btn")}</button>
+         <button id="deleteBizBtn" class="delete-action">${t("delete_btn")}</button>
+       </div>`
+    : "";
+
   detailCard.innerHTML = `
-    <div class="profile-logo"></div>
+    <div class="profile-logo" style="${b.logoUrl ? `background-image:url('${b.logoUrl}'); background-size:cover; background-position:center;` : ""}"></div>
     <h2 class="profile-name">${escapeHtml(b.name)}</h2>
     <div class="profile-meta">
       <span>${t("member_prefix")} ${escapeHtml(b.ownerName || "")}</span>
@@ -781,8 +939,24 @@ function showDetail(id) {
     <p class="profile-desc">${escapeHtml(b.description || "")}</p>
     <div class="profile-tags"><span class="tag">${escapeHtml(t(CATEGORY_KEYS[b.category] || "f_services"))}</span></div>
     <div class="contact-row">${contactButtons.join("") || `<span style='opacity:0.5; font-size:13px;'>${t("no_contact")}</span>`}</div>
+    ${ownerActionsHtml}
     <p class="disclaimer">${t("disclaimer")}</p>
+    ${galleryHtml}
   `;
+
+  if (isOwner) {
+    document.getElementById("editBizBtn").addEventListener("click", () => openBusinessModal(b));
+    document.getElementById("deleteBizBtn").addEventListener("click", async () => {
+      if (!confirm(t("confirm_delete"))) return;
+      try {
+        await deleteDoc(doc(db, "businesses", b.id));
+        detailView.classList.add("hidden");
+        browseView.classList.remove("hidden");
+      } catch (err) {
+        console.error(err);
+      }
+    });
+  }
 
   browseView.classList.add("hidden");
   detailView.classList.remove("hidden");
