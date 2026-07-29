@@ -1,22 +1,136 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Homemade — Home-Based Business Directory</title>
+<title data-t="page_title">Homemade — دليل المشاريع المنزلية</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Tajawal:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<style>
+:root{
+  --paper:#F4F0E6; --ink:#211F1A; --wood:#B4703A; --sage:#5C6E4E; --slate:#38566B;
+  --sms:#38566B; --call:#5C6E4E; --insta:#B4703A; --wa:#3D7A5C; --danger:#B0432F;
+  --card-bg:#FFFCF6; --line: rgba(33,31,26,0.12); --radius:14px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{background:var(--paper); color:var(--ink); font-family:'Tajawal', sans-serif; line-height:1.5; min-height:100vh;}
+h1,h2,h3,.display{font-family:'Cairo', sans-serif; font-weight:900; letter-spacing:-0.01em;}
+.mono{font-family:'IBM Plex Mono', monospace; letter-spacing:0.02em;}
+a{color:inherit; text-decoration:none;}
+button{font-family:inherit;}
+.wrap{max-width:1100px; margin:0 auto; padding:0 24px;}
+.hidden{display:none !important;}
+
+/* HEADER */
+header{border-bottom:1px solid var(--line); position:sticky; top:0; z-index:30; background:rgba(244,240,230,0.92); backdrop-filter:blur(6px);}
+.header-inner{display:flex; align-items:center; justify-content:space-between; padding:16px 24px; gap:12px; flex-wrap:wrap;}
+.logo{font-family:'Cairo', sans-serif; font-weight:900; font-size:22px; display:flex; align-items:center; gap:8px; cursor:pointer;}
+.logo .chip{width:12px; height:12px; border-radius:3px; background:var(--wood); transform:rotate(8deg); display:inline-block;}
+.header-actions{display:flex; align-items:center; gap:10px;}
+.btn{font-weight:700; font-size:14px; padding:10px 20px; border-radius:999px; border:none; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease;}
+.btn-primary{background:var(--ink); color:var(--paper);}
+.btn-primary:hover{transform:translateY(-1px); box-shadow:0 6px 14px rgba(33,31,26,0.25);}
+.btn-ghost{background:transparent; border:1px solid var(--line); color:var(--ink);}
+.user-pill{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; padding:8px 14px; border-radius:999px; background:var(--card-bg); border:1px solid var(--line);}
+.lang-toggle{font-family:'IBM Plex Mono', monospace; font-size:12px; border:1px solid var(--line); border-radius:999px; padding:8px 14px; cursor:pointer; background:var(--card-bg);}
+
+/* HERO */
+.hero{padding:44px 0 24px;}
+.eyebrow{display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--wood); margin-bottom:14px;}
+.eyebrow::before{content:"●"; font-size:8px;}
+.hero h1{font-size:32px; line-height:1.2; margin-bottom:10px;}
+.hero p.sub{font-size:15px; opacity:0.75; max-width:520px;}
+
+/* SEARCH */
+.search-row{display:flex; gap:10px; padding:20px 0; flex-wrap:wrap;}
+.search-input, .state-select{padding:13px 18px; border-radius:12px; border:1px solid var(--line); background:var(--card-bg); font-family:'Tajawal', sans-serif; font-size:14px;}
+.search-input{flex:1; min-width:200px;}
+.state-select{min-width:140px;}
+.search-input:focus, .state-select:focus{outline:2px solid var(--wood); outline-offset:1px;}
+
+/* CATEGORY GRID */
+.cat-section{padding:8px 0 30px;}
+.cat-section h3{font-size:12px; text-transform:uppercase; letter-spacing:0.06em; opacity:0.5; margin-bottom:14px; font-family:'IBM Plex Mono', monospace; font-weight:500;}
+.cat-grid{display:grid; grid-template-columns:repeat(6, 1fr); gap:12px;}
+.cat-tile{background:var(--card-bg); border:1px solid var(--line); border-radius:16px; padding:18px 10px; display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease;}
+.cat-tile:hover{transform:translateY(-3px); box-shadow:0 10px 22px rgba(33,31,26,0.1);}
+.cat-tile.active{border-color:var(--ink); box-shadow:0 0 0 1px var(--ink) inset;}
+.cat-icon{width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center;}
+.cat-icon svg{width:20px; height:20px;}
+.cat-icon.wood{background:rgba(180,112,58,0.14); color:var(--wood);}
+.cat-icon.sage{background:rgba(92,110,78,0.14); color:var(--sage);}
+.cat-icon.slate{background:rgba(56,86,107,0.14); color:var(--slate);}
+.cat-label{font-size:11.5px; font-weight:700; text-align:center; line-height:1.3;}
+@media (max-width:820px){ .cat-grid{grid-template-columns:repeat(3,1fr);} }
+
+/* GRID */
+.grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; padding-bottom:60px;}
+.card{background:var(--card-bg); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease;}
+.card:hover{transform:translateY(-4px); box-shadow:0 14px 28px rgba(33,31,26,0.12);}
+.card-media{height:130px; position:relative;}
+.card-tag{position:absolute; top:12px; inset-inline-start:12px; font-family:'IBM Plex Mono', monospace; font-size:11px; background:rgba(255,255,255,0.92); padding:4px 10px; border-radius:999px;}
+.card-body{padding:16px 18px 18px; display:flex; flex-direction:column; gap:8px;}
+.card-title{font-size:16px; font-weight:700;}
+.card-owner{font-size:12px; opacity:0.6;}
+.card-footer{display:flex; align-items:center; justify-content:space-between; padding-top:10px; border-top:1px solid var(--line); flex-wrap:wrap; gap:8px;}
+.city{font-size:12px; opacity:0.65;}
+.empty-state{grid-column:1/-1; text-align:center; padding:60px 20px; opacity:0.6;}
+
+/* PROFILE / DETAIL VIEW */
+.profile-hero{border-radius:20px; overflow:hidden; margin:24px 0 28px; height:170px;}
+.profile-card{background:var(--card-bg); border:1px solid var(--line); border-radius:20px; margin-top:-56px; position:relative; padding:28px; margin-inline:16px;}
+.profile-logo{width:64px; height:64px; border-radius:16px; background:var(--wood); border:4px solid var(--card-bg); margin-top:-40px;}
+.profile-name{font-size:24px; margin:14px 0 4px;}
+.profile-meta{display:flex; gap:14px; font-size:13px; opacity:0.65; flex-wrap:wrap; margin-bottom:16px;}
+.profile-desc{font-size:14px; line-height:1.7; opacity:0.85; max-width:600px; margin-bottom:20px; white-space:pre-wrap;}
+.profile-tags{display:flex; gap:8px; margin-bottom:24px; flex-wrap:wrap;}
+.tag{font-size:12px; font-weight:700; padding:6px 14px; border-radius:999px; background:rgba(180,112,58,0.12); color:var(--wood);}
+.contact-row{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:8px;}
+.contact-btn{display:inline-flex; align-items:center; gap:8px; color:#fff; font-size:14px; font-weight:700; padding:12px 20px; border-radius:12px; border:none; cursor:pointer;}
+.icon-sms{background:var(--sms);} .icon-call{background:var(--call);} .icon-insta{background:var(--insta);} .icon-wa{background:var(--wa);}
+.disclaimer{font-size:11px; opacity:0.5; margin-top:18px; max-width:560px; line-height:1.6;}
+.back-link{display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; opacity:0.7; margin-top:20px; cursor:pointer;}
+
+/* MODAL */
+.modal-overlay{position:fixed; inset:0; background:rgba(33,31,26,0.55); display:flex; align-items:center; justify-content:center; z-index:100; padding:20px;}
+.modal{background:var(--card-bg); border-radius:18px; max-width:460px; width:100%; padding:28px; max-height:90vh; overflow-y:auto;}
+.modal h2{font-size:20px; margin-bottom:18px;}
+.field{margin-bottom:14px; display:flex; flex-direction:column; gap:6px;}
+.field label{font-size:12px; font-weight:700; opacity:0.7;}
+.field input, .field select, .field textarea{
+  padding:11px 14px; border-radius:10px; border:1px solid var(--line); background:#fff; font-family:'Tajawal', sans-serif; font-size:14px;
+}
+.field textarea{resize:vertical; min-height:70px;}
+.checkbox-row{display:flex; align-items:center; gap:8px; font-size:13px;}
+.modal-actions{display:flex; gap:10px; margin-top:18px;}
+.modal-close{position:absolute; top:18px; inset-inline-end:18px; cursor:pointer; opacity:0.5; font-size:20px; background:none; border:none;}
+.modal{position:relative;}
+.tab-switch{display:flex; gap:6px; background:var(--paper); border-radius:999px; padding:4px; margin-bottom:18px;}
+.tab-switch button{flex:1; border:none; background:transparent; padding:8px; border-radius:999px; font-weight:700; font-size:13px; cursor:pointer;}
+.tab-switch button.active{background:var(--ink); color:var(--paper);}
+.form-error{color:var(--danger); font-size:12px; margin-top:4px;}
+.loading-text{text-align:center; padding:40px; opacity:0.5; font-size:13px;}
+
+footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; opacity:0.6; text-align:center;}
+
+@media (max-width:820px){ .grid{grid-template-columns:repeat(2,1fr);} }
+@media (max-width:560px){ .grid{grid-template-columns:1fr;} .cat-grid{grid-template-columns:repeat(3,1fr);} .hero h1{font-size:26px;} .profile-card{margin-inline:0; border-radius:16px 16px 0 0;} }
+:focus-visible{outline:2px solid var(--wood); outline-offset:2px;}
+
+</style>
 </head>
 <body>
 
 <header>
   <div class="wrap header-inner">
     <div class="logo" id="logoHome"><span class="chip"></span>Homemade</div>
-    <div class="header-actions" id="headerActions">
-      <!-- populated by app.js depending on auth state -->
-      <button class="btn btn-ghost" id="loginBtn">Log in</button>
-      <button class="btn btn-primary" id="addBusinessBtn">Add your business</button>
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+      <button class="lang-toggle" id="langToggle">EN / عربي</button>
+      <div class="header-actions" id="headerActions">
+        <!-- populated by app.js depending on auth state -->
+        <button class="btn btn-ghost" id="loginBtn" data-t="nav_login">Log in</button>
+        <button class="btn btn-primary" id="addBusinessBtn" data-t="nav_add">Add your business</button>
+      </div>
     </div>
   </div>
 </header>
@@ -25,55 +139,55 @@
 <div id="browseView">
   <div class="wrap">
     <div class="hero">
-      <div class="eyebrow">A directory of home-based businesses</div>
-      <h1>Discover home businesses near you</h1>
-      <p class="sub">Baking, crafts, gifts, and services — all run by real people from home. Reach out directly, however you prefer.</p>
+      <div class="eyebrow" data-t="eyebrow">A directory of home-based businesses</div>
+      <h1 data-t="hero_title">Discover home businesses near you</h1>
+      <p class="sub" data-t="hero_sub">Baking, crafts, gifts, and services — all run by real people from home. Reach out directly, however you prefer.</p>
     </div>
 
     <div class="search-row">
-      <input class="search-input" id="searchInput" placeholder="Search by business name or city...">
+      <input class="search-input" id="searchInput" data-t-placeholder="search_ph" placeholder="Search by business name or city...">
       <select class="state-select" id="stateSelect">
-        <option value="">All States</option>
-        <option>Texas</option>
-        <option>California</option>
-        <option>New York</option>
-        <option>Florida</option>
-        <option>Illinois</option>
+        <option value="" data-t="state_all">All States</option>
+        <option value="Texas" data-t="state_tx">Texas</option>
+        <option value="California" data-t="state_ca">California</option>
+        <option value="New York" data-t="state_ny">New York</option>
+        <option value="Florida" data-t="state_fl">Florida</option>
+        <option value="Illinois" data-t="state_il">Illinois</option>
       </select>
     </div>
 
     <div class="cat-section">
-      <h3>Browse by category</h3>
+      <h3 data-t="cat_section_label">Browse by category</h3>
       <div class="cat-grid" id="catGrid">
         <div class="cat-tile active" data-cat="">
           <div class="cat-icon slate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
-          <span class="cat-label">All</span>
+          <span class="cat-label" data-t="f_all">All</span>
         </div>
         <div class="cat-tile" data-cat="Food & Baking">
           <div class="cat-icon wood"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12c0-4.4 3.6-8 8-8s8 3.6 8 8"/><path d="M3 12h18l-1.5 8h-15z"/><path d="M12 4V2"/></svg></div>
-          <span class="cat-label">Food &amp; Baking</span>
+          <span class="cat-label" data-t="f_food">Food &amp; Baking</span>
         </div>
         <div class="cat-tile" data-cat="Handmade Crafts">
           <div class="cat-icon sage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.5 8L20 19"/><path d="M8.5 16L20 5"/></svg></div>
-          <span class="cat-label">Handmade Crafts</span>
+          <span class="cat-label" data-t="f_crafts">Handmade Crafts</span>
         </div>
         <div class="cat-tile" data-cat="Gifts">
           <div class="cat-icon wood"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="1.5"/><path d="M3 12h18"/><path d="M12 8v13"/><path d="M12 8c-1.5-4-6-4-6-1.5S9 8 12 8z"/><path d="M12 8c1.5-4 6-4 6-1.5S15 8 12 8z"/></svg></div>
-          <span class="cat-label">Gifts</span>
+          <span class="cat-label" data-t="f_gifts">Gifts</span>
         </div>
         <div class="cat-tile" data-cat="Services">
           <div class="cat-icon slate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M8 14l2.5 2.5L16 11"/></svg></div>
-          <span class="cat-label">Services</span>
+          <span class="cat-label" data-t="f_services">Services</span>
         </div>
         <div class="cat-tile" data-cat="Apparel & Accessories">
           <div class="cat-icon sage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4L4 7l2 3 2-1.5V21h8V8.5L18 10l2-3-4-3-2 2h-4z"/></svg></div>
-          <span class="cat-label">Apparel &amp; Accessories</span>
+          <span class="cat-label" data-t="f_apparel">Apparel &amp; Accessories</span>
         </div>
       </div>
     </div>
 
     <div class="grid" id="businessGrid">
-      <div class="loading-text">Loading businesses…</div>
+      <div class="loading-text" data-t="loading">Loading businesses…</div>
     </div>
   </div>
 </div>
@@ -86,38 +200,38 @@
       <!-- populated by app.js -->
     </div>
     <div class="wrap">
-      <span class="back-link" id="backToBrowse">← Back to all businesses</span>
+      <span class="back-link" id="backToBrowse" data-t="back_link">← Back to all businesses</span>
     </div>
   </div>
 </div>
 
-<footer class="wrap">Homemade — a directory of home-based businesses</footer>
+<footer class="wrap" data-t="footer">Homemade — a directory of home-based businesses</footer>
 
 <!-- ============ AUTH MODAL ============ -->
 <div class="modal-overlay hidden" id="authModal">
   <div class="modal">
     <button class="modal-close" id="closeAuthModal">×</button>
     <div class="tab-switch">
-      <button class="active" data-authtab="login">Log in</button>
-      <button data-authtab="signup">Sign up</button>
+      <button class="active" data-authtab="login" data-t="tab_login">Log in</button>
+      <button data-authtab="signup" data-t="tab_signup">Sign up</button>
     </div>
-    <h2 id="authTitle">Log in</h2>
+    <h2 id="authTitle" data-t="auth_title_login">Log in</h2>
     <form id="authForm">
       <div class="field hidden" id="nameField">
-        <label>Your name</label>
+        <label data-t="field_name">Your name</label>
         <input type="text" id="authName" placeholder="Layla Hassan">
       </div>
       <div class="field">
-        <label>Email</label>
+        <label data-t="field_email">Email</label>
         <input type="email" id="authEmail" required placeholder="you@example.com">
       </div>
       <div class="field">
-        <label>Password</label>
+        <label data-t="field_password">Password</label>
         <input type="password" id="authPassword" required placeholder="At least 6 characters" minlength="6">
       </div>
       <div class="form-error hidden" id="authError"></div>
       <div class="modal-actions">
-        <button type="submit" class="btn btn-primary" style="flex:1;" id="authSubmitBtn">Log in</button>
+        <button type="submit" class="btn btn-primary" style="flex:1;" id="authSubmitBtn" data-t="tab_login">Log in</button>
       </div>
     </form>
   </div>
@@ -127,66 +241,572 @@
 <div class="modal-overlay hidden" id="businessModal">
   <div class="modal">
     <button class="modal-close" id="closeBusinessModal">×</button>
-    <h2>Add your business</h2>
+    <h2 data-t="nav_add">Add your business</h2>
     <form id="businessForm">
       <div class="field">
-        <label>Business name</label>
+        <label data-t="field_bizname">Business name</label>
         <input type="text" id="bizName" required placeholder="Layla's Home Bakery">
       </div>
       <div class="field">
-        <label>Description</label>
-        <textarea id="bizDesc" required placeholder="What do you make or offer?"></textarea>
+        <label data-t="field_desc">Description</label>
+        <textarea id="bizDesc" required data-t-placeholder="field_desc_ph" placeholder="What do you make or offer?"></textarea>
       </div>
       <div class="field">
-        <label>Category</label>
+        <label data-t="field_category">Category</label>
         <select id="bizCategory" required>
-          <option value="">Select a category</option>
-          <option>Food & Baking</option>
-          <option>Handmade Crafts</option>
-          <option>Gifts</option>
-          <option>Services</option>
-          <option>Apparel & Accessories</option>
+          <option value="" data-t="select_category">Select a category</option>
+          <option value="Food & Baking" data-t="f_food">Food & Baking</option>
+          <option value="Handmade Crafts" data-t="f_crafts">Handmade Crafts</option>
+          <option value="Gifts" data-t="f_gifts">Gifts</option>
+          <option value="Services" data-t="f_services">Services</option>
+          <option value="Apparel & Accessories" data-t="f_apparel">Apparel & Accessories</option>
         </select>
       </div>
       <div class="field">
-        <label>City</label>
+        <label data-t="field_city">City</label>
         <input type="text" id="bizCity" required placeholder="Austin">
       </div>
       <div class="field">
-        <label>State</label>
+        <label data-t="field_state">State</label>
         <select id="bizState" required>
-          <option value="">Select a state</option>
-          <option>Texas</option>
-          <option>California</option>
-          <option>New York</option>
-          <option>Florida</option>
-          <option>Illinois</option>
+          <option value="" data-t="select_state">Select a state</option>
+          <option value="Texas" data-t="state_tx">Texas</option>
+          <option value="California" data-t="state_ca">California</option>
+          <option value="New York" data-t="state_ny">New York</option>
+          <option value="Florida" data-t="state_fl">Florida</option>
+          <option value="Illinois" data-t="state_il">Illinois</option>
         </select>
       </div>
       <div class="field">
-        <label>Text (SMS) number — optional</label>
+        <label data-t="field_sms">Text (SMS) number — optional</label>
         <input type="tel" id="bizSms" placeholder="+1 512 555 0100">
       </div>
       <div class="field">
-        <label>Phone number — optional</label>
+        <label data-t="field_call">Phone number — optional</label>
         <input type="tel" id="bizCall" placeholder="+1 512 555 0100">
       </div>
       <div class="field">
-        <label>Instagram handle — optional</label>
+        <label data-t="field_insta">Instagram handle — optional</label>
         <input type="text" id="bizInsta" placeholder="@laylasbakery">
       </div>
       <div class="field">
-        <label>WhatsApp number — optional</label>
+        <label data-t="field_wa">WhatsApp number — optional</label>
         <input type="tel" id="bizWhatsapp" placeholder="+1 512 555 0100">
       </div>
       <div class="form-error hidden" id="bizError"></div>
       <div class="modal-actions">
-        <button type="submit" class="btn btn-primary" style="flex:1;">Publish business</button>
+        <button type="submit" class="btn btn-primary" style="flex:1;" data-t="publish_btn">Publish business</button>
       </div>
     </form>
   </div>
 </div>
 
-<script type="module" src="app.js"></script>
+<script type="module">
+// firebase-config.js
+// Central Firebase initialization for Homemade.
+// Uses the modular v12 SDK via <script type="module"> imports (no bundler needed).
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  updateProfile
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  getDoc,
+  query,
+  where,
+  orderBy,
+  serverTimestamp,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAoKzoPNe3rUDyNvSDjAxg4VOW6PH2kJR4",
+  authDomain: "homemade-2b042.firebaseapp.com",
+  projectId: "homemade-2b042",
+  storageBucket: "homemade-2b042.firebasestorage.app",
+  messagingSenderId: "569995460262",
+  appId: "1:569995460262:web:6dc0930ad6aa133816fe67",
+  measurementId: "G-8D128M6D63"
+};
+
+const app = initializeApp(firebaseConfig);
+
+// Analytics can fail in some sandboxed/local contexts, so don't let it block the app.
+let analytics = null;
+try {
+  analytics = getAnalytics(app);
+} catch (e) {
+  console.warn("Analytics not initialized:", e.message);
+}
+
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+/* ---------------- TRANSLATIONS ---------------- */
+// translations.js
+// Lightweight i18n for Homemade. Default language is Arabic; English is a toggle.
+
+const translations = {
+  ar: {
+    page_title: "Homemade — دليل المشاريع المنزلية",
+    nav_login: "تسجيل الدخول",
+    nav_add: "أضف مشروعك",
+    eyebrow: "دليل المشاريع المنزلية",
+    hero_title: "اكتشف مشاريع منزلية حواليك",
+    hero_sub: "أكل، حرف يدوية، هدايا، وخدمات — كلها من أصحابها مباشرة. تواصل معاهم بالطريقة اللي تفضّلها.",
+    search_ph: "ابحث باسم المشروع أو المدينة...",
+    state_all: "كل الولايات",
+    state_tx: "تكساس", state_ca: "كاليفورنيا", state_ny: "نيويورك", state_fl: "فلوريدا", state_il: "إلينوي",
+    cat_section_label: "تصفح حسب التصنيف",
+    f_all: "الكل", f_food: "أكل وحلويات", f_crafts: "حرف يدوية", f_gifts: "هدايا", f_services: "خدمات", f_apparel: "ملابس وإكسسوارات",
+    loading: "جاري تحميل المشاريع…",
+    empty_state: "لا توجد مشاريع في هذا التصنيف بعد — كن أول من يضيف مشروعه.",
+    load_error: "تعذّر تحميل المشاريع حاليًا.",
+    owner_label: "صاحب المشروع:",
+    back_link: "← الرجوع لكل المشاريع",
+    footer: "Homemade — دليل المشاريع المنزلية",
+    disclaimer: "Homemade دليل تواصل فقط. كل الطلبات والدفع وسلامة الطعام مسؤولية مباشرة بين الزائر وصاحب المشروع.",
+    no_contact: "لا توجد وسيلة تواصل مضافة بعد.",
+    contact_sms: "✉ رسالة نصية", contact_call: "☎ اتصال", contact_insta: "📷 إنستغرام", contact_wa: "💬 واتساب",
+    tab_login: "تسجيل الدخول", tab_signup: "إنشاء حساب",
+    auth_title_login: "تسجيل الدخول", auth_title_signup: "إنشاء حساب",
+    auth_submit_login: "تسجيل الدخول", auth_submit_signup: "إنشاء الحساب",
+    field_name: "الاسم", field_email: "البريد الإلكتروني", field_password: "كلمة المرور",
+    field_bizname: "اسم المشروع", field_desc: "الوصف", field_desc_ph: "إيه اللي بتقدمه أو بتصنعه؟",
+    field_category: "التصنيف", select_category: "اختر تصنيف",
+    field_city: "المدينة", field_state: "الولاية", select_state: "اختر ولاية",
+    field_sms: "رقم الرسائل النصية — اختياري",
+    field_call: "رقم الهاتف — اختياري",
+    field_insta: "حساب إنستغرام — اختياري",
+    field_wa: "رقم واتساب — اختياري",
+    publish_btn: "نشر المشروع",
+    biz_error_contact: "من فضلك ضيف وسيلة تواصل واحدة على الأقل.",
+    biz_error_generic: "تعذّر نشر مشروعك. حاول مرة أخرى.",
+    auth_err_email_in_use: "البريد الإلكتروني ده متسجل بالفعل — جرّب تسجيل الدخول.",
+    auth_err_invalid_email: "البريد الإلكتروني مش صحيح.",
+    auth_err_weak_password: "كلمة المرور لازم تكون 6 حروف/أرقام على الأقل.",
+    auth_err_invalid_credential: "البريد الإلكتروني أو كلمة المرور غلط.",
+    auth_err_generic: "حصل خطأ، حاول مرة أخرى.",
+    logout: "تسجيل الخروج",
+    member_prefix: "👤"
+  },
+  en: {
+    page_title: "Homemade — Home-Based Business Directory",
+    nav_login: "Log in",
+    nav_add: "Add your business",
+    eyebrow: "A directory of home-based businesses",
+    hero_title: "Discover home businesses near you",
+    hero_sub: "Baking, crafts, gifts, and services — all run by real people from home. Reach out directly, however you prefer.",
+    search_ph: "Search by business name or city...",
+    state_all: "All States",
+    state_tx: "Texas", state_ca: "California", state_ny: "New York", state_fl: "Florida", state_il: "Illinois",
+    cat_section_label: "Browse by category",
+    f_all: "All", f_food: "Food & Baking", f_crafts: "Handmade Crafts", f_gifts: "Gifts", f_services: "Services", f_apparel: "Apparel & Accessories",
+    loading: "Loading businesses…",
+    empty_state: "No businesses match yet — be the first to add one in this category.",
+    load_error: "Couldn't load businesses right now.",
+    owner_label: "Owner:",
+    back_link: "← Back to all businesses",
+    footer: "Homemade — a directory of home-based businesses",
+    disclaimer: "Homemade is a directory only. All orders, payments, and food safety are handled directly between you and the business owner.",
+    no_contact: "No contact info provided yet.",
+    contact_sms: "✉ Text", contact_call: "☎ Call", contact_insta: "📷 Instagram", contact_wa: "💬 WhatsApp",
+    tab_login: "Log in", tab_signup: "Sign up",
+    auth_title_login: "Log in", auth_title_signup: "Sign up",
+    auth_submit_login: "Log in", auth_submit_signup: "Create account",
+    field_name: "Your name", field_email: "Email", field_password: "Password",
+    field_bizname: "Business name", field_desc: "Description", field_desc_ph: "What do you make or offer?",
+    field_category: "Category", select_category: "Select a category",
+    field_city: "City", field_state: "State", select_state: "Select a state",
+    field_sms: "Text (SMS) number — optional",
+    field_call: "Phone number — optional",
+    field_insta: "Instagram handle — optional",
+    field_wa: "WhatsApp number — optional",
+    publish_btn: "Publish business",
+    biz_error_contact: "Please add at least one way for people to reach you.",
+    biz_error_generic: "Couldn't publish your business. Please try again.",
+    auth_err_email_in_use: "That email is already registered — try logging in instead.",
+    auth_err_invalid_email: "That email doesn't look right.",
+    auth_err_weak_password: "Password should be at least 6 characters.",
+    auth_err_invalid_credential: "Incorrect email or password.",
+    auth_err_generic: "Something went wrong. Please try again.",
+    logout: "Log out",
+    member_prefix: "👤"
+  }
+};
+
+const STORAGE_KEY = "homemade_lang";
+let currentLang = localStorage.getItem(STORAGE_KEY) || "ar";
+
+function getLang() {
+  return currentLang;
+}
+
+function t(key) {
+  return (translations[currentLang] && translations[currentLang][key]) || key;
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem(STORAGE_KEY, lang);
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+  applyStaticTranslations();
+}
+
+function applyStaticTranslations() {
+  document.querySelectorAll("[data-t]").forEach(el => {
+    const key = el.getAttribute("data-t");
+    if (translations[currentLang][key] !== undefined) {
+      el.textContent = translations[currentLang][key];
+    }
+  });
+  document.querySelectorAll("[data-t-placeholder]").forEach(el => {
+    const key = el.getAttribute("data-t-placeholder");
+    if (translations[currentLang][key] !== undefined) {
+      el.placeholder = translations[currentLang][key];
+    }
+  });
+  document.title = t("page_title");
+}
+
+// Apply the stored/default language immediately on load.
+document.documentElement.lang = currentLang;
+document.documentElement.dir = currentLang === "ar" ? "rtl" : "ltr";
+
+
+/* ---------------- APP LOGIC ---------------- */
+
+/* ---------------- STATE ---------------- */
+let currentUser = null;
+let allBusinesses = [];
+let activeCategory = "";
+
+const CATEGORY_KEYS = {
+  "Food & Baking": "f_food",
+  "Handmade Crafts": "f_crafts",
+  "Gifts": "f_gifts",
+  "Services": "f_services",
+  "Apparel & Accessories": "f_apparel"
+};
+const CATEGORY_GRADIENTS = {
+  "Food & Baking": "linear-gradient(135deg,#D9A15C,#9C6A2E)",
+  "Handmade Crafts": "linear-gradient(135deg,#8FA377,#556B44)",
+  "Gifts": "linear-gradient(135deg,#C98849,#8A5427)",
+  "Services": "linear-gradient(135deg,#5A87A3,#2E4A5C)",
+  "Apparel & Accessories": "linear-gradient(135deg,#4E7590,#28404F)"
+};
+
+/* ---------------- DOM REFS ---------------- */
+const headerActions = document.getElementById("headerActions");
+const loginBtn = document.getElementById("loginBtn");
+const addBusinessBtn = document.getElementById("addBusinessBtn");
+const langToggle = document.getElementById("langToggle");
+
+const authModal = document.getElementById("authModal");
+const closeAuthModal = document.getElementById("closeAuthModal");
+const authForm = document.getElementById("authForm");
+const authTitle = document.getElementById("authTitle");
+const authError = document.getElementById("authError");
+const nameField = document.getElementById("nameField");
+const authSubmitBtn = document.getElementById("authSubmitBtn");
+let authMode = "login";
+
+const businessModal = document.getElementById("businessModal");
+const closeBusinessModal = document.getElementById("closeBusinessModal");
+const businessForm = document.getElementById("businessForm");
+const bizError = document.getElementById("bizError");
+
+const searchInput = document.getElementById("searchInput");
+const stateSelect = document.getElementById("stateSelect");
+const catGrid = document.getElementById("catGrid");
+const businessGrid = document.getElementById("businessGrid");
+
+const browseView = document.getElementById("browseView");
+const detailView = document.getElementById("detailView");
+const detailHero = document.getElementById("detailHero");
+const detailCard = document.getElementById("detailCard");
+const backToBrowse = document.getElementById("backToBrowse");
+const logoHome = document.getElementById("logoHome");
+
+/* ---------------- INITIAL RENDER ---------------- */
+applyStaticTranslations();
+
+/* ---------------- LANGUAGE TOGGLE ---------------- */
+langToggle.addEventListener("click", () => {
+  setLang(getLang() === "ar" ? "en" : "ar");
+  renderHeader();
+  renderGrid();
+});
+
+/* ---------------- AUTH UI ---------------- */
+function openAuthModal(mode) {
+  authMode = mode;
+  document.querySelectorAll("[data-authtab]").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.authtab === mode);
+  });
+  nameField.classList.toggle("hidden", mode !== "signup");
+  authTitle.textContent = mode === "signup" ? t("auth_title_signup") : t("auth_title_login");
+  authSubmitBtn.textContent = mode === "signup" ? t("auth_submit_signup") : t("auth_submit_login");
+  authError.classList.add("hidden");
+  authForm.reset();
+  authModal.classList.remove("hidden");
+}
+loginBtn.addEventListener("click", () => openAuthModal("login"));
+closeAuthModal.addEventListener("click", () => authModal.classList.add("hidden"));
+document.querySelectorAll("[data-authtab]").forEach(btn => {
+  btn.addEventListener("click", () => openAuthModal(btn.dataset.authtab));
+});
+
+authForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  authError.classList.add("hidden");
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
+  const name = document.getElementById("authName").value.trim();
+
+  try {
+    if (authMode === "signup") {
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      if (name) {
+        await updateProfile(cred.user, { displayName: name });
+      }
+    } else {
+      await signInWithEmailAndPassword(auth, email, password);
+    }
+    authModal.classList.add("hidden");
+  } catch (err) {
+    authError.textContent = friendlyAuthError(err.code);
+    authError.classList.remove("hidden");
+  }
+});
+
+function friendlyAuthError(code) {
+  const map = {
+    "auth/email-already-in-use": t("auth_err_email_in_use"),
+    "auth/invalid-email": t("auth_err_invalid_email"),
+    "auth/weak-password": t("auth_err_weak_password"),
+    "auth/invalid-credential": t("auth_err_invalid_credential"),
+    "auth/user-not-found": t("auth_err_invalid_credential"),
+    "auth/wrong-password": t("auth_err_invalid_credential")
+  };
+  return map[code] || t("auth_err_generic");
+}
+
+onAuthStateChanged(auth, (user) => {
+  currentUser = user;
+  renderHeader();
+});
+
+function renderHeader() {
+  if (currentUser) {
+    headerActions.innerHTML = `
+      <span class="user-pill">${t("member_prefix")} ${escapeHtml(currentUser.displayName || currentUser.email)}</span>
+      <button class="btn btn-ghost" id="logoutBtn">${t("logout")}</button>
+      <button class="btn btn-primary" id="addBusinessBtn2">${t("nav_add")}</button>
+    `;
+    document.getElementById("logoutBtn").addEventListener("click", () => signOut(auth));
+    document.getElementById("addBusinessBtn2").addEventListener("click", openBusinessModal);
+  } else {
+    headerActions.innerHTML = `
+      <button class="btn btn-ghost" id="loginBtn2">${t("nav_login")}</button>
+      <button class="btn btn-primary" id="addBusinessBtn2">${t("nav_add")}</button>
+    `;
+    document.getElementById("loginBtn2").addEventListener("click", () => openAuthModal("login"));
+    document.getElementById("addBusinessBtn2").addEventListener("click", openBusinessModal);
+  }
+}
+
+/* ---------------- ADD BUSINESS ---------------- */
+function openBusinessModal() {
+  if (!currentUser) {
+    openAuthModal("login");
+    return;
+  }
+  bizError.classList.add("hidden");
+  businessForm.reset();
+  businessModal.classList.remove("hidden");
+}
+addBusinessBtn.addEventListener("click", openBusinessModal);
+closeBusinessModal.addEventListener("click", () => businessModal.classList.add("hidden"));
+
+businessForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  bizError.classList.add("hidden");
+
+  const data = {
+    ownerId: currentUser.uid,
+    ownerName: currentUser.displayName || currentUser.email,
+    name: document.getElementById("bizName").value.trim(),
+    description: document.getElementById("bizDesc").value.trim(),
+    category: document.getElementById("bizCategory").value,
+    city: document.getElementById("bizCity").value.trim(),
+    state: document.getElementById("bizState").value,
+    contact: {
+      sms: document.getElementById("bizSms").value.trim(),
+      call: document.getElementById("bizCall").value.trim(),
+      instagram: document.getElementById("bizInsta").value.trim().replace(/^@/, ""),
+      whatsapp: document.getElementById("bizWhatsapp").value.trim()
+    },
+    createdAt: serverTimestamp()
+  };
+
+  if (!data.contact.sms && !data.contact.call && !data.contact.instagram && !data.contact.whatsapp) {
+    bizError.textContent = t("biz_error_contact");
+    bizError.classList.remove("hidden");
+    return;
+  }
+
+  try {
+    await addDoc(collection(db, "businesses"), data);
+    businessModal.classList.add("hidden");
+  } catch (err) {
+    bizError.textContent = t("biz_error_generic");
+    bizError.classList.remove("hidden");
+  }
+});
+
+/* ---------------- BROWSE / LISTING ---------------- */
+const businessesQuery = query(collection(db, "businesses"), orderBy("createdAt", "desc"));
+onSnapshot(businessesQuery, (snapshot) => {
+  allBusinesses = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+  renderGrid();
+}, (err) => {
+  businessGrid.innerHTML = `<div class="empty-state">${t("load_error")}</div>`;
+  console.error(err);
+});
+
+function renderGrid() {
+  const searchTerm = searchInput.value.trim().toLowerCase();
+  const stateFilter = stateSelect.value;
+
+  const filtered = allBusinesses.filter(b => {
+    if (activeCategory && b.category !== activeCategory) return false;
+    if (stateFilter && b.state !== stateFilter) return false;
+    if (searchTerm) {
+      const haystack = `${b.name} ${b.city}`.toLowerCase();
+      if (!haystack.includes(searchTerm)) return false;
+    }
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    businessGrid.innerHTML = `<div class="empty-state">${t("empty_state")}</div>`;
+    return;
+  }
+
+  businessGrid.innerHTML = filtered.map(b => `
+    <div class="card" data-id="${b.id}">
+      <div class="card-media" style="background:${CATEGORY_GRADIENTS[b.category] || CATEGORY_GRADIENTS["Services"]};">
+        <span class="card-tag">${escapeHtml(t(CATEGORY_KEYS[b.category] || "f_services"))}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${escapeHtml(b.name)}</div>
+        <div class="card-owner">${t("owner_label")} ${escapeHtml(b.ownerName || "")}</div>
+        <div class="card-footer">
+          <span class="city">📍 ${escapeHtml(b.city)}, ${escapeHtml(t(stateKey(b.state)))}</span>
+        </div>
+      </div>
+    </div>
+  `).join("");
+
+  document.querySelectorAll(".card").forEach(card => {
+    card.addEventListener("click", () => showDetail(card.dataset.id));
+  });
+}
+
+function stateKey(state) {
+  const map = { "Texas": "state_tx", "California": "state_ca", "New York": "state_ny", "Florida": "state_fl", "Illinois": "state_il" };
+  return map[state] || "state_all";
+}
+
+searchInput.addEventListener("input", renderGrid);
+stateSelect.addEventListener("change", renderGrid);
+catGrid.addEventListener("click", (e) => {
+  const tile = e.target.closest(".cat-tile");
+  if (!tile) return;
+  document.querySelectorAll(".cat-tile").forEach(el => el.classList.remove("active"));
+  tile.classList.add("active");
+  activeCategory = tile.dataset.cat;
+  renderGrid();
+});
+
+/* ---------------- DETAIL VIEW ---------------- */
+function showDetail(id) {
+  const b = allBusinesses.find(x => x.id === id);
+  if (!b) return;
+
+  detailHero.style.background = CATEGORY_GRADIENTS[b.category] || CATEGORY_GRADIENTS["Services"];
+
+  const contactButtons = [];
+  if (b.contact?.sms) {
+    contactButtons.push(`<a class="contact-btn icon-sms" href="sms:${encodeURIComponent(b.contact.sms)}">${t("contact_sms")}</a>`);
+  }
+  if (b.contact?.call) {
+    contactButtons.push(`<a class="contact-btn icon-call" href="tel:${encodeURIComponent(b.contact.call)}">${t("contact_call")}</a>`);
+  }
+  if (b.contact?.instagram) {
+    contactButtons.push(`<a class="contact-btn icon-insta" target="_blank" rel="noopener" href="https://instagram.com/${encodeURIComponent(b.contact.instagram)}">${t("contact_insta")}</a>`);
+  }
+  if (b.contact?.whatsapp) {
+    const digits = b.contact.whatsapp.replace(/[^\d]/g, "");
+    contactButtons.push(`<a class="contact-btn icon-wa" target="_blank" rel="noopener" href="https://wa.me/${digits}">${t("contact_wa")}</a>`);
+  }
+
+  detailCard.innerHTML = `
+    <div class="profile-logo"></div>
+    <h2 class="profile-name">${escapeHtml(b.name)}</h2>
+    <div class="profile-meta">
+      <span>${t("member_prefix")} ${escapeHtml(b.ownerName || "")}</span>
+      <span>📍 ${escapeHtml(b.city)}, ${escapeHtml(t(stateKey(b.state)))}</span>
+    </div>
+    <p class="profile-desc">${escapeHtml(b.description || "")}</p>
+    <div class="profile-tags"><span class="tag">${escapeHtml(t(CATEGORY_KEYS[b.category] || "f_services"))}</span></div>
+    <div class="contact-row">${contactButtons.join("") || `<span style='opacity:0.5; font-size:13px;'>${t("no_contact")}</span>`}</div>
+    <p class="disclaimer">${t("disclaimer")}</p>
+  `;
+
+  browseView.classList.add("hidden");
+  detailView.classList.remove("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+backToBrowse.addEventListener("click", () => {
+  detailView.classList.add("hidden");
+  browseView.classList.remove("hidden");
+});
+logoHome.addEventListener("click", () => {
+  detailView.classList.add("hidden");
+  browseView.classList.remove("hidden");
+});
+
+/* ---------------- UTIL ---------------- */
+function escapeHtml(str) {
+  if (!str) return "";
+  return str.replace(/[&<>"']/g, m => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[m]));
+}
+
+</script>
 </body>
 </html>
+
