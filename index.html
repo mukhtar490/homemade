@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title data-t="page_title">Homemade — دليل المشاريع المنزلية</title>
+<title data-t="page_title">السوق العربي — دليل المشاريع المنزلية</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Tajawal:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
@@ -20,6 +20,31 @@ a{color:inherit; text-decoration:none;}
 button{font-family:inherit;}
 .wrap{max-width:1100px; margin:0 auto; padding:0 24px;}
 .hidden{display:none !important;}
+
+/* WELCOME SCREEN */
+.welcome-screen{
+  position:fixed; inset:0; z-index:500; overflow:hidden;
+  background:
+    linear-gradient(180deg, rgba(33,31,26,0.1), rgba(33,31,26,0.94) 68%),
+    linear-gradient(135deg,#B4703A,#38566B);
+  display:flex; flex-direction:column; justify-content:flex-end;
+  padding:32px 24px 40px; color:#fff;
+}
+.welcome-decor{position:absolute; border:2px solid rgba(255,255,255,0.15); border-radius:50%;}
+.welcome-decor.circle-1{width:220px; height:220px; top:-60px; inset-inline-start:-60px;}
+.welcome-decor.circle-2{width:160px; height:160px; bottom:140px; inset-inline-end:-40px;}
+.welcome-badge{
+  position:relative; margin:auto auto 24px; width:88px; height:88px; border-radius:24px;
+  background:rgba(255,255,255,0.14); display:flex; align-items:center; justify-content:center;
+}
+.welcome-badge .chip-lg{width:32px; height:32px; border-radius:9px; background:#fff; transform:rotate(8deg); display:block;}
+.welcome-content{position:relative; margin-bottom:32px; max-width:520px;}
+.welcome-brand{font-family:'IBM Plex Mono', monospace; font-size:12px; opacity:0.75; margin-bottom:10px; letter-spacing:0.05em;}
+.welcome-headline{font-family:'Cairo', sans-serif; font-weight:900; font-size:28px; line-height:1.35; margin-bottom:14px;}
+.welcome-sub{font-size:14px; line-height:1.7; opacity:0.85;}
+.welcome-actions{position:relative; display:flex; flex-direction:column; align-items:center; gap:14px;}
+.welcome-next{width:100%; max-width:460px; padding:15px; font-size:15px;}
+.welcome-skip{font-size:13px; opacity:0.8; cursor:pointer; text-decoration:underline;}
 
 /* HEADER */
 header{border-bottom:1px solid var(--line); position:sticky; top:0; z-index:30; background:rgba(244,240,230,0.92); backdrop-filter:blur(6px);}
@@ -130,9 +155,24 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
 </head>
 <body>
 
+<div class="welcome-screen" id="welcomeScreen">
+  <div class="welcome-decor circle-1"></div>
+  <div class="welcome-decor circle-2"></div>
+  <div class="welcome-badge"><span class="chip-lg"></span></div>
+  <div class="welcome-content">
+    <div class="welcome-brand" data-t="brand_name">السوق العربي</div>
+    <h1 class="welcome-headline" data-t="welcome_headline">تطبيق واحد لكل مشاريعك المنزلية</h1>
+    <p class="welcome-sub" data-t="welcome_sub">اعرض مشروعك، اكتشف مشاريع غيرك، وتواصل مباشرة — كل ده في مكان واحد.</p>
+  </div>
+  <div class="welcome-actions">
+    <button class="btn btn-primary welcome-next" id="welcomeNextBtn" data-t="welcome_next">التالي</button>
+    <span class="welcome-skip" id="welcomeSkipBtn" data-t="welcome_skip">ابدأ الآن واستكشف بسهولة</span>
+  </div>
+</div>
+
 <header>
   <div class="wrap header-inner">
-    <div class="logo" id="logoHome"><span class="chip"></span>Homemade</div>
+    <div class="logo" id="logoHome"><span class="chip"></span><span data-t="brand_name">السوق العربي</span></div>
     <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
       <button class="lang-toggle" id="langToggle">EN / عربي</button>
       <div class="header-actions" id="headerActions">
@@ -214,7 +254,7 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
   </div>
 </div>
 
-<footer class="wrap" data-t="footer">Homemade — a directory of home-based businesses</footer>
+<footer class="wrap" data-t="footer">Al Souq Al Arabi — a directory of home-based businesses</footer>
 
 <!-- ============ AUTH MODAL ============ -->
 <div class="modal-overlay hidden" id="authModal">
@@ -387,10 +427,15 @@ const storage = getStorage(app);
 
 const translations = {
   ar: {
-    page_title: "Homemade — دليل المشاريع المنزلية",
+    page_title: "السوق العربي — دليل المشاريع المنزلية",
+    brand_name: "السوق العربي",
     nav_login: "تسجيل الدخول",
     nav_add: "أضف مشروعك",
     eyebrow: "دليل المشاريع المنزلية",
+    welcome_headline: "تطبيق واحد لكل مشاريعك المنزلية",
+    welcome_sub: "اعرض مشروعك، اكتشف مشاريع غيرك، وتواصل مباشرة — كل ده في مكان واحد.",
+    welcome_next: "التالي",
+    welcome_skip: "ابدأ الآن واستكشف بسهولة",
     hero_title: "اكتشف مشاريع منزلية حواليك",
     hero_sub: "أكل، حرف يدوية، هدايا، وخدمات — كلها من أصحابها مباشرة. تواصل معاهم بالطريقة اللي تفضّلها.",
     search_ph: "ابحث باسم المشروع أو المدينة...",
@@ -403,8 +448,8 @@ const translations = {
     load_error: "تعذّر تحميل المشاريع حاليًا.",
     owner_label: "صاحب المشروع:",
     back_link: "← الرجوع لكل المشاريع",
-    footer: "Homemade — دليل المشاريع المنزلية",
-    disclaimer: "Homemade دليل تواصل فقط. كل الطلبات والدفع وسلامة الطعام مسؤولية مباشرة بين الزائر وصاحب المشروع.",
+    footer: "السوق العربي — دليل المشاريع المنزلية",
+    disclaimer: "السوق العربي دليل تواصل فقط. كل الطلبات والدفع وسلامة الطعام مسؤولية مباشرة بين الزائر وصاحب المشروع.",
     no_contact: "لا توجد وسيلة تواصل مضافة بعد.",
     contact_sms: "✉ رسالة نصية", contact_call: "☎ اتصال", contact_insta: "📷 إنستغرام", contact_wa: "💬 واتساب",
     tab_login: "تسجيل الدخول", tab_signup: "إنشاء حساب",
@@ -437,10 +482,15 @@ const translations = {
     member_prefix: "👤"
   },
   en: {
-    page_title: "Homemade — Home-Based Business Directory",
+    page_title: "Al Souq Al Arabi — Home-Based Business Directory",
+    brand_name: "Al Souq Al Arabi",
     nav_login: "Log in",
     nav_add: "Add your business",
     eyebrow: "A directory of home-based businesses",
+    welcome_headline: "One app for all your home-based projects",
+    welcome_sub: "Show your business, discover others, and connect directly — all in one place.",
+    welcome_next: "Next",
+    welcome_skip: "Start exploring now",
     hero_title: "Discover home businesses near you",
     hero_sub: "Baking, crafts, gifts, and services — all run by real people from home. Reach out directly, however you prefer.",
     search_ph: "Search by business name or city...",
@@ -453,8 +503,8 @@ const translations = {
     load_error: "Couldn't load businesses right now.",
     owner_label: "Owner:",
     back_link: "← Back to all businesses",
-    footer: "Homemade — a directory of home-based businesses",
-    disclaimer: "Homemade is a directory only. All orders, payments, and food safety are handled directly between you and the business owner.",
+    footer: "Al Souq Al Arabi — a directory of home-based businesses",
+    disclaimer: "Al Souq Al Arabi is a directory only. All orders, payments, and food safety are handled directly between you and the business owner.",
     no_contact: "No contact info provided yet.",
     contact_sms: "✉ Text", contact_call: "☎ Call", contact_insta: "📷 Instagram", contact_wa: "💬 WhatsApp",
     tab_login: "Log in", tab_signup: "Sign up",
@@ -591,6 +641,26 @@ const detailHero = document.getElementById("detailHero");
 const detailCard = document.getElementById("detailCard");
 const backToBrowse = document.getElementById("backToBrowse");
 const logoHome = document.getElementById("logoHome");
+
+const welcomeScreen = document.getElementById("welcomeScreen");
+const welcomeNextBtn = document.getElementById("welcomeNextBtn");
+const welcomeSkipBtn = document.getElementById("welcomeSkipBtn");
+
+/* ---------------- WELCOME SCREEN ---------------- */
+function hideWelcome() {
+  welcomeScreen.classList.add("hidden");
+  localStorage.setItem("homemade_seen_welcome", "1");
+}
+if (localStorage.getItem("homemade_seen_welcome")) {
+  welcomeScreen.classList.add("hidden");
+}
+welcomeNextBtn.addEventListener("click", () => {
+  hideWelcome();
+  openAuthModal("login");
+});
+welcomeSkipBtn.addEventListener("click", () => {
+  hideWelcome();
+});
 
 /* ---------------- INITIAL RENDER ---------------- */
 applyStaticTranslations();
