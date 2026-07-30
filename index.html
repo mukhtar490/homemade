@@ -67,7 +67,12 @@ header{border-bottom:1px solid var(--line); position:sticky; top:0; z-index:30; 
 .btn-primary:hover{transform:translateY(-1px); box-shadow:0 6px 14px rgba(33,31,26,0.25);}
 .btn-ghost{background:transparent; border:1px solid var(--line); color:var(--ink);}
 .user-pill{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; padding:8px 14px; border-radius:999px; background:var(--card-bg); border:1px solid var(--line);}
-.lang-toggle{font-family:'IBM Plex Mono', monospace; font-size:12px; border:1px solid var(--line); border-radius:999px; padding:8px 14px; cursor:pointer; background:var(--card-bg);}
+.lang-toggle{
+  font-family:'IBM Plex Mono', monospace; font-size:12px; border:1px solid var(--line); border-radius:999px;
+  width:38px; height:38px; padding:0; cursor:pointer; background:var(--card-bg);
+  display:flex; align-items:center; justify-content:center; color:var(--ink); flex-shrink:0;
+}
+.lang-toggle svg{width:19px; height:19px;}
 
 /* HERO */
 .hero{padding:44px 0 24px;}
@@ -130,6 +135,19 @@ header{border-bottom:1px solid var(--line); position:sticky; top:0; z-index:30; 
 .owner-actions{display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;}
 .owner-actions button{font-size:13px; font-weight:700; padding:9px 16px; border-radius:10px; border:1px solid var(--line); background:var(--card-bg); cursor:pointer;}
 .owner-actions .delete-action{color:var(--danger); border-color:rgba(176,67,47,0.3);}
+
+/* RATINGS */
+.rating-block{margin:6px 0 16px; display:flex; flex-direction:column; gap:10px;}
+.rating-avg{display:flex; align-items:center; gap:8px; font-size:14px;}
+.star-fixed{color:var(--line); font-size:16px; line-height:1;}
+.star-fixed.filled{color:var(--wood);}
+.rating-count{font-size:12px; opacity:0.6;}
+.rating-input{display:flex; align-items:center; gap:4px;}
+.rate-star{font-size:24px; color:var(--line); cursor:pointer; transition:color .1s; line-height:1;}
+.rate-star.active{color:var(--wood);}
+.rating-hint{font-size:12px; opacity:0.55; margin-inline-start:8px;}
+.card-rating{font-size:12px; font-weight:700; color:var(--wood); display:flex; align-items:center; gap:3px;}
+.card-rating .rc{opacity:0.55; font-weight:400;}
 input[type="file"]{font-family:'Tajawal', sans-serif; font-size:13px; padding:9px 10px; border-radius:10px; border:1px dashed var(--line); background:#fff;}
 .preview-row{display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;}
 .preview-thumb{width:56px; height:56px; border-radius:8px; background-size:cover; background-position:center; border:1px solid var(--line);}
@@ -184,7 +202,13 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
   <div class="wrap header-inner">
     <div class="logo" id="logoHome"><span class="chip"></span><span data-t="brand_name">السوق العربي</span></div>
     <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-      <button class="lang-toggle" id="langToggle">EN / عربي</button>
+      <button class="lang-toggle" id="langToggle" aria-label="Change language" title="Change language">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M3 12h18"/>
+          <path d="M12 3c2.5 2.5 3.8 5.7 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.7-3.8-9s1.3-6.5 3.8-9z"/>
+        </svg>
+      </button>
       <div class="header-actions" id="headerActions">
         <!-- populated by app.js depending on auth state -->
         <button class="btn btn-ghost" id="loginBtn" data-t="nav_login">Log in</button>
@@ -389,6 +413,7 @@ import {
   getFirestore,
   collection,
   addDoc,
+  setDoc,
   updateDoc,
   deleteDoc,
   getDocs,
@@ -483,6 +508,8 @@ const translations = {
     confirm_delete: "متأكد إنك عايز تحذف المشروع ده؟ الإجراء ده نهائي.",
     uploading_text: "جاري رفع الصور…",
     update_btn: "حفظ التعديلات",
+    rate_prompt: "قيّم هذا المشروع",
+    rate_login_prompt: "سجّل الدخول عشان تقدر تقيّم",
     auth_err_email_in_use: "البريد الإلكتروني ده متسجل بالفعل — جرّب تسجيل الدخول.",
     auth_err_invalid_email: "البريد الإلكتروني مش صحيح.",
     auth_err_weak_password: "كلمة المرور لازم تكون 6 حروف/أرقام على الأقل.",
@@ -538,6 +565,8 @@ const translations = {
     confirm_delete: "Are you sure you want to delete this business? This can't be undone.",
     uploading_text: "Uploading photos…",
     update_btn: "Save changes",
+    rate_prompt: "Rate this business",
+    rate_login_prompt: "Log in to leave a rating",
     auth_err_email_in_use: "That email is already registered — try logging in instead.",
     auth_err_invalid_email: "That email doesn't look right.",
     auth_err_weak_password: "Password should be at least 6 characters.",
@@ -663,10 +692,10 @@ function hideWelcome() {
 }
 welcomeNextBtn.addEventListener("click", () => {
   hideWelcome();
-  openAuthModal("login");
 });
 welcomeSkipBtn.addEventListener("click", () => {
   hideWelcome();
+  openAuthModal("login");
 });
 
 /* ---------------- INITIAL RENDER ---------------- */
@@ -932,6 +961,9 @@ function renderGrid() {
     const mediaStyle = b.logoUrl
       ? `background-image:url('${b.logoUrl}'); background-size:cover; background-position:center;`
       : `background:${CATEGORY_GRADIENTS[b.category] || CATEGORY_GRADIENTS["Services"]};`;
+    const ratingHtml = b.ratingCount
+      ? `<span class="card-rating">★ ${b.ratingAvg.toFixed(1)} <span class="rc">(${b.ratingCount})</span></span>`
+      : "";
     return `
     <div class="card" data-id="${b.id}">
       <div class="card-media" style="${mediaStyle}">
@@ -942,6 +974,7 @@ function renderGrid() {
         <div class="card-owner">${t("owner_label")} ${escapeHtml(b.ownerName || "")}</div>
         <div class="card-footer">
           <span class="city">📍 ${escapeHtml(b.city)}, ${escapeHtml(t(stateKey(b.state)))}</span>
+          ${ratingHtml}
         </div>
       </div>
     </div>
@@ -968,6 +1001,60 @@ catGrid.addEventListener("click", (e) => {
   activeCategory = tile.dataset.cat;
   renderGrid();
 });
+
+/* ---------------- RATINGS ---------------- */
+function starsDisplay(avg) {
+  const rounded = Math.round(avg || 0);
+  let html = "";
+  for (let i = 1; i <= 5; i++) {
+    html += `<span class="star-fixed ${i <= rounded ? "filled" : ""}">★</span>`;
+  }
+  return html;
+}
+
+async function recomputeRatingAggregate(businessId) {
+  const snap = await getDocs(collection(db, "businesses", businessId, "ratings"));
+  let total = 0, count = 0;
+  snap.forEach(d => { total += (d.data().stars || 0); count++; });
+  const avg = count ? total / count : 0;
+  await updateDoc(doc(db, "businesses", businessId), { ratingAvg: avg, ratingCount: count });
+}
+
+async function submitRating(businessId, stars) {
+  if (!currentUser) {
+    openAuthModal("login");
+    return;
+  }
+  try {
+    const ratingRef = doc(db, "businesses", businessId, "ratings", currentUser.uid);
+    await setDoc(ratingRef, {
+      stars,
+      userName: currentUser.displayName || currentUser.email || "",
+      createdAt: serverTimestamp()
+    }, { merge: true });
+    await recomputeRatingAggregate(businessId);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function attachRatingHandlers(businessId, isOwner) {
+  if (isOwner) return;
+  const wrap = document.getElementById("ratingInput");
+  if (!wrap) return;
+  const stars = wrap.querySelectorAll(".rate-star");
+  stars.forEach(star => {
+    star.addEventListener("mouseenter", () => {
+      const val = parseInt(star.dataset.star, 10);
+      stars.forEach(s => s.classList.toggle("active", parseInt(s.dataset.star, 10) <= val));
+    });
+    star.addEventListener("click", () => {
+      const val = parseInt(star.dataset.star, 10);
+      submitRating(businessId, val);
+    });
+  });
+  wrap.addEventListener("mouseleave", () => stars.forEach(s => s.classList.remove("active")));
+}
 
 /* ---------------- DETAIL VIEW ---------------- */
 function showDetail(id) {
@@ -1006,6 +1093,18 @@ function showDetail(id) {
        </div>`
     : "";
 
+  const ratingInputHtml = !isOwner
+    ? `<div class="rating-input" id="ratingInput">
+         ${[1, 2, 3, 4, 5].map(n => `<span class="rate-star" data-star="${n}">★</span>`).join("")}
+         <span class="rating-hint">${currentUser ? t("rate_prompt") : t("rate_login_prompt")}</span>
+       </div>`
+    : "";
+  const ratingBlockHtml = `
+    <div class="rating-block">
+      <div class="rating-avg">${starsDisplay(b.ratingAvg)} <span class="rating-count">(${b.ratingCount || 0})</span></div>
+      ${ratingInputHtml}
+    </div>`;
+
   detailCard.innerHTML = `
     <div class="profile-logo" style="${b.logoUrl ? `background-image:url('${b.logoUrl}'); background-size:cover; background-position:center;` : ""}"></div>
     <h2 class="profile-name">${escapeHtml(b.name)}</h2>
@@ -1013,6 +1112,7 @@ function showDetail(id) {
       <span>${t("member_prefix")} ${escapeHtml(b.ownerName || "")}</span>
       <span>📍 ${escapeHtml(b.city)}, ${escapeHtml(t(stateKey(b.state)))}</span>
     </div>
+    ${ratingBlockHtml}
     <p class="profile-desc">${escapeHtml(b.description || "")}</p>
     <div class="profile-tags"><span class="tag">${escapeHtml(t(CATEGORY_KEYS[b.category] || "f_services"))}</span></div>
     <div class="contact-row">${contactButtons.join("") || `<span style='opacity:0.5; font-size:13px;'>${t("no_contact")}</span>`}</div>
@@ -1020,6 +1120,8 @@ function showDetail(id) {
     <p class="disclaimer">${t("disclaimer")}</p>
     ${galleryHtml}
   `;
+
+  attachRatingHandlers(b.id, isOwner);
 
   if (isOwner) {
     document.getElementById("editBizBtn").addEventListener("click", () => openBusinessModal(b));
