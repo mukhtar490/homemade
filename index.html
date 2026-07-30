@@ -47,14 +47,14 @@ button{font-family:inherit;}
 .welcome-skip{font-size:13px; opacity:0.8; cursor:pointer; text-decoration:underline;}
 
 /* AUTH SCREEN — distinct full-bleed background, not the app UI behind it */
-.auth-screen-bg{
+#authModal.auth-screen-bg{
   background:
     radial-gradient(circle at 15% 20%, rgba(255,255,255,0.06), transparent 45%),
     radial-gradient(circle at 85% 80%, rgba(255,255,255,0.05), transparent 45%),
-    linear-gradient(150deg, var(--ink) 0%, #33506A 55%, var(--wood) 130%);
+    linear-gradient(150deg, var(--ink) 0%, #33506A 55%, var(--wood) 130%) !important;
   backdrop-filter:none;
 }
-.auth-screen-bg .modal{box-shadow:0 24px 60px rgba(0,0,0,0.35);}
+#authModal.auth-screen-bg .modal{box-shadow:0 24px 60px rgba(0,0,0,0.35);}
 
 /* HEADER */
 header{border-bottom:1px solid var(--line); position:sticky; top:0; z-index:30; background:rgba(244,240,230,0.92); backdrop-filter:blur(6px);}
