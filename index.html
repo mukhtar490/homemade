@@ -172,11 +172,24 @@ html[dir="ltr"] .category-back{transform:scaleX(-1);}
   position:fixed; inset:0; background:rgba(15,14,12,0.92); z-index:700;
   display:flex; align-items:center; justify-content:center; padding:24px;
 }
-.lightbox img{max-width:100%; max-height:100%; border-radius:10px; object-fit:contain;}
+.lightbox img{max-width:100%; max-height:100%; border-radius:10px; object-fit:contain; user-select:none; -webkit-user-drag:none;}
 .lightbox-close{
   position:absolute; top:20px; inset-inline-end:20px; width:40px; height:40px; border-radius:50%;
   background:rgba(255,255,255,0.15); color:#fff; border:none; font-size:22px; cursor:pointer;
-  display:flex; align-items:center; justify-content:center;
+  display:flex; align-items:center; justify-content:center; z-index:2;
+}
+.lightbox-nav{
+  position:absolute; top:50%; transform:translateY(-50%); width:44px; height:44px; border-radius:50%;
+  background:rgba(255,255,255,0.15); color:#fff; border:none; font-size:26px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; z-index:2; line-height:1;
+}
+.lightbox-prev{inset-inline-start:14px;}
+.lightbox-next{inset-inline-end:14px;}
+.lightbox-nav.hidden, .lightbox-counter.hidden{display:none;}
+.lightbox-counter{
+  position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
+  background:rgba(255,255,255,0.15); color:#fff; font-size:12px; font-weight:700;
+  padding:6px 14px; border-radius:999px; font-family:'IBM Plex Mono', monospace;
 }
 .zoomable{cursor:zoom-in;}
 
@@ -422,7 +435,10 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
 
 <div class="lightbox hidden" id="lightbox">
   <button class="lightbox-close" id="lightboxClose" aria-label="Close">×</button>
+  <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous">‹</button>
   <img id="lightboxImg" src="" alt="">
+  <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next">›</button>
+  <div class="lightbox-counter hidden" id="lightboxCounter"></div>
 </div>
 
 <footer class="wrap" data-t="footer">Al Souq Al Arabi — a directory of home-based businesses</footer>
@@ -1506,6 +1522,8 @@ function showDetail(id) {
   const b = allBusinesses.find(x => x.id === id);
   if (!b) return;
   detailCard.dataset.currentId = id;
+  currentDetailLogoUrl = b.logoUrl || "";
+  currentDetailImages = b.images || [];
 
   detailHero.style.background = b.logoUrl
     ? `url('${b.logoUrl}') center/cover`
@@ -1527,7 +1545,7 @@ function showDetail(id) {
   }
 
   const galleryHtml = (b.images && b.images.length)
-    ? `<div class="gallery">${b.images.map(u => `<div class="gallery-item zoomable" data-full="${u}" style="background-image:url('${u}')"></div>`).join("")}</div>`
+    ? `<div class="gallery">${b.images.map((u, i) => `<div class="gallery-item zoomable" data-group="gallery" data-index="${i}" style="background-image:url('${u}')"></div>`).join("")}</div>`
     : "";
 
   const isOwner = currentUser && currentUser.uid === b.ownerId;
@@ -1556,7 +1574,7 @@ function showDetail(id) {
     </div>`;
 
   detailCard.innerHTML = `
-    <div class="profile-logo ${b.logoUrl ? "zoomable" : ""}" ${b.logoUrl ? `data-full="${b.logoUrl}"` : ""} style="${b.logoUrl ? `background-image:url('${b.logoUrl}'); background-size:cover; background-position:center;` : ""}"></div>
+    <div class="profile-logo ${b.logoUrl ? "zoomable" : ""}" ${b.logoUrl ? `data-group="logo"` : ""} style="${b.logoUrl ? `background-image:url('${b.logoUrl}'); background-size:cover; background-position:center;` : ""}"></div>
     <h2 class="profile-name">${escapeHtml(b.name)}</h2>
     <div class="profile-meta">
       <span>${t("member_prefix")} ${escapeHtml(b.ownerName || "")}</span>
@@ -1625,26 +1643,84 @@ function escapeHtml(str) {
 const lightbox = document.getElementById("lightbox");
 const lightboxImg = document.getElementById("lightboxImg");
 const lightboxClose = document.getElementById("lightboxClose");
+const lightboxPrev = document.getElementById("lightboxPrev");
+const lightboxNext = document.getElementById("lightboxNext");
+const lightboxCounter = document.getElementById("lightboxCounter");
 
-function openLightbox(url) {
-  if (!url) return;
-  lightboxImg.src = url;
+let currentDetailLogoUrl = "";
+let currentDetailImages = [];
+let lightboxImages = [];
+let lightboxIndex = 0;
+
+function renderLightboxImage() {
+  if (!lightboxImages.length) return;
+  lightboxImg.src = lightboxImages[lightboxIndex];
+  const multi = lightboxImages.length > 1;
+  lightboxPrev.classList.toggle("hidden", !multi);
+  lightboxNext.classList.toggle("hidden", !multi);
+  lightboxCounter.classList.toggle("hidden", !multi);
+  if (multi) lightboxCounter.textContent = `${lightboxIndex + 1} / ${lightboxImages.length}`;
+}
+
+function openLightbox(images, startIndex) {
+  const list = (images || []).filter(Boolean);
+  if (!list.length) return;
+  lightboxImages = list;
+  lightboxIndex = Math.max(0, Math.min(startIndex || 0, list.length - 1));
+  renderLightboxImage();
   lightbox.classList.remove("hidden");
 }
 function closeLightbox() {
   lightbox.classList.add("hidden");
   lightboxImg.src = "";
+  lightboxImages = [];
 }
+function showNextImage() {
+  if (lightboxImages.length < 2) return;
+  lightboxIndex = (lightboxIndex + 1) % lightboxImages.length;
+  renderLightboxImage();
+}
+function showPrevImage() {
+  if (lightboxImages.length < 2) return;
+  lightboxIndex = (lightboxIndex - 1 + lightboxImages.length) % lightboxImages.length;
+  renderLightboxImage();
+}
+
 lightboxClose.addEventListener("click", closeLightbox);
+lightboxNext.addEventListener("click", (e) => { e.stopPropagation(); showNextImage(); });
+lightboxPrev.addEventListener("click", (e) => { e.stopPropagation(); showPrevImage(); });
 lightbox.addEventListener("click", (e) => {
   if (e.target === lightbox) closeLightbox();
 });
+document.addEventListener("keydown", (e) => {
+  if (lightbox.classList.contains("hidden")) return;
+  if (e.key === "Escape") closeLightbox();
+  if (e.key === "ArrowRight") showNextImage();
+  if (e.key === "ArrowLeft") showPrevImage();
+});
+
+// Swipe support (touch) — works regardless of language direction:
+// swipe left always goes to the next image, swipe right to the previous.
+let touchStartX = 0;
+lightbox.addEventListener("touchstart", (e) => {
+  touchStartX = e.changedTouches[0].clientX;
+}, { passive: true });
+lightbox.addEventListener("touchend", (e) => {
+  const deltaX = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(deltaX) < 40) return;
+  if (deltaX < 0) showNextImage();
+  else showPrevImage();
+}, { passive: true });
 
 function attachZoomHandlers() {
   document.querySelectorAll(".zoomable").forEach(el => {
     el.addEventListener("click", (e) => {
       e.stopPropagation();
-      openLightbox(el.dataset.full);
+      if (el.dataset.group === "logo") {
+        openLightbox([currentDetailLogoUrl], 0);
+      } else if (el.dataset.group === "gallery") {
+        openLightbox(currentDetailImages, parseInt(el.dataset.index, 10) || 0);
+      }
     });
   });
 }
