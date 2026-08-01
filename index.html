@@ -523,7 +523,7 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
     <form id="authForm">
       <div class="field hidden" id="nameField">
         <label data-t="field_name">Your name</label>
-        <input type="text" id="authName" placeholder="Layla Hassan" required>
+        <input type="text" id="authName" placeholder="Layla Hassan">
       </div>
       <div class="field">
         <label data-t="field_email">Email</label>
@@ -855,6 +855,7 @@ const translations = {
     auth_err_weak_password: "يجب ألا تقل كلمة المرور عن 6 أحرف أو أرقام.",
     auth_err_invalid_credential: "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
     auth_err_generic: "حدث خطأ، يُرجى المحاولة مرة أخرى.",
+    auth_err_name_required: "يُرجى إدخال اسمك.",
     logout: "تسجيل الخروج",
     my_businesses: "مشاريعي",
     drawer_home: "الرئيسية",
@@ -986,6 +987,7 @@ const translations = {
     auth_err_weak_password: "Password should be at least 6 characters.",
     auth_err_invalid_credential: "Incorrect email or password.",
     auth_err_generic: "Something went wrong. Please try again.",
+    auth_err_name_required: "Please enter your name.",
     logout: "Log out",
     my_businesses: "My Businesses",
     drawer_home: "Home",
@@ -1178,6 +1180,11 @@ authForm.addEventListener("submit", async (e) => {
 
   try {
     if (authMode === "signup") {
+      if (!name) {
+        authError.textContent = t("auth_err_name_required");
+        authError.classList.remove("hidden");
+        return;
+      }
       const cred = await createUserWithEmailAndPassword(auth, email, password);
       if (name) {
         await updateProfile(cred.user, { displayName: name });
@@ -1187,7 +1194,7 @@ authForm.addEventListener("submit", async (e) => {
     }
     authModal.classList.add("hidden");
   } catch (err) {
-    authError.textContent = friendlyAuthError(err.code);
+    authError.textContent = friendlyAuthError(err.code) + " [" + (err.code || err.message || "unknown") + "]";
     authError.classList.remove("hidden");
   }
 });
