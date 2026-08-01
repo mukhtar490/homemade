@@ -1276,13 +1276,23 @@ async function recomputeRatingAggregate(businessId) {
 
 async function submitRating(businessId, stars, comment) {
   const ratingRef = doc(db, "businesses", businessId, "ratings", currentUser.uid);
-  await setDoc(ratingRef, {
-    stars,
-    comment: comment || "",
-    userName: currentUser.displayName || currentUser.email || "",
-    createdAt: serverTimestamp()
-  }, { merge: true });
-  await recomputeRatingAggregate(businessId);
+  try {
+    await setDoc(ratingRef, {
+      stars,
+      comment: comment || "",
+      userName: currentUser.displayName || currentUser.email || "",
+      createdAt: serverTimestamp()
+    }, { merge: true });
+  } catch (err) {
+    err.step = "rating-write";
+    throw err;
+  }
+  try {
+    await recomputeRatingAggregate(businessId);
+  } catch (err) {
+    err.step = "aggregate-update";
+    throw err;
+  }
 }
 
 function attachRatingHandlers(businessId, isOwner) {
@@ -1326,7 +1336,7 @@ function attachRatingHandlers(businessId, isOwner) {
       msgEl.classList.remove("hidden");
     } catch (err) {
       console.error(err);
-      msgEl.textContent = t("biz_error_generic") + " [" + (err.code || err.message || "unknown") + "]";
+      msgEl.textContent = t("biz_error_generic") + " [" + (err.step || "?") + ":" + (err.code || err.message || "unknown") + "]";
       msgEl.classList.remove("hidden");
     } finally {
       submitBtn.disabled = false;
