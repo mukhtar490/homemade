@@ -128,6 +128,37 @@ header{border-bottom:1px solid var(--line); position:sticky; top:0; z-index:30; 
 }
 .filter-banner span[id]{text-decoration:underline; cursor:pointer;}
 
+/* CATEGORY PAGE */
+.category-header{
+  background:var(--ink); color:#fff; padding:20px 24px; display:flex; align-items:center; gap:16px;
+  position:sticky; top:0; z-index:40;
+}
+.category-back{
+  background:rgba(255,255,255,0.15); border:none; color:#fff; width:36px; height:36px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px; flex-shrink:0;
+}
+html[dir="ltr"] .category-back{transform:scaleX(-1);}
+.category-header h2{
+  flex:1; text-align:center; font-family:'Cairo', sans-serif; font-weight:900; font-size:19px;
+  margin-inline-end:36px;
+}
+.category-list{display:flex; flex-direction:column; gap:14px; padding:24px 0 60px;}
+.category-row{
+  display:flex; align-items:flex-start; gap:14px; background:var(--card-bg); border:1px solid var(--line);
+  border-radius:14px; padding:16px; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease;
+}
+.category-row:hover{transform:translateY(-2px); box-shadow:0 10px 22px rgba(33,31,26,0.1);}
+.category-row-avatar{
+  width:52px; height:52px; border-radius:50%; flex-shrink:0; background-size:cover; background-position:center;
+  display:flex; align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:18px;
+}
+.category-row-body{flex:1; min-width:0; display:flex; flex-direction:column; gap:6px;}
+.category-row-top{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+.category-row-name{font-weight:800; font-size:15px;}
+.category-row-tag{font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px; background:rgba(180,112,58,0.12); color:var(--wood); flex-shrink:0;}
+.category-row-desc{font-size:13px; opacity:0.7; line-height:1.6; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+.category-row-meta{font-size:12px; opacity:0.55;}
+
 /* EXIT TOAST */
 .exit-toast{
   position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
@@ -347,6 +378,17 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
     <div class="grid" id="businessGrid">
       <div class="loading-text" data-t="loading">Loading businesses…</div>
     </div>
+  </div>
+</div>
+
+<!-- ============ CATEGORY PAGE ============ -->
+<div id="categoryView" class="hidden">
+  <div class="category-header">
+    <button class="category-back" id="categoryBackBtn" aria-label="Back">→</button>
+    <h2 id="categoryTitle">Category</h2>
+  </div>
+  <div class="wrap">
+    <div class="category-list" id="categoryList"></div>
   </div>
 </div>
 
@@ -915,10 +957,17 @@ const businessGrid = document.getElementById("businessGrid");
 
 const browseView = document.getElementById("browseView");
 const detailView = document.getElementById("detailView");
+const categoryView = document.getElementById("categoryView");
+const categoryTitle = document.getElementById("categoryTitle");
+const categoryList = document.getElementById("categoryList");
+const categoryBackBtn = document.getElementById("categoryBackBtn");
 const detailHero = document.getElementById("detailHero");
 const detailCard = document.getElementById("detailCard");
 const backToBrowse = document.getElementById("backToBrowse");
 const logoHome = document.getElementById("logoHome");
+
+let currentScreen = "browse"; // "browse" | "category" | "detail"
+let detailReturnScreen = "browse";
 
 const welcomeScreen = document.getElementById("welcomeScreen");
 const welcomeNextBtn = document.getElementById("welcomeNextBtn");
@@ -1021,6 +1070,8 @@ function renderHeader() {
     document.getElementById("myBusinessesBtn").addEventListener("click", () => {
       showOnlyMine = true;
       detailView.classList.add("hidden");
+      categoryView.classList.add("hidden");
+      currentScreen = "browse";
       browseView.classList.remove("hidden");
       renderGrid();
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1176,6 +1227,9 @@ const businessesQuery = query(collection(db, "businesses"), orderBy("createdAt",
 onSnapshot(businessesQuery, (snapshot) => {
   allBusinesses = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
   renderGrid();
+  if (!categoryView.classList.contains("hidden")) {
+    renderCategoryList();
+  }
   // Keep an open detail view in sync with live data (e.g. after an edit).
   if (!detailView.classList.contains("hidden") && detailCard.dataset.currentId) {
     showDetail(detailCard.dataset.currentId);
@@ -1262,9 +1316,69 @@ catGrid.addEventListener("click", (e) => {
   if (!tile) return;
   document.querySelectorAll(".cat-tile").forEach(el => el.classList.remove("active"));
   tile.classList.add("active");
-  activeCategory = tile.dataset.cat;
-  renderGrid();
+  const cat = tile.dataset.cat;
+  if (!cat) {
+    // "All" tile: clear any active category and stay on the browse grid.
+    activeCategory = "";
+    renderGrid();
+  } else {
+    openCategoryPage(cat);
+  }
 });
+
+/* ---------------- CATEGORY PAGE ---------------- */
+function openCategoryPage(cat) {
+  activeCategory = cat;
+  currentScreen = "category";
+  categoryTitle.textContent = t(CATEGORY_KEYS[cat] || "f_services");
+  renderCategoryList();
+  browseView.classList.add("hidden");
+  detailView.classList.add("hidden");
+  categoryView.classList.remove("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function renderCategoryList() {
+  const items = allBusinesses.filter(b => b.category === activeCategory);
+
+  if (items.length === 0) {
+    categoryList.innerHTML = `<div class="empty-state">${t("empty_state")}</div>`;
+    return;
+  }
+
+  categoryList.innerHTML = items.map(b => {
+    const initial = (b.name || "?").trim().charAt(0).toUpperCase();
+    const avatarStyle = b.logoUrl
+      ? `background-image:url('${b.logoUrl}');`
+      : `background:${CATEGORY_GRADIENTS[b.category] || CATEGORY_GRADIENTS["Services"]};`;
+    return `
+    <div class="category-row" data-id="${b.id}">
+      <div class="category-row-avatar" style="${avatarStyle}">${b.logoUrl ? "" : initial}</div>
+      <div class="category-row-body">
+        <div class="category-row-top">
+          <span class="category-row-name">${escapeHtml(b.name)}</span>
+          <span class="category-row-tag">${escapeHtml(t(CATEGORY_KEYS[b.category] || "f_services"))}</span>
+        </div>
+        <div class="category-row-desc">${escapeHtml(b.description || "")}</div>
+        <div class="category-row-meta">📍 ${escapeHtml(b.city)}, ${escapeHtml(t(stateKey(b.state)))}</div>
+      </div>
+    </div>`;
+  }).join("");
+
+  document.querySelectorAll(".category-row").forEach(row => {
+    row.addEventListener("click", () => showDetail(row.dataset.id));
+  });
+}
+
+function closeCategoryPage() {
+  currentScreen = "browse";
+  categoryView.classList.add("hidden");
+  browseView.classList.remove("hidden");
+  activeCategory = "";
+  document.querySelectorAll(".cat-tile").forEach(el => el.classList.toggle("active", el.dataset.cat === ""));
+  renderGrid();
+}
+categoryBackBtn.addEventListener("click", closeCategoryPage);
 
 /* ---------------- RATINGS ---------------- */
 let selectedRatingStars = 0;
@@ -1456,16 +1570,27 @@ function showDetail(id) {
   }
 
   browseView.classList.add("hidden");
+  categoryView.classList.add("hidden");
+  detailReturnScreen = currentScreen === "detail" ? detailReturnScreen : currentScreen;
+  currentScreen = "detail";
   detailView.classList.remove("hidden");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 backToBrowse.addEventListener("click", () => {
   detailView.classList.add("hidden");
-  browseView.classList.remove("hidden");
+  if (detailReturnScreen === "category") {
+    currentScreen = "category";
+    categoryView.classList.remove("hidden");
+  } else {
+    currentScreen = "browse";
+    browseView.classList.remove("hidden");
+  }
 });
 logoHome.addEventListener("click", () => {
   detailView.classList.add("hidden");
+  categoryView.classList.add("hidden");
+  currentScreen = "browse";
   browseView.classList.remove("hidden");
 });
 
@@ -1502,7 +1627,15 @@ if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App
       hideWelcome();
     } else if (!detailView.classList.contains("hidden")) {
       detailView.classList.add("hidden");
-      browseView.classList.remove("hidden");
+      if (detailReturnScreen === "category") {
+        currentScreen = "category";
+        categoryView.classList.remove("hidden");
+      } else {
+        currentScreen = "browse";
+        browseView.classList.remove("hidden");
+      }
+    } else if (!categoryView.classList.contains("hidden")) {
+      closeCategoryPage();
     } else if (showOnlyMine) {
       showOnlyMine = false;
       renderGrid();
