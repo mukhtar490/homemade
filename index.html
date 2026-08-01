@@ -128,6 +128,14 @@ header{border-bottom:1px solid var(--line); position:sticky; top:0; z-index:30; 
 }
 .filter-banner span[id]{text-decoration:underline; cursor:pointer;}
 
+/* EXIT TOAST */
+.exit-toast{
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  background:var(--ink); color:var(--paper); font-size:13px; font-weight:700;
+  padding:12px 22px; border-radius:999px; z-index:600; box-shadow:0 10px 24px rgba(0,0,0,0.25);
+  pointer-events:none;
+}
+
 /* PROFILE / DETAIL VIEW */
 .profile-hero{border-radius:20px; overflow:hidden; margin:24px 0 28px; height:170px;}
 .profile-card{background:var(--card-bg); border:1px solid var(--line); border-radius:20px; margin-top:-56px; position:relative; padding:28px; margin-inline:16px;}
@@ -234,7 +242,7 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
       <div class="header-actions" id="headerActions">
         <!-- populated by app.js depending on auth state -->
         <button class="btn btn-ghost" id="loginBtn" data-t="nav_login">Log in</button>
-        <button class="btn btn-primary" id="addBusinessBtn" data-t="nav_add">Add your business</button>
+        <button class="btn btn-primary" id="addBusinessBtn" data-t="nav_add">Add your business/profession</button>
       </div>
     </div>
   </div>
@@ -354,6 +362,8 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
     </div>
   </div>
 </div>
+
+<div class="exit-toast hidden" id="exitToast" data-t="exit_toast_msg">Press back again to exit</div>
 
 <footer class="wrap" data-t="footer">Al Souq Al Arabi — a directory of home-based businesses</footer>
 
@@ -577,7 +587,7 @@ const translations = {
     page_title: "السوق العربي — دليل المشاريع المنزلية",
     brand_name: "السوق العربي",
     nav_login: "تسجيل الدخول",
-    nav_add: "أضف مشروعك",
+    nav_add: "أضف مشروعك/مهنتك",
     eyebrow: "دليل المشاريع المنزلية",
     welcome_headline: "تطبيق واحد لكل مشاريعك المنزلية",
     welcome_sub: "اعرض مشروعك، اكتشف مشاريع غيرك، وتواصل مباشرة — كل ده في مكان واحد.",
@@ -645,6 +655,7 @@ const translations = {
     owner_label: "صاحب المشروع:",
     back_link: "← الرجوع لكل المشاريع",
     footer: "السوق العربي — دليل المشاريع المنزلية",
+    exit_toast_msg: "اضغط رجوع مرة أخرى للخروج",
     disclaimer: "السوق العربي دليل تواصل فقط. كل الطلبات والدفع وسلامة الطعام مسؤولية مباشرة بين الزائر وصاحب المشروع.",
     no_contact: "لا توجد وسيلة تواصل مضافة بعد.",
     contact_sms: "✉ رسالة نصية", contact_call: "☎ اتصال", contact_insta: "📷 إنستغرام", contact_wa: "💬 واتساب",
@@ -691,7 +702,7 @@ const translations = {
     page_title: "Al Souq Al Arabi — Home-Based Business Directory",
     brand_name: "Al Souq Al Arabi",
     nav_login: "Log in",
-    nav_add: "Add your business",
+    nav_add: "Add your business/profession",
     eyebrow: "A directory of home-based businesses",
     welcome_headline: "One app for all your home-based projects",
     welcome_sub: "Show your business, discover others, and connect directly — all in one place.",
@@ -759,6 +770,7 @@ const translations = {
     owner_label: "Owner:",
     back_link: "← Back to all businesses",
     footer: "Al Souq Al Arabi — a directory of home-based businesses",
+    exit_toast_msg: "Press back again to exit",
     disclaimer: "Al Souq Al Arabi is a directory only. All orders, payments, and food safety are handled directly between you and the business owner.",
     no_contact: "No contact info provided yet.",
     contact_sms: "✉ Text", contact_call: "☎ Call", contact_insta: "📷 Instagram", contact_wa: "💬 WhatsApp",
@@ -1336,7 +1348,7 @@ function attachRatingHandlers(businessId, isOwner) {
       msgEl.classList.remove("hidden");
     } catch (err) {
       console.error(err);
-      msgEl.textContent = t("biz_error_generic") + " [" + (err.step || "?") + ":" + (err.code || err.message || "unknown") + "]";
+      msgEl.textContent = "[" + (err.step || "?") + ":" + (err.code || err.message || "unknown") + "] uid=" + (currentUser ? currentUser.uid : "none") + " path=businesses/" + businessId + "/ratings/" + (currentUser ? currentUser.uid : "?");
       msgEl.classList.remove("hidden");
     } finally {
       submitBtn.disabled = false;
@@ -1463,6 +1475,47 @@ function escapeHtml(str) {
   return str.replace(/[&<>"']/g, m => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   }[m]));
+}
+
+/* ---------------- ANDROID HARDWARE BACK BUTTON ---------------- */
+// Only active when running inside the Capacitor native app (no-op on regular web).
+let lastBackPressTime = 0;
+let exitToastTimer = null;
+const EXIT_PRESS_WINDOW_MS = 2000;
+const exitToastEl = document.getElementById("exitToast");
+
+function showExitToast() {
+  if (!exitToastEl) return;
+  exitToastEl.textContent = t("exit_toast_msg");
+  exitToastEl.classList.remove("hidden");
+  clearTimeout(exitToastTimer);
+  exitToastTimer = setTimeout(() => exitToastEl.classList.add("hidden"), EXIT_PRESS_WINDOW_MS);
+}
+
+if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+  window.Capacitor.Plugins.App.addListener("backButton", () => {
+    if (!businessModal.classList.contains("hidden")) {
+      businessModal.classList.add("hidden");
+    } else if (!authModal.classList.contains("hidden")) {
+      authModal.classList.add("hidden");
+    } else if (!welcomeScreen.classList.contains("hidden")) {
+      hideWelcome();
+    } else if (!detailView.classList.contains("hidden")) {
+      detailView.classList.add("hidden");
+      browseView.classList.remove("hidden");
+    } else if (showOnlyMine) {
+      showOnlyMine = false;
+      renderGrid();
+    } else {
+      const now = Date.now();
+      if (now - lastBackPressTime < EXIT_PRESS_WINDOW_MS) {
+        window.Capacitor.Plugins.App.exitApp();
+      } else {
+        lastBackPressTime = now;
+        showExitToast();
+      }
+    }
+  });
 }
 
 </script>
