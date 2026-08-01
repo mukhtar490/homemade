@@ -239,6 +239,11 @@ html[dir="ltr"] .category-back{transform:scaleX(-1);}
 .profile-logo{width:64px; height:64px; border-radius:16px; background:var(--wood); border:4px solid var(--card-bg); margin-top:-40px;}
 .profile-name{font-size:24px; margin:14px 0 4px;}
 .profile-meta{display:flex; gap:14px; font-size:13px; opacity:0.65; flex-wrap:wrap; margin-bottom:16px;}
+.owner-line{display:flex; align-items:center; gap:6px;}
+.owner-mini-avatar{
+  display:inline-block; width:20px; height:20px; border-radius:50%;
+  background-size:cover; background-position:center; background-color:var(--line); flex-shrink:0;
+}
 .profile-desc{font-size:14px; line-height:1.7; opacity:0.85; max-width:600px; margin-bottom:20px; white-space:pre-wrap;}
 .profile-tags{display:flex; gap:8px; margin-bottom:24px; flex-wrap:wrap;}
 .tag{font-size:12px; font-weight:700; padding:6px 14px; border-radius:999px; background:rgba(180,112,58,0.12); color:var(--wood);}
@@ -1855,11 +1860,15 @@ function showDetail(id) {
       ${ratingInputHtml}
     </div>`;
 
+  const ownerAvatarHtml = b.logoUrl
+    ? `<span class="owner-mini-avatar" style="background-image:url('${b.logoUrl}')"></span>`
+    : `<span>${t("member_prefix")}</span>`;
+
   detailCard.innerHTML = `
     <div class="profile-logo ${b.logoUrl ? "zoomable" : ""}" ${b.logoUrl ? `data-group="logo"` : ""} style="${b.logoUrl ? `background-image:url('${b.logoUrl}'); background-size:cover; background-position:center;` : ""}"></div>
     <h2 class="profile-name">${escapeHtml(b.name)}</h2>
     <div class="profile-meta">
-      <span>${t("member_prefix")} ${escapeHtml(b.ownerName || "")}</span>
+      <span class="owner-line">${ownerAvatarHtml} ${escapeHtml(b.ownerName || "")}</span>
       <span>📍 ${escapeHtml(b.city)}, ${escapeHtml(t(stateKey(b.state)))}</span>
     </div>
     ${ratingBlockHtml}
