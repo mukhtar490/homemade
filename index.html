@@ -100,6 +100,15 @@ header{border-bottom:1px solid var(--line); position:sticky; top:0; z-index:30; 
   width:64px; height:64px; border-radius:50%; background:var(--wood); margin:0 auto 12px;
   display:flex; align-items:center; justify-content:center; font-family:'Cairo', sans-serif; font-weight:900; font-size:24px; color:#fff;
 }
+.drawer-avatar-wrap{position:relative; width:64px; margin:0 auto 12px;}
+.drawer-avatar-wrap .drawer-avatar{margin:0;}
+.avatar-edit-btn{
+  position:absolute; bottom:-2px; inset-inline-end:-4px; width:26px; height:26px; border-radius:50%;
+  background:var(--wood); border:2px solid var(--ink); color:#fff; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+.avatar-edit-btn svg{width:13px; height:13px;}
+.avatar-edit-btn:disabled{opacity:0.5; cursor:default;}
 .drawer-name{font-family:'Cairo', sans-serif; font-weight:800; font-size:18px; margin-bottom:4px;}
 .drawer-email{font-size:12.5px; opacity:0.75; word-break:break-all;}
 .drawer-menu{padding:10px 0;}
@@ -321,7 +330,7 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
   <div class="welcome-content">
     <div class="welcome-brand" data-t="brand_name">السوق العربي</div>
     <h1 class="welcome-headline" data-t="welcome_headline">تطبيق واحد لكل مشاريعك المنزلية</h1>
-    <p class="welcome-sub" data-t="welcome_sub">اعرض مشروعك، اكتشف مشاريع غيرك، وتواصل مباشرة — كل ده في مكان واحد.</p>
+    <p class="welcome-sub" data-t="welcome_sub">اعرض مشروعك، اكتشف مشاريع غيرك، وتواصل مباشرة — كل ذلك في مكان واحد.</p>
   </div>
   <div class="welcome-actions">
     <button class="btn btn-primary welcome-next" id="welcomeNextBtn" data-t="welcome_next">التالي</button>
@@ -732,7 +741,7 @@ const translations = {
     welcome_sub: "اعرض مشروعك، اكتشف مشاريع غيرك، وتواصل مباشرة — كل ذلك في مكان واحد.",
     welcome_next: "التالي",
     welcome_skip: "ابدأ الآن واستكشف بسهولة",
-    hero_title: "اكتشف مشاريع منزلية بالقرب منك",
+    hero_title: "اكتشف مشاريع وحرفيّين بالقرب منك",
     hero_sub: "أطعمة، حرف يدوية، هدايا، وخدمات — جميعها من أصحابها مباشرة. تواصل معهم بالطريقة التي تفضّلها.",
     search_ph: "ابحث باسم المشروع أو المدينة...",
     state_all: "كل الولايات",
@@ -835,6 +844,7 @@ const translations = {
     auth_err_generic: "حدث خطأ، يُرجى المحاولة مرة أخرى.",
     logout: "تسجيل الخروج",
     my_businesses: "مشاريعي",
+    drawer_home: "الرئيسية",
     drawer_search: "بحث",
     drawer_terms: "الشروط والأحكام",
     drawer_privacy: "سياسة الخصوصية",
@@ -963,6 +973,7 @@ const translations = {
     auth_err_generic: "Something went wrong. Please try again.",
     logout: "Log out",
     my_businesses: "My Businesses",
+    drawer_home: "Home",
     drawer_search: "Search",
     drawer_terms: "Terms & Conditions",
     drawer_privacy: "Privacy Policy",
@@ -1201,6 +1212,18 @@ function openDrawer() {
 function closeDrawer() {
   drawerOverlay.classList.add("hidden");
 }
+function goHome() {
+  showOnlyMine = false;
+  activeCategory = "";
+  detailView.classList.add("hidden");
+  categoryView.classList.add("hidden");
+  currentScreen = "browse";
+  browseView.classList.remove("hidden");
+  document.querySelectorAll(".cat-tile").forEach(el => el.classList.toggle("active", el.dataset.cat === ""));
+  renderGrid();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 function goToMyBusinesses() {
   showOnlyMine = true;
   detailView.classList.add("hidden");
@@ -1258,14 +1281,27 @@ function renderDrawer() {
   if (currentUser) {
     const label = currentUser.displayName || currentUser.email || "";
     const initial = label.trim().charAt(0).toUpperCase() || "?";
+    const avatarStyle = currentUser.photoURL
+      ? `background-image:url('${currentUser.photoURL}'); background-size:cover; background-position:center;`
+      : "";
     drawerPanel.innerHTML = `
       <div class="drawer-header">
         <button class="drawer-close" id="drawerCloseBtn">×</button>
-        <div class="drawer-avatar">${escapeHtml(initial)}</div>
+        <div class="drawer-avatar-wrap">
+          <div class="drawer-avatar" id="drawerAvatarCircle" style="${avatarStyle}">${currentUser.photoURL ? "" : escapeHtml(initial)}</div>
+          <button class="avatar-edit-btn" id="avatarEditBtn" type="button" aria-label="Change photo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h3l2-2h8l2 2h3v13H3z"/><circle cx="12" cy="13" r="4"/></svg>
+          </button>
+          <input type="file" id="avatarUploadInput" accept="image/*" class="hidden">
+        </div>
         <div class="drawer-name">${escapeHtml(currentUser.displayName || label)}</div>
         <div class="drawer-email">${escapeHtml(currentUser.email || "")}</div>
       </div>
       <div class="drawer-menu">
+        <button class="drawer-item" id="drawerHome">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
+          <span>${t("drawer_home")}</span>
+        </button>
         <button class="drawer-item" id="drawerMyBusinesses">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
           <span>${t("my_businesses")}</span>
@@ -1284,6 +1320,24 @@ function renderDrawer() {
     document.getElementById("drawerMyBusinesses").addEventListener("click", () => { closeDrawer(); goToMyBusinesses(); });
     document.getElementById("drawerDeleteAccount").addEventListener("click", handleDeleteAccount);
     document.getElementById("drawerLogout").addEventListener("click", () => { closeDrawer(); signOut(auth); });
+    document.getElementById("avatarEditBtn").addEventListener("click", () => {
+      document.getElementById("avatarUploadInput").click();
+    });
+    document.getElementById("avatarUploadInput").addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const editBtn = document.getElementById("avatarEditBtn");
+      editBtn.disabled = true;
+      try {
+        const url = await uploadImage(file, `users/${currentUser.uid}/avatar`);
+        await updateProfile(currentUser, { photoURL: url });
+        renderDrawer();
+      } catch (err) {
+        console.error(err);
+        alert(t("biz_error_generic"));
+        editBtn.disabled = false;
+      }
+    });
   } else {
     drawerPanel.innerHTML = `
       <div class="drawer-header">
@@ -1292,6 +1346,10 @@ function renderDrawer() {
         <div class="drawer-name">${t("nav_login")}</div>
       </div>
       <div class="drawer-menu">
+        <button class="drawer-item" id="drawerHome">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
+          <span>${t("drawer_home")}</span>
+        </button>
         <button class="drawer-item" id="drawerLoginBtn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>
           <span>${t("nav_login")}</span>
@@ -1302,6 +1360,7 @@ function renderDrawer() {
     document.getElementById("drawerLoginBtn").addEventListener("click", () => { closeDrawer(); openAuthModal("login"); });
   }
   document.getElementById("drawerCloseBtn").addEventListener("click", closeDrawer);
+  document.getElementById("drawerHome").addEventListener("click", () => { closeDrawer(); goHome(); });
   document.getElementById("drawerSearch").addEventListener("click", () => { closeDrawer(); goToSearch(); });
   document.getElementById("drawerTerms").addEventListener("click", () => { closeDrawer(); openInfoModal("terms_title", "terms_body"); });
   document.getElementById("drawerPrivacy").addEventListener("click", () => { closeDrawer(); openInfoModal("privacy_title", "privacy_body"); });
