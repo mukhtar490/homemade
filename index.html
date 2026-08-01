@@ -58,27 +58,58 @@ button{font-family:inherit;}
 
 /* HEADER */
 header{border-bottom:1px solid var(--line); position:sticky; top:0; z-index:30; background:rgba(244,240,230,0.92); backdrop-filter:blur(6px);}
-.header-inner{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 24px; flex-wrap:wrap;}
+.header-inner{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 24px;}
+.header-brand-group{display:flex; align-items:center; gap:12px;}
 .logo{font-family:'Cairo', sans-serif; font-weight:900; font-size:20px; display:flex; align-items:center; gap:8px; cursor:pointer; flex-shrink:0;}
 .logo .chip{width:11px; height:11px; border-radius:3px; background:var(--wood); transform:rotate(8deg); display:inline-block;}
-.header-actions{display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end;}
-.header-actions-group{display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end;}
 .btn{font-weight:700; font-size:13.5px; padding:9px 16px; border-radius:999px; border:none; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease; white-space:nowrap;}
 .btn-primary{background:var(--ink); color:var(--paper);}
 .btn-primary:hover{transform:translateY(-1px); box-shadow:0 6px 14px rgba(33,31,26,0.25);}
 .btn-ghost{background:transparent; border:1px solid var(--line); color:var(--ink);}
-.user-pill{display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; padding:8px 12px; border-radius:999px; background:var(--card-bg); border:1px solid var(--line); max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.hero-cta{margin-top:6px; padding:13px 26px; font-size:14px;}
 .lang-toggle{
   font-family:'IBM Plex Mono', monospace; font-size:12px; border:1px solid var(--line); border-radius:999px;
   width:38px; height:38px; padding:0; cursor:pointer; background:var(--card-bg);
   display:flex; align-items:center; justify-content:center; color:var(--ink); flex-shrink:0;
 }
 .lang-toggle svg{width:19px; height:19px;}
+.menu-toggle{
+  width:38px; height:38px; border-radius:50%; border:1px solid var(--line); background:var(--card-bg);
+  color:var(--ink); cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.menu-toggle svg{width:20px; height:20px;}
 @media (max-width:640px){
   .header-inner{gap:10px; padding:12px 16px;}
-  .header-actions{width:100%; justify-content:flex-start;}
-  .user-pill{max-width:110px;}
+  .logo{font-size:17px;}
 }
+
+/* SIDE DRAWER */
+.drawer-overlay{position:fixed; inset:0; background:rgba(15,14,12,0.5); z-index:800;}
+.drawer-panel{
+  position:absolute; top:0; right:0; height:100%; width:min(320px, 84vw);
+  background:var(--card-bg); box-shadow:-16px 0 40px rgba(0,0,0,0.2);
+  overflow-y:auto; animation:drawerIn .2s ease;
+}
+@keyframes drawerIn{from{transform:translateX(20px); opacity:0;} to{transform:translateX(0); opacity:1;}}
+.drawer-header{background:var(--ink); color:#fff; padding:28px 22px; text-align:center; position:relative;}
+.drawer-close{
+  position:absolute; top:16px; inset-inline-end:16px; width:32px; height:32px; border-radius:50%;
+  background:rgba(255,255,255,0.15); border:none; color:#fff; font-size:18px; cursor:pointer;
+}
+.drawer-avatar{
+  width:64px; height:64px; border-radius:50%; background:var(--wood); margin:0 auto 12px;
+  display:flex; align-items:center; justify-content:center; font-family:'Cairo', sans-serif; font-weight:900; font-size:24px; color:#fff;
+}
+.drawer-name{font-family:'Cairo', sans-serif; font-weight:800; font-size:18px; margin-bottom:4px;}
+.drawer-email{font-size:12.5px; opacity:0.75; word-break:break-all;}
+.drawer-menu{padding:10px 0;}
+.drawer-item{
+  display:flex; align-items:center; gap:12px; padding:16px 22px; font-size:14px; font-weight:700; cursor:pointer;
+  border-bottom:1px solid var(--line); background:none; border-inline:none; border-top:none; width:100%; text-align:start; color:var(--ink);
+}
+.drawer-item svg{width:19px; height:19px; flex-shrink:0; opacity:0.6;}
+.drawer-item.danger{color:var(--danger);}
+.drawer-footer{padding:24px 22px; text-align:center;}
 
 /* HERO */
 .hero{padding:44px 0 24px;}
@@ -235,10 +266,23 @@ html[dir="ltr"] .category-back{transform:scaleX(-1);}
 .rating-msg{font-size:12.5px; font-weight:700; color:var(--wood);}
 .card-rating{font-size:12px; font-weight:700; color:var(--wood); display:flex; align-items:center; gap:3px;}
 .card-rating .rc{opacity:0.55; font-weight:400;}
+
+/* REVIEWS */
+.reviews-section{margin-top:28px; padding-top:20px; border-top:1px solid var(--line);}
+.reviews-title{font-size:16px; margin-bottom:14px;}
+.reviews-list{display:flex; flex-direction:column; gap:12px;}
+.review-item{background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:14px 16px;}
+.review-top{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:6px;}
+.review-name{font-weight:700; font-size:13px;}
+.review-stars{display:flex; gap:2px;}
+.review-stars .star-fixed{font-size:13px;}
+.review-comment{font-size:13px; line-height:1.6; opacity:0.8; white-space:pre-wrap;}
 input[type="file"]{font-family:'Tajawal', sans-serif; font-size:13px; padding:9px 10px; border-radius:10px; border:1px dashed var(--line); background:#fff;}
 .preview-row{display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;}
 .preview-thumb{width:56px; height:56px; border-radius:8px; background-size:cover; background-position:center; border:1px solid var(--line);}
 .upload-status{font-size:12px; opacity:0.6; margin-top:6px;}
+.info-modal-body{font-size:13.5px; line-height:1.8; opacity:0.85; max-height:60vh; overflow-y:auto;}
+.info-modal-body p{margin-bottom:12px;}
 
 /* MODAL */
 .modal-overlay{position:fixed; inset:0; background:rgba(33,31,26,0.55); display:flex; align-items:center; justify-content:center; z-index:100; padding:20px;}
@@ -287,23 +331,32 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
 
 <header>
   <div class="wrap header-inner">
-    <div class="logo" id="logoHome"><span class="chip"></span><span data-t="brand_name">السوق العربي</span></div>
-    <div class="header-actions-group">
-      <button class="lang-toggle" id="langToggle" aria-label="Change language" title="Change language">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="9"/>
-          <path d="M3 12h18"/>
-          <path d="M12 3c2.5 2.5 3.8 5.7 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.7-3.8-9s1.3-6.5 3.8-9z"/>
+    <div class="header-brand-group">
+      <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 7h16"/>
+          <path d="M4 12h16"/>
+          <path d="M4 17h16"/>
         </svg>
       </button>
-      <div class="header-actions" id="headerActions">
-        <!-- populated by app.js depending on auth state -->
-        <button class="btn btn-ghost" id="loginBtn" data-t="nav_login">Log in</button>
-        <button class="btn btn-primary" id="addBusinessBtn" data-t="nav_add">Add your business/profession</button>
-      </div>
+      <div class="logo" id="logoHome"><span class="chip"></span><span data-t="brand_name">السوق العربي</span></div>
     </div>
+    <button class="lang-toggle" id="langToggle" aria-label="Change language" title="Change language">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M3 12h18"/>
+        <path d="M12 3c2.5 2.5 3.8 5.7 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.7-3.8-9s1.3-6.5 3.8-9z"/>
+      </svg>
+    </button>
   </div>
 </header>
+
+<!-- ============ SIDE DRAWER ============ -->
+<div class="drawer-overlay hidden" id="drawerOverlay">
+  <div class="drawer-panel" id="drawerPanel">
+    <!-- populated by app.js -->
+  </div>
+</div>
 
 <!-- ============ BROWSE VIEW ============ -->
 <div id="browseView">
@@ -312,6 +365,7 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
       <div class="eyebrow" data-t="eyebrow">A directory of home-based businesses</div>
       <h1 data-t="hero_title">Discover home businesses near you</h1>
       <p class="sub" data-t="hero_sub">Baking, crafts, gifts, and services — all run by real people from home. Reach out directly, however you prefer.</p>
+      <button class="btn btn-primary hero-cta" id="addBusinessBtn" data-t="nav_add">Add your business/profession</button>
     </div>
 
     <div class="search-row">
@@ -592,6 +646,14 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
   </div>
 </div>
 
+<div class="modal-overlay hidden" id="infoModal">
+  <div class="modal">
+    <button class="modal-close" id="closeInfoModal">×</button>
+    <h2 id="infoModalTitle"></h2>
+    <div class="info-modal-body" id="infoModalBody"></div>
+  </div>
+</div>
+
 <script type="module">
 // firebase-config.js
 // Central Firebase initialization for Homemade.
@@ -605,7 +667,8 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
-  updateProfile
+  updateProfile,
+  deleteUser
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 import {
   getFirestore,
@@ -763,6 +826,8 @@ const translations = {
     rating_saving: "جاري الحفظ…",
     rating_select_stars: "اختر عدد النجوم الأول.",
     rating_saved: "تم حفظ تقييمك، شكرًا لك!",
+    reviews_title: "التقييمات والتعليقات",
+    no_reviews: "لا توجد تعليقات بعد.",
     auth_err_email_in_use: "البريد الإلكتروني ده متسجل بالفعل — جرّب تسجيل الدخول.",
     auth_err_invalid_email: "البريد الإلكتروني مش صحيح.",
     auth_err_weak_password: "كلمة المرور لازم تكون 6 حروف/أرقام على الأقل.",
@@ -770,6 +835,17 @@ const translations = {
     auth_err_generic: "حصل خطأ، حاول مرة أخرى.",
     logout: "تسجيل الخروج",
     my_businesses: "مشاريعي",
+    drawer_search: "بحث",
+    drawer_terms: "الشروط والأحكام",
+    drawer_privacy: "سياسة الخصوصية",
+    drawer_delete_account: "حذف الحساب",
+    terms_title: "الشروط والأحكام",
+    terms_body: "باستخدامك تطبيق السوق العربي فإنك توافق على الآتي:\n\n١. المنصة دليل تواصل فقط بين أصحاب المشاريع المنزلية والزوار — لا تدير المنصة أي عمليات بيع أو دفع أو توصيل.\n\n٢. كل الطلبات والتعاملات المالية والاتفاقات تتم مباشرة بين الزائر وصاحب المشروع، وتحت مسؤوليتهما الكاملة.\n\n٣. صاحب المشروع مسؤول عن الالتزام بأي قوانين محلية أو ولائية تخص نشاطه (مثل قوانين سلامة الأغذية المنزلية).\n\n٤. يحتفظ التطبيق بحق إزالة أي مشروع يخالف هذه الشروط أو يحتوي على معلومات مضللة.\n\nهذا النص عام وقد يتم تحديثه لاحقًا.",
+    privacy_title: "سياسة الخصوصية",
+    privacy_body: "نحرص على خصوصية بياناتك:\n\n١. بيانات الحساب (الاسم والبريد الإلكتروني) تُستخدم فقط لتسجيل الدخول وربط المشاريع بصاحبها.\n\n٢. بيانات المشروع (الاسم، الوصف، الصور، معلومات التواصل) تكون ظاهرة للعامة بشكل مقصود ضمن الدليل.\n\n٣. لا نبيع بياناتك لأي طرف ثالث.\n\n٤. يمكنك طلب حذف حسابك وبياناته في أي وقت من هذه القائمة.\n\nهذا النص عام وقد يتم تحديثه لاحقًا.",
+    confirm_delete_account: "متأكد إنك عايز تحذف حسابك؟ الإجراء ده نهائي ومش هيرجع تاني. المشاريع اللي نشرتها هتفضل ظاهرة للعموم من غير حساب مرتبط بيها.",
+    delete_account_relogin: "لحماية حسابك، لازم تسجّل الدخول تاني قبل ما تقدر تحذفه. سجّل دخول وجرّب تاني.",
+    delete_account_success: "تم حذف حسابك بنجاح.",
     showing_mine_label: "بتعرض مشاريعك بس",
     clear_filter: "عرض كل المشاريع",
     member_prefix: "👤"
@@ -878,6 +954,8 @@ const translations = {
     rating_saving: "Saving…",
     rating_select_stars: "Pick a star rating first.",
     rating_saved: "Your rating has been saved. Thank you!",
+    reviews_title: "Reviews",
+    no_reviews: "No reviews yet.",
     auth_err_email_in_use: "That email is already registered — try logging in instead.",
     auth_err_invalid_email: "That email doesn't look right.",
     auth_err_weak_password: "Password should be at least 6 characters.",
@@ -885,6 +963,17 @@ const translations = {
     auth_err_generic: "Something went wrong. Please try again.",
     logout: "Log out",
     my_businesses: "My Businesses",
+    drawer_search: "Search",
+    drawer_terms: "Terms & Conditions",
+    drawer_privacy: "Privacy Policy",
+    drawer_delete_account: "Delete Account",
+    terms_title: "Terms & Conditions",
+    terms_body: "By using Al Souq Al Arabi, you agree to the following:\n\n1. This platform is a contact directory only, connecting home-based business owners with visitors. It does not process sales, payments, or deliveries.\n\n2. All orders, payments, and agreements happen directly between the visitor and the business owner, at their own responsibility.\n\n3. Business owners are responsible for complying with any local or state laws relevant to their activity (e.g. cottage food laws).\n\n4. The platform reserves the right to remove any listing that violates these terms or contains misleading information.\n\nThis is general placeholder text and may be updated later.",
+    privacy_title: "Privacy Policy",
+    privacy_body: "We care about your privacy:\n\n1. Account data (name and email) is used only for sign-in and to link listings to their owner.\n\n2. Business listing data (name, description, photos, contact info) is intentionally public as part of the directory.\n\n3. We do not sell your data to third parties.\n\n4. You can request to delete your account and its data at any time from this menu.\n\nThis is general placeholder text and may be updated later.",
+    confirm_delete_account: "Are you sure you want to delete your account? This can't be undone. Any businesses you've published will remain publicly listed without an account attached.",
+    delete_account_relogin: "For your security, please log in again before deleting your account, then try again.",
+    delete_account_success: "Your account has been deleted.",
     showing_mine_label: "Showing your businesses only",
     clear_filter: "Show all businesses",
     member_prefix: "👤"
@@ -958,10 +1047,15 @@ const CATEGORY_GRADIENTS = {
 };
 
 /* ---------------- DOM REFS ---------------- */
-const headerActions = document.getElementById("headerActions");
-const loginBtn = document.getElementById("loginBtn");
 const addBusinessBtn = document.getElementById("addBusinessBtn");
 const langToggle = document.getElementById("langToggle");
+const menuToggle = document.getElementById("menuToggle");
+const drawerOverlay = document.getElementById("drawerOverlay");
+const drawerPanel = document.getElementById("drawerPanel");
+const infoModal = document.getElementById("infoModal");
+const infoModalTitle = document.getElementById("infoModalTitle");
+const infoModalBody = document.getElementById("infoModalBody");
+const closeInfoModal = document.getElementById("closeInfoModal");
 
 const authModal = document.getElementById("authModal");
 const closeAuthModal = document.getElementById("closeAuthModal");
@@ -1026,8 +1120,8 @@ applyStaticTranslations();
 /* ---------------- LANGUAGE TOGGLE ---------------- */
 langToggle.addEventListener("click", () => {
   setLang(getLang() === "ar" ? "en" : "ar");
-  renderHeader();
   renderGrid();
+  if (!drawerOverlay.classList.contains("hidden")) renderDrawer();
 });
 
 /* ---------------- AUTH UI ---------------- */
@@ -1043,7 +1137,6 @@ function openAuthModal(mode) {
   authForm.reset();
   authModal.classList.remove("hidden");
 }
-loginBtn.addEventListener("click", () => openAuthModal("login"));
 closeAuthModal.addEventListener("click", () => authModal.classList.add("hidden"));
 document.querySelectorAll("[data-authtab]").forEach(btn => {
   btn.addEventListener("click", () => openAuthModal(btn.dataset.authtab));
@@ -1086,41 +1179,138 @@ function friendlyAuthError(code) {
 
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
-  renderHeader();
+  if (!drawerOverlay.classList.contains("hidden")) renderDrawer();
   // Re-render the open detail view (if any) so owner actions appear/disappear correctly.
   if (!detailView.classList.contains("hidden") && detailCard.dataset.currentId) {
     showDetail(detailCard.dataset.currentId);
   }
 });
 
-function renderHeader() {
-  if (currentUser) {
-    headerActions.innerHTML = `
-      <span class="user-pill">${t("member_prefix")} ${escapeHtml(currentUser.displayName || currentUser.email)}</span>
-      <button class="btn btn-ghost" id="myBusinessesBtn">${t("my_businesses")}</button>
-      <button class="btn btn-ghost" id="logoutBtn">${t("logout")}</button>
-      <button class="btn btn-primary" id="addBusinessBtn2">${t("nav_add")}</button>
-    `;
-    document.getElementById("myBusinessesBtn").addEventListener("click", () => {
-      showOnlyMine = true;
-      detailView.classList.add("hidden");
-      categoryView.classList.add("hidden");
-      currentScreen = "browse";
-      browseView.classList.remove("hidden");
-      renderGrid();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-    document.getElementById("logoutBtn").addEventListener("click", () => signOut(auth));
-    document.getElementById("addBusinessBtn2").addEventListener("click", () => openBusinessModal());
-  } else {
-    headerActions.innerHTML = `
-      <button class="btn btn-ghost" id="loginBtn2">${t("nav_login")}</button>
-      <button class="btn btn-primary" id="addBusinessBtn2">${t("nav_add")}</button>
-    `;
-    document.getElementById("loginBtn2").addEventListener("click", () => openAuthModal("login"));
-    document.getElementById("addBusinessBtn2").addEventListener("click", () => openBusinessModal());
+closeInfoModal.addEventListener("click", () => infoModal.classList.add("hidden"));
+function openInfoModal(titleKey, bodyKey) {
+  infoModalTitle.textContent = t(titleKey);
+  infoModalBody.innerHTML = t(bodyKey).split("\n\n").map(p => `<p>${escapeHtml(p)}</p>`).join("");
+  infoModal.classList.remove("hidden");
+}
+
+/* ---------------- SIDE DRAWER ---------------- */
+function openDrawer() {
+  renderDrawer();
+  drawerOverlay.classList.remove("hidden");
+}
+function closeDrawer() {
+  drawerOverlay.classList.add("hidden");
+}
+function goToMyBusinesses() {
+  showOnlyMine = true;
+  detailView.classList.add("hidden");
+  categoryView.classList.add("hidden");
+  currentScreen = "browse";
+  browseView.classList.remove("hidden");
+  renderGrid();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function goToSearch() {
+  detailView.classList.add("hidden");
+  categoryView.classList.add("hidden");
+  currentScreen = "browse";
+  browseView.classList.remove("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  setTimeout(() => searchInput.focus(), 250);
+}
+
+async function handleDeleteAccount() {
+  if (!confirm(t("confirm_delete_account"))) return;
+  try {
+    await deleteUser(currentUser);
+    closeDrawer();
+    alert(t("delete_account_success"));
+  } catch (err) {
+    console.error(err);
+    if (err.code === "auth/requires-recent-login") {
+      alert(t("delete_account_relogin"));
+      closeDrawer();
+      await signOut(auth);
+      openAuthModal("login");
+    } else {
+      alert(t("biz_error_generic"));
+    }
   }
 }
+
+function renderDrawer() {
+  const commonItemsHtml = `
+    <button class="drawer-item" id="drawerSearch">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <span>${t("drawer_search")}</span>
+    </button>
+    <button class="drawer-item" id="drawerTerms">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span>${t("drawer_terms")}</span>
+    </button>
+    <button class="drawer-item" id="drawerPrivacy">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span>${t("drawer_privacy")}</span>
+    </button>
+  `;
+
+  if (currentUser) {
+    const label = currentUser.displayName || currentUser.email || "";
+    const initial = label.trim().charAt(0).toUpperCase() || "?";
+    drawerPanel.innerHTML = `
+      <div class="drawer-header">
+        <button class="drawer-close" id="drawerCloseBtn">×</button>
+        <div class="drawer-avatar">${escapeHtml(initial)}</div>
+        <div class="drawer-name">${escapeHtml(currentUser.displayName || label)}</div>
+        <div class="drawer-email">${escapeHtml(currentUser.email || "")}</div>
+      </div>
+      <div class="drawer-menu">
+        <button class="drawer-item" id="drawerMyBusinesses">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          <span>${t("my_businesses")}</span>
+        </button>
+        ${commonItemsHtml}
+        <button class="drawer-item danger" id="drawerDeleteAccount">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          <span>${t("drawer_delete_account")}</span>
+        </button>
+        <button class="drawer-item danger" id="drawerLogout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+          <span>${t("logout")}</span>
+        </button>
+      </div>
+    `;
+    document.getElementById("drawerMyBusinesses").addEventListener("click", () => { closeDrawer(); goToMyBusinesses(); });
+    document.getElementById("drawerDeleteAccount").addEventListener("click", handleDeleteAccount);
+    document.getElementById("drawerLogout").addEventListener("click", () => { closeDrawer(); signOut(auth); });
+  } else {
+    drawerPanel.innerHTML = `
+      <div class="drawer-header">
+        <button class="drawer-close" id="drawerCloseBtn">×</button>
+        <div class="drawer-avatar">?</div>
+        <div class="drawer-name">${t("nav_login")}</div>
+      </div>
+      <div class="drawer-menu">
+        <button class="drawer-item" id="drawerLoginBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>
+          <span>${t("nav_login")}</span>
+        </button>
+        ${commonItemsHtml}
+      </div>
+    `;
+    document.getElementById("drawerLoginBtn").addEventListener("click", () => { closeDrawer(); openAuthModal("login"); });
+  }
+  document.getElementById("drawerCloseBtn").addEventListener("click", closeDrawer);
+  document.getElementById("drawerSearch").addEventListener("click", () => { closeDrawer(); goToSearch(); });
+  document.getElementById("drawerTerms").addEventListener("click", () => { closeDrawer(); openInfoModal("terms_title", "terms_body"); });
+  document.getElementById("drawerPrivacy").addEventListener("click", () => { closeDrawer(); openInfoModal("privacy_title", "privacy_body"); });
+}
+
+menuToggle.addEventListener("click", openDrawer);
+drawerOverlay.addEventListener("click", (e) => {
+  if (e.target === drawerOverlay) closeDrawer();
+});
 
 /* ---------------- ADD / EDIT BUSINESS ---------------- */
 function openBusinessModal(business = null) {
@@ -1434,6 +1624,39 @@ async function recomputeRatingAggregate(businessId) {
   await updateDoc(doc(db, "businesses", businessId), { ratingAvg: avg, ratingCount: count });
 }
 
+async function loadReviews(businessId) {
+  const listEl = document.getElementById("reviewsList");
+  if (!listEl) return;
+  try {
+    const snap = await getDocs(collection(db, "businesses", businessId, "ratings"));
+    const reviews = snap.docs
+      .map(d => d.data())
+      .filter(r => r.comment && r.comment.trim())
+      .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+    // Guard against a stale response landing after the user navigated away.
+    if (detailCard.dataset.currentId !== businessId) return;
+
+    if (reviews.length === 0) {
+      listEl.innerHTML = `<div class="empty-state" style="padding:24px 0;">${t("no_reviews")}</div>`;
+      return;
+    }
+
+    listEl.innerHTML = reviews.map(r => `
+      <div class="review-item">
+        <div class="review-top">
+          <span class="review-name">${escapeHtml(r.userName || "")}</span>
+          <span class="review-stars">${starsDisplay(r.stars)}</span>
+        </div>
+        <p class="review-comment">${escapeHtml(r.comment)}</p>
+      </div>
+    `).join("");
+  } catch (err) {
+    console.error(err);
+    listEl.innerHTML = `<div class="empty-state" style="padding:24px 0;">${t("load_error")}</div>`;
+  }
+}
+
 async function submitRating(businessId, stars, comment) {
   const ratingRef = doc(db, "businesses", businessId, "ratings", currentUser.uid);
   try {
@@ -1587,10 +1810,17 @@ function showDetail(id) {
     ${ownerActionsHtml}
     <p class="disclaimer">${t("disclaimer")}</p>
     ${galleryHtml}
+    <div class="reviews-section">
+      <h3 class="reviews-title">${t("reviews_title")}</h3>
+      <div class="reviews-list" id="reviewsList">
+        <div class="loading-text">${t("loading")}</div>
+      </div>
+    </div>
   `;
 
   attachRatingHandlers(b.id, isOwner);
   attachZoomHandlers();
+  loadReviews(b.id);
 
   if (isOwner) {
     document.getElementById("editBizBtn").addEventListener("click", () => openBusinessModal(b));
@@ -1744,6 +1974,10 @@ if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App
   window.Capacitor.Plugins.App.addListener("backButton", () => {
     if (!lightbox.classList.contains("hidden")) {
       closeLightbox();
+    } else if (!infoModal.classList.contains("hidden")) {
+      infoModal.classList.add("hidden");
+    } else if (!drawerOverlay.classList.contains("hidden")) {
+      closeDrawer();
     } else if (!businessModal.classList.contains("hidden")) {
       businessModal.classList.add("hidden");
     } else if (!authModal.classList.contains("hidden")) {
