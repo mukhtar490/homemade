@@ -58,21 +58,27 @@ button{font-family:inherit;}
 
 /* HEADER */
 header{border-bottom:1px solid var(--line); position:sticky; top:0; z-index:30; background:rgba(244,240,230,0.92); backdrop-filter:blur(6px);}
-.header-inner{display:flex; align-items:center; justify-content:space-between; padding:16px 24px; gap:12px; flex-wrap:wrap;}
-.logo{font-family:'Cairo', sans-serif; font-weight:900; font-size:22px; display:flex; align-items:center; gap:8px; cursor:pointer;}
-.logo .chip{width:12px; height:12px; border-radius:3px; background:var(--wood); transform:rotate(8deg); display:inline-block;}
-.header-actions{display:flex; align-items:center; gap:10px;}
-.btn{font-weight:700; font-size:14px; padding:10px 20px; border-radius:999px; border:none; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease;}
+.header-inner{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 24px; flex-wrap:wrap;}
+.logo{font-family:'Cairo', sans-serif; font-weight:900; font-size:20px; display:flex; align-items:center; gap:8px; cursor:pointer; flex-shrink:0;}
+.logo .chip{width:11px; height:11px; border-radius:3px; background:var(--wood); transform:rotate(8deg); display:inline-block;}
+.header-actions{display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end;}
+.header-actions-group{display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end;}
+.btn{font-weight:700; font-size:13.5px; padding:9px 16px; border-radius:999px; border:none; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease; white-space:nowrap;}
 .btn-primary{background:var(--ink); color:var(--paper);}
 .btn-primary:hover{transform:translateY(-1px); box-shadow:0 6px 14px rgba(33,31,26,0.25);}
 .btn-ghost{background:transparent; border:1px solid var(--line); color:var(--ink);}
-.user-pill{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; padding:8px 14px; border-radius:999px; background:var(--card-bg); border:1px solid var(--line);}
+.user-pill{display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; padding:8px 12px; border-radius:999px; background:var(--card-bg); border:1px solid var(--line); max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .lang-toggle{
   font-family:'IBM Plex Mono', monospace; font-size:12px; border:1px solid var(--line); border-radius:999px;
   width:38px; height:38px; padding:0; cursor:pointer; background:var(--card-bg);
   display:flex; align-items:center; justify-content:center; color:var(--ink); flex-shrink:0;
 }
 .lang-toggle svg{width:19px; height:19px;}
+@media (max-width:640px){
+  .header-inner{gap:10px; padding:12px 16px;}
+  .header-actions{width:100%; justify-content:flex-start;}
+  .user-pill{max-width:110px;}
+}
 
 /* HERO */
 .hero{padding:44px 0 24px;}
@@ -115,6 +121,12 @@ header{border-bottom:1px solid var(--line); position:sticky; top:0; z-index:30; 
 .card-footer{display:flex; align-items:center; justify-content:space-between; padding-top:10px; border-top:1px solid var(--line); flex-wrap:wrap; gap:8px;}
 .city{font-size:12px; opacity:0.65;}
 .empty-state{grid-column:1/-1; text-align:center; padding:60px 20px; opacity:0.6;}
+.filter-banner{
+  grid-column:1/-1; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
+  background:rgba(180,112,58,0.1); border:1px solid rgba(180,112,58,0.25); color:var(--wood);
+  font-size:13px; font-weight:700; padding:12px 16px; border-radius:12px;
+}
+.filter-banner span[id]{text-decoration:underline; cursor:pointer;}
 
 /* PROFILE / DETAIL VIEW */
 .profile-hero{border-radius:20px; overflow:hidden; margin:24px 0 28px; height:170px;}
@@ -201,7 +213,7 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
 <header>
   <div class="wrap header-inner">
     <div class="logo" id="logoHome"><span class="chip"></span><span data-t="brand_name">السوق العربي</span></div>
-    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+    <div class="header-actions-group">
       <button class="lang-toggle" id="langToggle" aria-label="Change language" title="Change language">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="9"/>
@@ -231,11 +243,56 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
       <input class="search-input" id="searchInput" data-t-placeholder="search_ph" placeholder="Search by business name or city...">
       <select class="state-select" id="stateSelect">
         <option value="" data-t="state_all">All States</option>
-        <option value="Texas" data-t="state_tx">Texas</option>
-        <option value="California" data-t="state_ca">California</option>
-        <option value="New York" data-t="state_ny">New York</option>
-        <option value="Florida" data-t="state_fl">Florida</option>
-        <option value="Illinois" data-t="state_il">Illinois</option>
+          <option value="Alabama" data-t="state_al">Alabama</option>
+          <option value="Alaska" data-t="state_ak">Alaska</option>
+          <option value="Arizona" data-t="state_az">Arizona</option>
+          <option value="Arkansas" data-t="state_ar">Arkansas</option>
+          <option value="California" data-t="state_ca">California</option>
+          <option value="Colorado" data-t="state_co">Colorado</option>
+          <option value="Connecticut" data-t="state_ct">Connecticut</option>
+          <option value="Delaware" data-t="state_de">Delaware</option>
+          <option value="Florida" data-t="state_fl">Florida</option>
+          <option value="Georgia" data-t="state_ga">Georgia</option>
+          <option value="Hawaii" data-t="state_hi">Hawaii</option>
+          <option value="Idaho" data-t="state_id">Idaho</option>
+          <option value="Illinois" data-t="state_il">Illinois</option>
+          <option value="Indiana" data-t="state_in_">Indiana</option>
+          <option value="Iowa" data-t="state_ia">Iowa</option>
+          <option value="Kansas" data-t="state_ks">Kansas</option>
+          <option value="Kentucky" data-t="state_ky">Kentucky</option>
+          <option value="Louisiana" data-t="state_la">Louisiana</option>
+          <option value="Maine" data-t="state_me">Maine</option>
+          <option value="Maryland" data-t="state_md">Maryland</option>
+          <option value="Massachusetts" data-t="state_ma">Massachusetts</option>
+          <option value="Michigan" data-t="state_mi">Michigan</option>
+          <option value="Minnesota" data-t="state_mn">Minnesota</option>
+          <option value="Mississippi" data-t="state_ms">Mississippi</option>
+          <option value="Missouri" data-t="state_mo">Missouri</option>
+          <option value="Montana" data-t="state_mt">Montana</option>
+          <option value="Nebraska" data-t="state_ne">Nebraska</option>
+          <option value="Nevada" data-t="state_nv">Nevada</option>
+          <option value="New Hampshire" data-t="state_nh">New Hampshire</option>
+          <option value="New Jersey" data-t="state_nj">New Jersey</option>
+          <option value="New Mexico" data-t="state_nm">New Mexico</option>
+          <option value="New York" data-t="state_ny">New York</option>
+          <option value="North Carolina" data-t="state_nc">North Carolina</option>
+          <option value="North Dakota" data-t="state_nd">North Dakota</option>
+          <option value="Ohio" data-t="state_oh">Ohio</option>
+          <option value="Oklahoma" data-t="state_ok">Oklahoma</option>
+          <option value="Oregon" data-t="state_or_">Oregon</option>
+          <option value="Pennsylvania" data-t="state_pa">Pennsylvania</option>
+          <option value="Rhode Island" data-t="state_ri">Rhode Island</option>
+          <option value="South Carolina" data-t="state_sc">South Carolina</option>
+          <option value="South Dakota" data-t="state_sd">South Dakota</option>
+          <option value="Tennessee" data-t="state_tn">Tennessee</option>
+          <option value="Texas" data-t="state_tx">Texas</option>
+          <option value="Utah" data-t="state_ut">Utah</option>
+          <option value="Vermont" data-t="state_vt">Vermont</option>
+          <option value="Virginia" data-t="state_va">Virginia</option>
+          <option value="Washington" data-t="state_wa">Washington</option>
+          <option value="West Virginia" data-t="state_wv">West Virginia</option>
+          <option value="Wisconsin" data-t="state_wi">Wisconsin</option>
+          <option value="Wyoming" data-t="state_wy">Wyoming</option>
       </select>
     </div>
 
@@ -363,11 +420,56 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
         <label data-t="field_state">State</label>
         <select id="bizState" required>
           <option value="" data-t="select_state">Select a state</option>
-          <option value="Texas" data-t="state_tx">Texas</option>
+          <option value="Alabama" data-t="state_al">Alabama</option>
+          <option value="Alaska" data-t="state_ak">Alaska</option>
+          <option value="Arizona" data-t="state_az">Arizona</option>
+          <option value="Arkansas" data-t="state_ar">Arkansas</option>
           <option value="California" data-t="state_ca">California</option>
-          <option value="New York" data-t="state_ny">New York</option>
+          <option value="Colorado" data-t="state_co">Colorado</option>
+          <option value="Connecticut" data-t="state_ct">Connecticut</option>
+          <option value="Delaware" data-t="state_de">Delaware</option>
           <option value="Florida" data-t="state_fl">Florida</option>
+          <option value="Georgia" data-t="state_ga">Georgia</option>
+          <option value="Hawaii" data-t="state_hi">Hawaii</option>
+          <option value="Idaho" data-t="state_id">Idaho</option>
           <option value="Illinois" data-t="state_il">Illinois</option>
+          <option value="Indiana" data-t="state_in_">Indiana</option>
+          <option value="Iowa" data-t="state_ia">Iowa</option>
+          <option value="Kansas" data-t="state_ks">Kansas</option>
+          <option value="Kentucky" data-t="state_ky">Kentucky</option>
+          <option value="Louisiana" data-t="state_la">Louisiana</option>
+          <option value="Maine" data-t="state_me">Maine</option>
+          <option value="Maryland" data-t="state_md">Maryland</option>
+          <option value="Massachusetts" data-t="state_ma">Massachusetts</option>
+          <option value="Michigan" data-t="state_mi">Michigan</option>
+          <option value="Minnesota" data-t="state_mn">Minnesota</option>
+          <option value="Mississippi" data-t="state_ms">Mississippi</option>
+          <option value="Missouri" data-t="state_mo">Missouri</option>
+          <option value="Montana" data-t="state_mt">Montana</option>
+          <option value="Nebraska" data-t="state_ne">Nebraska</option>
+          <option value="Nevada" data-t="state_nv">Nevada</option>
+          <option value="New Hampshire" data-t="state_nh">New Hampshire</option>
+          <option value="New Jersey" data-t="state_nj">New Jersey</option>
+          <option value="New Mexico" data-t="state_nm">New Mexico</option>
+          <option value="New York" data-t="state_ny">New York</option>
+          <option value="North Carolina" data-t="state_nc">North Carolina</option>
+          <option value="North Dakota" data-t="state_nd">North Dakota</option>
+          <option value="Ohio" data-t="state_oh">Ohio</option>
+          <option value="Oklahoma" data-t="state_ok">Oklahoma</option>
+          <option value="Oregon" data-t="state_or_">Oregon</option>
+          <option value="Pennsylvania" data-t="state_pa">Pennsylvania</option>
+          <option value="Rhode Island" data-t="state_ri">Rhode Island</option>
+          <option value="South Carolina" data-t="state_sc">South Carolina</option>
+          <option value="South Dakota" data-t="state_sd">South Dakota</option>
+          <option value="Tennessee" data-t="state_tn">Tennessee</option>
+          <option value="Texas" data-t="state_tx">Texas</option>
+          <option value="Utah" data-t="state_ut">Utah</option>
+          <option value="Vermont" data-t="state_vt">Vermont</option>
+          <option value="Virginia" data-t="state_va">Virginia</option>
+          <option value="Washington" data-t="state_wa">Washington</option>
+          <option value="West Virginia" data-t="state_wv">West Virginia</option>
+          <option value="Wisconsin" data-t="state_wi">Wisconsin</option>
+          <option value="Wyoming" data-t="state_wy">Wyoming</option>
         </select>
       </div>
       <div class="field">
@@ -475,7 +577,56 @@ const translations = {
     hero_sub: "أكل، حرف يدوية، هدايا، وخدمات — كلها من أصحابها مباشرة. تواصل معاهم بالطريقة اللي تفضّلها.",
     search_ph: "ابحث باسم المشروع أو المدينة...",
     state_all: "كل الولايات",
-    state_tx: "تكساس", state_ca: "كاليفورنيا", state_ny: "نيويورك", state_fl: "فلوريدا", state_il: "إلينوي",
+    state_al: "ألاباما",
+    state_ak: "ألاسكا",
+    state_az: "أريزونا",
+    state_ar: "أركنساس",
+    state_ca: "كاليفورنيا",
+    state_co: "كولورادو",
+    state_ct: "كونيتيكت",
+    state_de: "ديلاوير",
+    state_fl: "فلوريدا",
+    state_ga: "جورجيا",
+    state_hi: "هاواي",
+    state_id: "أيداهو",
+    state_il: "إلينوي",
+    state_in_: "إنديانا",
+    state_ia: "آيوا",
+    state_ks: "كانساس",
+    state_ky: "كنتاكي",
+    state_la: "لويزيانا",
+    state_me: "مين",
+    state_md: "ماريلاند",
+    state_ma: "ماساتشوستس",
+    state_mi: "ميشيغان",
+    state_mn: "مينيسوتا",
+    state_ms: "ميسيسيبي",
+    state_mo: "ميزوري",
+    state_mt: "مونتانا",
+    state_ne: "نبراسكا",
+    state_nv: "نيفادا",
+    state_nh: "نيوهامبشير",
+    state_nj: "نيوجيرزي",
+    state_nm: "نيومكسيكو",
+    state_ny: "نيويورك",
+    state_nc: "كارولاينا الشمالية",
+    state_nd: "داكوتا الشمالية",
+    state_oh: "أوهايو",
+    state_ok: "أوكلاهوما",
+    state_or_: "أوريغون",
+    state_pa: "بنسلفانيا",
+    state_ri: "رود آيلاند",
+    state_sc: "كارولاينا الجنوبية",
+    state_sd: "داكوتا الجنوبية",
+    state_tn: "تينيسي",
+    state_tx: "تكساس",
+    state_ut: "يوتا",
+    state_vt: "فيرمونت",
+    state_va: "فيرجينيا",
+    state_wa: "واشنطن",
+    state_wv: "فيرجينيا الغربية",
+    state_wi: "ويسكونسن",
+    state_wy: "وايومنغ",
     cat_section_label: "تصفح حسب التصنيف",
     f_all: "الكل", f_food: "أكل وحلويات", f_crafts: "حرف يدوية", f_gifts: "هدايا", f_services: "خدمات", f_apparel: "ملابس وإكسسوارات",
     loading: "جاري تحميل المشاريع…",
@@ -516,6 +667,9 @@ const translations = {
     auth_err_invalid_credential: "البريد الإلكتروني أو كلمة المرور غلط.",
     auth_err_generic: "حصل خطأ، حاول مرة أخرى.",
     logout: "تسجيل الخروج",
+    my_businesses: "مشاريعي",
+    showing_mine_label: "بتعرض مشاريعك بس",
+    clear_filter: "عرض كل المشاريع",
     member_prefix: "👤"
   },
   en: {
@@ -532,7 +686,56 @@ const translations = {
     hero_sub: "Baking, crafts, gifts, and services — all run by real people from home. Reach out directly, however you prefer.",
     search_ph: "Search by business name or city...",
     state_all: "All States",
-    state_tx: "Texas", state_ca: "California", state_ny: "New York", state_fl: "Florida", state_il: "Illinois",
+    state_al: "Alabama",
+    state_ak: "Alaska",
+    state_az: "Arizona",
+    state_ar: "Arkansas",
+    state_ca: "California",
+    state_co: "Colorado",
+    state_ct: "Connecticut",
+    state_de: "Delaware",
+    state_fl: "Florida",
+    state_ga: "Georgia",
+    state_hi: "Hawaii",
+    state_id: "Idaho",
+    state_il: "Illinois",
+    state_in_: "Indiana",
+    state_ia: "Iowa",
+    state_ks: "Kansas",
+    state_ky: "Kentucky",
+    state_la: "Louisiana",
+    state_me: "Maine",
+    state_md: "Maryland",
+    state_ma: "Massachusetts",
+    state_mi: "Michigan",
+    state_mn: "Minnesota",
+    state_ms: "Mississippi",
+    state_mo: "Missouri",
+    state_mt: "Montana",
+    state_ne: "Nebraska",
+    state_nv: "Nevada",
+    state_nh: "New Hampshire",
+    state_nj: "New Jersey",
+    state_nm: "New Mexico",
+    state_ny: "New York",
+    state_nc: "North Carolina",
+    state_nd: "North Dakota",
+    state_oh: "Ohio",
+    state_ok: "Oklahoma",
+    state_or_: "Oregon",
+    state_pa: "Pennsylvania",
+    state_ri: "Rhode Island",
+    state_sc: "South Carolina",
+    state_sd: "South Dakota",
+    state_tn: "Tennessee",
+    state_tx: "Texas",
+    state_ut: "Utah",
+    state_vt: "Vermont",
+    state_va: "Virginia",
+    state_wa: "Washington",
+    state_wv: "West Virginia",
+    state_wi: "Wisconsin",
+    state_wy: "Wyoming",
     cat_section_label: "Browse by category",
     f_all: "All", f_food: "Food & Baking", f_crafts: "Handmade Crafts", f_gifts: "Gifts", f_services: "Services", f_apparel: "Apparel & Accessories",
     loading: "Loading businesses…",
@@ -573,6 +776,9 @@ const translations = {
     auth_err_invalid_credential: "Incorrect email or password.",
     auth_err_generic: "Something went wrong. Please try again.",
     logout: "Log out",
+    my_businesses: "My Businesses",
+    showing_mine_label: "Showing your businesses only",
+    clear_filter: "Show all businesses",
     member_prefix: "👤"
   }
 };
@@ -623,6 +829,7 @@ document.documentElement.dir = currentLang === "ar" ? "rtl" : "ltr";
 let currentUser = null;
 let allBusinesses = [];
 let activeCategory = "";
+let showOnlyMine = false;
 let editingBusinessId = null;
 let existingLogoUrl = "";
 let existingImages = [];
@@ -775,9 +982,17 @@ function renderHeader() {
   if (currentUser) {
     headerActions.innerHTML = `
       <span class="user-pill">${t("member_prefix")} ${escapeHtml(currentUser.displayName || currentUser.email)}</span>
+      <button class="btn btn-ghost" id="myBusinessesBtn">${t("my_businesses")}</button>
       <button class="btn btn-ghost" id="logoutBtn">${t("logout")}</button>
       <button class="btn btn-primary" id="addBusinessBtn2">${t("nav_add")}</button>
     `;
+    document.getElementById("myBusinessesBtn").addEventListener("click", () => {
+      showOnlyMine = true;
+      detailView.classList.add("hidden");
+      browseView.classList.remove("hidden");
+      renderGrid();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
     document.getElementById("logoutBtn").addEventListener("click", () => signOut(auth));
     document.getElementById("addBusinessBtn2").addEventListener("click", () => openBusinessModal());
   } else {
@@ -943,6 +1158,7 @@ function renderGrid() {
   const stateFilter = stateSelect.value;
 
   const filtered = allBusinesses.filter(b => {
+    if (showOnlyMine && (!currentUser || b.ownerId !== currentUser.uid)) return false;
     if (activeCategory && b.category !== activeCategory) return false;
     if (stateFilter && b.state !== stateFilter) return false;
     if (searchTerm) {
@@ -952,12 +1168,17 @@ function renderGrid() {
     return true;
   });
 
+  const bannerHtml = showOnlyMine
+    ? `<div class="filter-banner">${t("showing_mine_label")} <span id="clearMineFilter">${t("clear_filter")}</span></div>`
+    : "";
+
   if (filtered.length === 0) {
-    businessGrid.innerHTML = `<div class="empty-state">${t("empty_state")}</div>`;
+    businessGrid.innerHTML = bannerHtml + `<div class="empty-state">${t("empty_state")}</div>`;
+    attachBannerHandler();
     return;
   }
 
-  businessGrid.innerHTML = filtered.map(b => {
+  businessGrid.innerHTML = bannerHtml + filtered.map(b => {
     const mediaStyle = b.logoUrl
       ? `background-image:url('${b.logoUrl}'); background-size:cover; background-position:center;`
       : `background:${CATEGORY_GRADIENTS[b.category] || CATEGORY_GRADIENTS["Services"]};`;
@@ -984,10 +1205,21 @@ function renderGrid() {
   document.querySelectorAll(".card").forEach(card => {
     card.addEventListener("click", () => showDetail(card.dataset.id));
   });
+  attachBannerHandler();
+}
+
+function attachBannerHandler() {
+  const clearBtn = document.getElementById("clearMineFilter");
+  if (clearBtn) {
+    clearBtn.addEventListener("click", () => {
+      showOnlyMine = false;
+      renderGrid();
+    });
+  }
 }
 
 function stateKey(state) {
-  const map = { "Texas": "state_tx", "California": "state_ca", "New York": "state_ny", "Florida": "state_fl", "Illinois": "state_il" };
+  const map = { "Alabama": "state_al", "Alaska": "state_ak", "Arizona": "state_az", "Arkansas": "state_ar", "California": "state_ca", "Colorado": "state_co", "Connecticut": "state_ct", "Delaware": "state_de", "Florida": "state_fl", "Georgia": "state_ga", "Hawaii": "state_hi", "Idaho": "state_id", "Illinois": "state_il", "Indiana": "state_in_", "Iowa": "state_ia", "Kansas": "state_ks", "Kentucky": "state_ky", "Louisiana": "state_la", "Maine": "state_me", "Maryland": "state_md", "Massachusetts": "state_ma", "Michigan": "state_mi", "Minnesota": "state_mn", "Mississippi": "state_ms", "Missouri": "state_mo", "Montana": "state_mt", "Nebraska": "state_ne", "Nevada": "state_nv", "New Hampshire": "state_nh", "New Jersey": "state_nj", "New Mexico": "state_nm", "New York": "state_ny", "North Carolina": "state_nc", "North Dakota": "state_nd", "Ohio": "state_oh", "Oklahoma": "state_ok", "Oregon": "state_or_", "Pennsylvania": "state_pa", "Rhode Island": "state_ri", "South Carolina": "state_sc", "South Dakota": "state_sd", "Tennessee": "state_tn", "Texas": "state_tx", "Utah": "state_ut", "Vermont": "state_vt", "Virginia": "state_va", "Washington": "state_wa", "West Virginia": "state_wv", "Wisconsin": "state_wi", "Wyoming": "state_wy" };
   return map[state] || "state_all";
 }
 
