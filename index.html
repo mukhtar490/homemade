@@ -149,15 +149,25 @@ header{border-bottom:1px solid var(--line); position:sticky; top:0; z-index:30; 
 .owner-actions .delete-action{color:var(--danger); border-color:rgba(176,67,47,0.3);}
 
 /* RATINGS */
-.rating-block{margin:6px 0 16px; display:flex; flex-direction:column; gap:10px;}
+.rating-block{margin:6px 0 16px; display:flex; flex-direction:column; gap:12px;}
 .rating-avg{display:flex; align-items:center; gap:8px; font-size:14px;}
 .star-fixed{color:var(--line); font-size:16px; line-height:1;}
 .star-fixed.filled{color:var(--wood);}
 .rating-count{font-size:12px; opacity:0.6;}
+.rating-form{
+  display:flex; flex-direction:column; gap:10px; padding:16px; border-radius:14px;
+  background:var(--paper); border:1px solid var(--line);
+}
+.rating-hint{font-size:12.5px; font-weight:700; opacity:0.7;}
 .rating-input{display:flex; align-items:center; gap:4px;}
-.rate-star{font-size:24px; color:var(--line); cursor:pointer; transition:color .1s; line-height:1;}
+.rate-star{font-size:26px; color:var(--line); cursor:pointer; transition:color .1s; line-height:1; user-select:none;}
 .rate-star.active{color:var(--wood);}
-.rating-hint{font-size:12px; opacity:0.55; margin-inline-start:8px;}
+.rating-comment{
+  width:100%; min-height:64px; padding:10px 12px; border-radius:10px; border:1px solid var(--line);
+  background:#fff; font-family:'Tajawal', sans-serif; font-size:13px; resize:vertical;
+}
+.rating-submit-btn{align-self:flex-start; padding:10px 22px; font-size:13px;}
+.rating-msg{font-size:12.5px; font-weight:700; color:var(--wood);}
 .card-rating{font-size:12px; font-weight:700; color:var(--wood); display:flex; align-items:center; gap:3px;}
 .card-rating .rc{opacity:0.55; font-weight:400;}
 input[type="file"]{font-family:'Tajawal', sans-serif; font-size:13px; padding:9px 10px; border-radius:10px; border:1px dashed var(--line); background:#fff;}
@@ -661,6 +671,11 @@ const translations = {
     update_btn: "حفظ التعديلات",
     rate_prompt: "قيّم هذا المشروع",
     rate_login_prompt: "سجّل الدخول عشان تقدر تقيّم",
+    rating_comment_ph: "اكتب تعليقك (اختياري)...",
+    rating_submit_btn: "حفظ التقييم",
+    rating_saving: "جاري الحفظ…",
+    rating_select_stars: "اختر عدد النجوم الأول.",
+    rating_saved: "تم حفظ تقييمك، شكرًا لك!",
     auth_err_email_in_use: "البريد الإلكتروني ده متسجل بالفعل — جرّب تسجيل الدخول.",
     auth_err_invalid_email: "البريد الإلكتروني مش صحيح.",
     auth_err_weak_password: "كلمة المرور لازم تكون 6 حروف/أرقام على الأقل.",
@@ -770,6 +785,11 @@ const translations = {
     update_btn: "Save changes",
     rate_prompt: "Rate this business",
     rate_login_prompt: "Log in to leave a rating",
+    rating_comment_ph: "Write a comment (optional)...",
+    rating_submit_btn: "Save rating",
+    rating_saving: "Saving…",
+    rating_select_stars: "Pick a star rating first.",
+    rating_saved: "Your rating has been saved. Thank you!",
     auth_err_email_in_use: "That email is already registered — try logging in instead.",
     auth_err_invalid_email: "That email doesn't look right.",
     auth_err_weak_password: "Password should be at least 6 characters.",
@@ -1235,6 +1255,8 @@ catGrid.addEventListener("click", (e) => {
 });
 
 /* ---------------- RATINGS ---------------- */
+let selectedRatingStars = 0;
+
 function starsDisplay(avg) {
   const rounded = Math.round(avg || 0);
   let html = "";
@@ -1252,22 +1274,15 @@ async function recomputeRatingAggregate(businessId) {
   await updateDoc(doc(db, "businesses", businessId), { ratingAvg: avg, ratingCount: count });
 }
 
-async function submitRating(businessId, stars) {
-  if (!currentUser) {
-    openAuthModal("login");
-    return;
-  }
-  try {
-    const ratingRef = doc(db, "businesses", businessId, "ratings", currentUser.uid);
-    await setDoc(ratingRef, {
-      stars,
-      userName: currentUser.displayName || currentUser.email || "",
-      createdAt: serverTimestamp()
-    }, { merge: true });
-    await recomputeRatingAggregate(businessId);
-  } catch (err) {
-    console.error(err);
-  }
+async function submitRating(businessId, stars, comment) {
+  const ratingRef = doc(db, "businesses", businessId, "ratings", currentUser.uid);
+  await setDoc(ratingRef, {
+    stars,
+    comment: comment || "",
+    userName: currentUser.displayName || currentUser.email || "",
+    createdAt: serverTimestamp()
+  }, { merge: true });
+  await recomputeRatingAggregate(businessId);
 }
 
 function attachRatingHandlers(businessId, isOwner) {
@@ -1275,17 +1290,61 @@ function attachRatingHandlers(businessId, isOwner) {
   const wrap = document.getElementById("ratingInput");
   if (!wrap) return;
   const stars = wrap.querySelectorAll(".rate-star");
+  const submitBtn = document.getElementById("ratingSubmitBtn");
+  const commentEl = document.getElementById("ratingComment");
+  const msgEl = document.getElementById("ratingMsg");
+
+  selectedRatingStars = 0;
+
+  function paintStars(val) {
+    stars.forEach(s => s.classList.toggle("active", parseInt(s.dataset.star, 10) <= val));
+  }
+
   stars.forEach(star => {
-    star.addEventListener("mouseenter", () => {
-      const val = parseInt(star.dataset.star, 10);
-      stars.forEach(s => s.classList.toggle("active", parseInt(s.dataset.star, 10) <= val));
-    });
     star.addEventListener("click", () => {
-      const val = parseInt(star.dataset.star, 10);
-      submitRating(businessId, val);
+      selectedRatingStars = parseInt(star.dataset.star, 10);
+      paintStars(selectedRatingStars);
     });
   });
-  wrap.addEventListener("mouseleave", () => stars.forEach(s => s.classList.remove("active")));
+
+  submitBtn.addEventListener("click", async () => {
+    if (!currentUser) {
+      openAuthModal("login");
+      return;
+    }
+    if (!selectedRatingStars) {
+      msgEl.textContent = t("rating_select_stars");
+      msgEl.classList.remove("hidden");
+      return;
+    }
+    submitBtn.disabled = true;
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = t("rating_saving");
+    try {
+      await submitRating(businessId, selectedRatingStars, commentEl.value.trim());
+      msgEl.textContent = t("rating_saved");
+      msgEl.classList.remove("hidden");
+    } catch (err) {
+      console.error(err);
+      msgEl.textContent = t("biz_error_generic");
+      msgEl.classList.remove("hidden");
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }
+  });
+
+  // Pre-fill the widget with the signed-in user's existing rating, if any.
+  if (currentUser) {
+    getDoc(doc(db, "businesses", businessId, "ratings", currentUser.uid)).then(snap => {
+      if (snap.exists()) {
+        const data = snap.data();
+        selectedRatingStars = data.stars || 0;
+        paintStars(selectedRatingStars);
+        if (commentEl && data.comment) commentEl.value = data.comment;
+      }
+    }).catch(err => console.error(err));
+  }
 }
 
 /* ---------------- DETAIL VIEW ---------------- */
@@ -1326,9 +1385,14 @@ function showDetail(id) {
     : "";
 
   const ratingInputHtml = !isOwner
-    ? `<div class="rating-input" id="ratingInput">
-         ${[1, 2, 3, 4, 5].map(n => `<span class="rate-star" data-star="${n}">★</span>`).join("")}
-         <span class="rating-hint">${currentUser ? t("rate_prompt") : t("rate_login_prompt")}</span>
+    ? `<div class="rating-form" id="ratingForm">
+         <div class="rating-hint">${currentUser ? t("rate_prompt") : t("rate_login_prompt")}</div>
+         <div class="rating-input" id="ratingInput">
+           ${[1, 2, 3, 4, 5].map(n => `<span class="rate-star" data-star="${n}">★</span>`).join("")}
+         </div>
+         <textarea class="rating-comment" id="ratingComment" placeholder="${t("rating_comment_ph")}"></textarea>
+         <button type="button" class="btn btn-primary rating-submit-btn" id="ratingSubmitBtn">${t("rating_submit_btn")}</button>
+         <div class="rating-msg hidden" id="ratingMsg"></div>
        </div>`
     : "";
   const ratingBlockHtml = `
