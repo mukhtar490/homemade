@@ -523,7 +523,7 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
     <form id="authForm">
       <div class="field hidden" id="nameField">
         <label data-t="field_name">Your name</label>
-        <input type="text" id="authName" placeholder="Layla Hassan">
+        <input type="text" id="authName" placeholder="Layla Hassan" required>
       </div>
       <div class="field">
         <label data-t="field_email">Email</label>
@@ -651,6 +651,12 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
       <div class="field">
         <label data-t="field_wa">WhatsApp number — optional</label>
         <input type="tel" id="bizWhatsapp" placeholder="+1 512 555 0100">
+      </div>
+      <div class="field">
+        <label class="checkbox-row">
+          <input type="checkbox" id="bizShowOwnerPhoto">
+          <span data-t="show_owner_photo_label">Show my personal photo next to my name</span>
+        </label>
       </div>
       <div class="form-error hidden" id="bizError"></div>
       <div class="modal-actions">
@@ -806,6 +812,7 @@ const translations = {
     empty_state: "لا توجد مشاريع في هذا التصنيف بعد — كن أول من يضيف مشروعه.",
     load_error: "تعذّر تحميل المشاريع حاليًا.",
     owner_label: "صاحب المشروع:",
+    owner_generic: "صاحب المشروع",
     back_link: "← العودة إلى جميع المشاريع",
     footer: "السوق العربي — دليل المشاريع المنزلية",
     exit_toast_msg: "اضغط زر الرجوع مرة أخرى للخروج",
@@ -825,6 +832,7 @@ const translations = {
     field_insta: "حساب إنستغرام — اختياري",
     field_wa: "رقم واتساب — اختياري",
     publish_btn: "نشر المشروع",
+    show_owner_photo_label: "إظهار صورتي الشخصية بجانب اسمي في صفحة المشروع",
     biz_error_contact: "يُرجى إضافة وسيلة تواصل واحدة على الأقل.",
     biz_error_generic: "تعذّر نشر المشروع. يُرجى المحاولة مرة أخرى.",
     edit_business_title: "تعديل المشروع",
@@ -935,6 +943,7 @@ const translations = {
     empty_state: "No businesses match yet — be the first to add one in this category.",
     load_error: "Couldn't load businesses right now.",
     owner_label: "Owner:",
+    owner_generic: "Business Owner",
     back_link: "← Back to all businesses",
     footer: "Al Souq Al Arabi — a directory of home-based businesses",
     exit_toast_msg: "Press back again to exit",
@@ -954,6 +963,7 @@ const translations = {
     field_insta: "Instagram handle — optional",
     field_wa: "WhatsApp number — optional",
     publish_btn: "Publish business",
+    show_owner_photo_label: "Show my personal photo next to my name",
     biz_error_contact: "Please add at least one way for people to reach you.",
     biz_error_generic: "Couldn't publish your business. Please try again.",
     edit_business_title: "Edit your business",
@@ -1091,6 +1101,7 @@ const bizSubmitBtn = businessForm.querySelector("button[type=submit]");
 
 const bizLogoInput = document.getElementById("bizLogo");
 const bizGalleryInput = document.getElementById("bizGallery");
+const bizShowOwnerPhoto = document.getElementById("bizShowOwnerPhoto");
 const logoPreviewWrap = document.getElementById("logoPreviewWrap");
 const galleryPreviewWrap = document.getElementById("galleryPreviewWrap");
 
@@ -1403,6 +1414,7 @@ function openBusinessModal(business = null) {
     document.getElementById("bizCall").value = business.contact?.call || "";
     document.getElementById("bizInsta").value = business.contact?.instagram || "";
     document.getElementById("bizWhatsapp").value = business.contact?.whatsapp || "";
+    bizShowOwnerPhoto.checked = !!business.showOwnerPhoto;
 
     if (existingLogoUrl) {
       logoPreviewWrap.innerHTML = `<div class="preview-row"><div class="preview-thumb" style="background-image:url('${existingLogoUrl}')"></div></div>`;
@@ -1480,7 +1492,7 @@ businessForm.addEventListener("submit", async (e) => {
 
     const data = {
       ownerId: currentUser.uid,
-      ownerName: currentUser.displayName || currentUser.email,
+      ownerName: currentUser.displayName || t("owner_generic"),
       name: document.getElementById("bizName").value.trim(),
       description: document.getElementById("bizDesc").value.trim(),
       category: document.getElementById("bizCategory").value,
@@ -1488,7 +1500,9 @@ businessForm.addEventListener("submit", async (e) => {
       state: document.getElementById("bizState").value,
       contact,
       logoUrl,
-      images
+      images,
+      showOwnerPhoto: bizShowOwnerPhoto.checked,
+      ownerPhotoURL: currentUser.photoURL || ""
     };
 
     if (editingBusinessId) {
@@ -1566,7 +1580,7 @@ function renderGrid() {
       </div>
       <div class="card-body">
         <div class="card-title">${escapeHtml(b.name)}</div>
-        <div class="card-owner">${t("owner_label")} ${escapeHtml(b.ownerName || "")}</div>
+        <div class="card-owner">${t("owner_label")} ${escapeHtml(safeOwnerName(b.ownerName))}</div>
         <div class="card-footer">
           <span class="city">📍 ${escapeHtml(b.city)}, ${escapeHtml(t(stateKey(b.state)))}</span>
           ${ratingHtml}
@@ -1860,15 +1874,16 @@ function showDetail(id) {
       ${ratingInputHtml}
     </div>`;
 
-  const ownerAvatarHtml = b.logoUrl
-    ? `<span class="owner-mini-avatar" style="background-image:url('${b.logoUrl}')"></span>`
+  const ownerAvatarUrl = (b.showOwnerPhoto && b.ownerPhotoURL) ? b.ownerPhotoURL : b.logoUrl;
+  const ownerAvatarHtml = ownerAvatarUrl
+    ? `<span class="owner-mini-avatar" style="background-image:url('${ownerAvatarUrl}')"></span>`
     : `<span>${t("member_prefix")}</span>`;
 
   detailCard.innerHTML = `
     <div class="profile-logo ${b.logoUrl ? "zoomable" : ""}" ${b.logoUrl ? `data-group="logo"` : ""} style="${b.logoUrl ? `background-image:url('${b.logoUrl}'); background-size:cover; background-position:center;` : ""}"></div>
     <h2 class="profile-name">${escapeHtml(b.name)}</h2>
     <div class="profile-meta">
-      <span class="owner-line">${ownerAvatarHtml} ${escapeHtml(b.ownerName || "")}</span>
+      <span class="owner-line">${ownerAvatarHtml} ${escapeHtml(safeOwnerName(b.ownerName))}</span>
       <span>📍 ${escapeHtml(b.city)}, ${escapeHtml(t(stateKey(b.state)))}</span>
     </div>
     ${ratingBlockHtml}
@@ -1935,6 +1950,16 @@ function escapeHtml(str) {
   return str.replace(/[&<>"']/g, m => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   }[m]));
+}
+
+// Never display a raw email address as a public "owner name" — falls back
+// to a generic label if the stored name looks like an email (covers older
+// listings created before a display name was required at signup).
+function safeOwnerName(name) {
+  if (!name || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(name.trim())) {
+    return t("owner_generic");
+  }
+  return name;
 }
 
 /* ---------------- IMAGE LIGHTBOX ---------------- */
