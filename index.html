@@ -167,6 +167,19 @@ html[dir="ltr"] .category-back{transform:scaleX(-1);}
   pointer-events:none;
 }
 
+/* LIGHTBOX */
+.lightbox{
+  position:fixed; inset:0; background:rgba(15,14,12,0.92); z-index:700;
+  display:flex; align-items:center; justify-content:center; padding:24px;
+}
+.lightbox img{max-width:100%; max-height:100%; border-radius:10px; object-fit:contain;}
+.lightbox-close{
+  position:absolute; top:20px; inset-inline-end:20px; width:40px; height:40px; border-radius:50%;
+  background:rgba(255,255,255,0.15); color:#fff; border:none; font-size:22px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+.zoomable{cursor:zoom-in;}
+
 /* PROFILE / DETAIL VIEW */
 .profile-hero{border-radius:20px; overflow:hidden; margin:24px 0 28px; height:170px;}
 .profile-card{background:var(--card-bg); border:1px solid var(--line); border-radius:20px; margin-top:-56px; position:relative; padding:28px; margin-inline:16px;}
@@ -406,6 +419,11 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
 </div>
 
 <div class="exit-toast hidden" id="exitToast" data-t="exit_toast_msg">Press back again to exit</div>
+
+<div class="lightbox hidden" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close">×</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
 
 <footer class="wrap" data-t="footer">Al Souq Al Arabi — a directory of home-based businesses</footer>
 
@@ -1509,7 +1527,7 @@ function showDetail(id) {
   }
 
   const galleryHtml = (b.images && b.images.length)
-    ? `<div class="gallery">${b.images.map(u => `<div class="gallery-item" style="background-image:url('${u}')"></div>`).join("")}</div>`
+    ? `<div class="gallery">${b.images.map(u => `<div class="gallery-item zoomable" data-full="${u}" style="background-image:url('${u}')"></div>`).join("")}</div>`
     : "";
 
   const isOwner = currentUser && currentUser.uid === b.ownerId;
@@ -1538,7 +1556,7 @@ function showDetail(id) {
     </div>`;
 
   detailCard.innerHTML = `
-    <div class="profile-logo" style="${b.logoUrl ? `background-image:url('${b.logoUrl}'); background-size:cover; background-position:center;` : ""}"></div>
+    <div class="profile-logo ${b.logoUrl ? "zoomable" : ""}" ${b.logoUrl ? `data-full="${b.logoUrl}"` : ""} style="${b.logoUrl ? `background-image:url('${b.logoUrl}'); background-size:cover; background-position:center;` : ""}"></div>
     <h2 class="profile-name">${escapeHtml(b.name)}</h2>
     <div class="profile-meta">
       <span>${t("member_prefix")} ${escapeHtml(b.ownerName || "")}</span>
@@ -1554,6 +1572,7 @@ function showDetail(id) {
   `;
 
   attachRatingHandlers(b.id, isOwner);
+  attachZoomHandlers();
 
   if (isOwner) {
     document.getElementById("editBizBtn").addEventListener("click", () => openBusinessModal(b));
@@ -1602,6 +1621,34 @@ function escapeHtml(str) {
   }[m]));
 }
 
+/* ---------------- IMAGE LIGHTBOX ---------------- */
+const lightbox = document.getElementById("lightbox");
+const lightboxImg = document.getElementById("lightboxImg");
+const lightboxClose = document.getElementById("lightboxClose");
+
+function openLightbox(url) {
+  if (!url) return;
+  lightboxImg.src = url;
+  lightbox.classList.remove("hidden");
+}
+function closeLightbox() {
+  lightbox.classList.add("hidden");
+  lightboxImg.src = "";
+}
+lightboxClose.addEventListener("click", closeLightbox);
+lightbox.addEventListener("click", (e) => {
+  if (e.target === lightbox) closeLightbox();
+});
+
+function attachZoomHandlers() {
+  document.querySelectorAll(".zoomable").forEach(el => {
+    el.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openLightbox(el.dataset.full);
+    });
+  });
+}
+
 /* ---------------- ANDROID HARDWARE BACK BUTTON ---------------- */
 // Only active when running inside the Capacitor native app (no-op on regular web).
 let lastBackPressTime = 0;
@@ -1619,7 +1666,9 @@ function showExitToast() {
 
 if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
   window.Capacitor.Plugins.App.addListener("backButton", () => {
-    if (!businessModal.classList.contains("hidden")) {
+    if (!lightbox.classList.contains("hidden")) {
+      closeLightbox();
+    } else if (!businessModal.classList.contains("hidden")) {
       businessModal.classList.add("hidden");
     } else if (!authModal.classList.contains("hidden")) {
       authModal.classList.add("hidden");
