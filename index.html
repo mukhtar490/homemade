@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title data-t="page_title">السوق العربي — دليل المشاريع المنزلية</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Tajawal:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -13,7 +13,11 @@
   --card-bg:#FFFCF6; --line: rgba(33,31,26,0.12); --radius:14px;
 }
 *{box-sizing:border-box; margin:0; padding:0;}
-body{background:var(--paper); color:var(--ink); font-family:'Tajawal', sans-serif; line-height:1.5; min-height:100vh;}
+html, body{height:100%;}
+body{
+  background:var(--paper); color:var(--ink); font-family:'Tajawal', sans-serif; line-height:1.5; min-height:100vh;
+  -webkit-overflow-scrolling:touch; overscroll-behavior-y:none;
+}
 h1,h2,h3,.display{font-family:'Cairo', sans-serif; font-weight:900; letter-spacing:-0.01em;}
 .mono{font-family:'IBM Plex Mono', monospace; letter-spacing:0.02em;}
 a{color:inherit; text-decoration:none;}
@@ -28,7 +32,7 @@ button{font-family:inherit;}
     linear-gradient(180deg, rgba(33,31,26,0.1), rgba(33,31,26,0.94) 68%),
     linear-gradient(135deg,#B4703A,#38566B);
   display:flex; flex-direction:column; justify-content:flex-end;
-  padding:32px 24px 40px; color:#fff;
+  padding:calc(32px + env(safe-area-inset-top)) 24px calc(40px + env(safe-area-inset-bottom)); color:#fff;
 }
 .welcome-decor{position:absolute; border:2px solid rgba(255,255,255,0.15); border-radius:50%;}
 .welcome-decor.circle-1{width:220px; height:220px; top:-60px; inset-inline-start:-60px;}
@@ -57,7 +61,7 @@ button{font-family:inherit;}
 #authModal.auth-screen-bg .modal{box-shadow:0 24px 60px rgba(0,0,0,0.35);}
 
 /* HEADER */
-header{border-bottom:1px solid var(--line); position:sticky; top:0; z-index:30; background:rgba(244,240,230,0.92); backdrop-filter:blur(6px);}
+header{border-bottom:1px solid var(--line); position:sticky; top:0; z-index:30; background:rgba(244,240,230,0.92); backdrop-filter:blur(6px); padding-top:env(safe-area-inset-top);}
 .header-inner{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 24px;}
 .header-brand-group{display:flex; align-items:center; gap:12px;}
 .logo{font-family:'Cairo', sans-serif; font-weight:900; font-size:20px; display:flex; align-items:center; gap:8px; cursor:pointer; flex-shrink:0;}
@@ -67,7 +71,8 @@ header{border-bottom:1px solid var(--line); position:sticky; top:0; z-index:30; 
 .btn-primary:hover{transform:translateY(-1px); box-shadow:0 6px 14px rgba(33,31,26,0.25);}
 .btn-ghost{background:transparent; border:1px solid var(--line); color:var(--ink);}
 .fab-add{
-  position:fixed; bottom:26px; inset-inline-end:22px; border-radius:999px;
+  position:fixed; bottom:calc(26px + env(safe-area-inset-bottom)); inset-inline-end:22px; border-radius:999px;
+  -webkit-transform:translateZ(0); transform:translateZ(0); will-change:transform;
   background:var(--ink); color:var(--paper); border:none; cursor:pointer; z-index:90;
   display:flex; align-items:center; gap:8px; padding:15px 22px 15px 18px;
   box-shadow:0 12px 28px rgba(33,31,26,0.35); transition:transform .15s ease, box-shadow .15s ease;
@@ -101,7 +106,7 @@ html[dir="rtl"] .fab-add{padding:15px 18px 15px 22px;}
   overflow-y:auto; animation:drawerIn .2s ease;
 }
 @keyframes drawerIn{from{transform:translateX(20px); opacity:0;} to{transform:translateX(0); opacity:1;}}
-.drawer-header{background:var(--ink); color:#fff; padding:28px 22px; text-align:center; position:relative;}
+.drawer-header{background:var(--ink); color:#fff; padding:calc(28px + env(safe-area-inset-top)) 22px 28px; text-align:center; position:relative;}
 .drawer-close{
   position:absolute; top:16px; inset-inline-end:16px; width:32px; height:32px; border-radius:50%;
   background:rgba(255,255,255,0.15); border:none; color:#fff; font-size:18px; cursor:pointer;
@@ -141,8 +146,10 @@ html[dir="rtl"] .fab-add{padding:15px 18px 15px 22px;}
 .search-row{display:flex; gap:10px; padding:20px 0; flex-wrap:wrap;}
 .search-input, .state-select{padding:13px 18px; border-radius:12px; border:1px solid var(--line); background:var(--card-bg); font-family:'Tajawal', sans-serif; font-size:14px;}
 .search-input{flex:1; min-width:200px;}
-.state-select{min-width:140px;}
+.state-select{min-width:140px; width:100%;}
 .search-input:focus, .state-select:focus{outline:2px solid var(--wood); outline-offset:1px;}
+.filter-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-bottom:14px;}
+@media (max-width:680px){ .filter-grid{grid-template-columns:1fr;} }
 
 /* CATEGORY GRID */
 .cat-section{padding:8px 0 30px;}
@@ -181,7 +188,7 @@ html[dir="rtl"] .fab-add{padding:15px 18px 15px 22px;}
 
 /* CATEGORY PAGE */
 .category-header{
-  background:var(--ink); color:#fff; padding:20px 24px; display:flex; align-items:center; gap:16px;
+  background:var(--ink); color:#fff; padding:calc(20px + env(safe-area-inset-top)) 24px 20px; display:flex; align-items:center; gap:16px;
   position:sticky; top:0; z-index:40;
 }
 .category-back{
@@ -212,7 +219,7 @@ html[dir="ltr"] .category-back{transform:scaleX(-1);}
 
 /* EXIT TOAST */
 .exit-toast{
-  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  position:fixed; bottom:calc(24px + env(safe-area-inset-bottom)); left:50%; transform:translateX(-50%);
   background:var(--ink); color:var(--paper); font-size:13px; font-weight:700;
   padding:12px 22px; border-radius:999px; z-index:600; box-shadow:0 10px 24px rgba(0,0,0,0.25);
   pointer-events:none;
@@ -386,6 +393,12 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
 <!-- ============ BROWSE VIEW ============ -->
 <div id="browseView">
   <div class="wrap">
+    <div class="hero">
+      <div class="eyebrow" data-t="eyebrow">A directory of home-based businesses</div>
+      <h1 data-t="hero_title">Discover home businesses near you</h1>
+      <p class="sub" data-t="hero_sub">Baking, crafts, gifts, and services — all run by real people from home. Reach out directly, however you prefer.</p>
+    </div>
+
     <div class="cat-section cat-section-top">
       <h3 data-t="cat_section_label">Browse by category</h3>
       <div class="cat-grid" id="catGrid">
@@ -418,8 +431,31 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
 
     <div class="search-row">
       <input class="search-input" id="searchInput" data-t-placeholder="search_ph" placeholder="Search by business name or city...">
-      <select class="state-select" id="stateSelect">
-        <option value="" data-t="state_all">All States</option>
+    </div>
+
+    <div class="filter-grid">
+      <div class="field">
+        <label data-t="filter_category_label">Category</label>
+        <select class="state-select" id="categoryFilterSelect">
+          <option value="" data-t="f_all">All</option>
+          <option value="Food & Baking" data-t="f_food">Food &amp; Baking</option>
+          <option value="Handmade Crafts" data-t="f_crafts">Handmade Crafts</option>
+          <option value="Gifts" data-t="f_gifts">Gifts</option>
+          <option value="Services" data-t="f_services">Services</option>
+          <option value="Apparel & Accessories" data-t="f_apparel">Apparel &amp; Accessories</option>
+        </select>
+      </div>
+      <div class="field">
+        <label data-t="field_subcategory_filter">Specialty / profession type</label>
+        <select class="state-select" id="subcategoryFilterSelect">
+          <option value="" data-t="subcat_filter_all">All specialties</option>
+        </select>
+      </div>
+      <div class="field">
+        <label data-t="field_state">State</label>
+        <select class="state-select" id="stateSelect">
+          <option value="" data-t="state_all">All States</option>
+          <option value="Online" data-t="state_online">🌐 Online</option>
           <option value="Alabama" data-t="state_al">Alabama</option>
           <option value="Alaska" data-t="state_ak">Alaska</option>
           <option value="Arizona" data-t="state_az">Arizona</option>
@@ -470,13 +506,13 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
           <option value="West Virginia" data-t="state_wv">West Virginia</option>
           <option value="Wisconsin" data-t="state_wi">Wisconsin</option>
           <option value="Wyoming" data-t="state_wy">Wyoming</option>
-      </select>
+        </select>
+      </div>
     </div>
 
-    <div class="hero">
-      <div class="eyebrow" data-t="eyebrow">A directory of home-based businesses</div>
-      <h1 data-t="hero_title">Discover home businesses near you</h1>
-      <p class="sub" data-t="hero_sub">Baking, crafts, gifts, and services — all run by real people from home. Reach out directly, however you prefer.</p>
+    <div class="field">
+      <label data-t="field_city_filter">City (optional)</label>
+      <input class="search-input" id="cityFilterInput" data-t-placeholder="field_city_filter_ph" placeholder="Type a city name...">
     </div>
 
     <div class="grid" id="businessGrid">
@@ -591,6 +627,12 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
           <option value="Apparel & Accessories" data-t="f_apparel">Apparel & Accessories</option>
         </select>
       </div>
+      <div class="field hidden" id="bizSubcategoryField">
+        <label id="bizSubcategoryLabel" data-t="field_subcategory">Specialty</label>
+        <select id="bizSubcategory">
+          <option value="" data-t="select_subcategory">Select an option</option>
+        </select>
+      </div>
       <div class="field">
         <label data-t="field_city">City</label>
         <input type="text" id="bizCity" required placeholder="Austin">
@@ -599,6 +641,7 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
         <label data-t="field_state">State</label>
         <select id="bizState" required>
           <option value="" data-t="select_state">Select a state</option>
+          <option value="Online" data-t="state_online">🌐 Online</option>
           <option value="Alabama" data-t="state_al">Alabama</option>
           <option value="Alaska" data-t="state_ak">Alaska</option>
           <option value="Arizona" data-t="state_az">Arizona</option>
@@ -695,7 +738,6 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
 // Uses the modular v12 SDK via <script type="module"> imports (no bundler needed).
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -703,10 +745,15 @@ import {
   signOut,
   onAuthStateChanged,
   updateProfile,
-  deleteUser
+  deleteUser,
+  setPersistence,
+  browserLocalPersistence,
+  indexedDBLocalPersistence,
+  inMemoryPersistence
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 import {
-  getFirestore,
+  initializeFirestore,
+  memoryLocalCache,
   collection,
   addDoc,
   setDoc,
@@ -738,19 +785,34 @@ const firebaseConfig = {
   measurementId: "G-8D128M6D63"
 };
 
-const app = initializeApp(firebaseConfig);
+let app, auth, db, storage;
 
-// Analytics can fail in some sandboxed/local contexts, so don't let it block the app.
-let analytics = null;
 try {
-  analytics = getAnalytics(app);
-} catch (e) {
-  console.warn("Analytics not initialized:", e.message);
-}
+  app = initializeApp(firebaseConfig);
 
-const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
+  auth = getAuth(app);
+  // Explicit, minimal Firestore setup: memory-only cache (no IndexedDB) and
+  // long-polling transport instead of the default streaming transport —
+  // both are common failure points inside WKWebView (iOS native app / Simulator).
+  db = initializeFirestore(app, {
+    localCache: memoryLocalCache(),
+    experimentalForceLongPolling: true
+  });
+  storage = getStorage(app);
+
+  // WKWebView (iOS, especially the Simulator) has a known-buggy IndexedDB
+  // implementation that can crash Firebase Auth's default persistence layer
+  // with an opaque cross-origin "Script error." Force a safer persistence
+  // mode so auth still works reliably inside the native app.
+  setPersistence(auth, browserLocalPersistence).catch(() => {
+    return setPersistence(auth, inMemoryPersistence);
+  }).catch((persistErr) => {
+    console.warn("Auth persistence fallback failed:", persistErr);
+  });
+} catch (initErr) {
+  console.error("Firebase initialization failed:", initErr);
+  throw initErr;
+}
 
 /* ---------------- TRANSLATIONS ---------------- */
 // translations.js
@@ -841,6 +903,47 @@ const translations = {
     field_bizname: "اسم المشروع", field_desc: "الوصف", field_desc_ph: "ما الذي تقدّمه أو تصنعه؟",
     field_logo: "الشعار — اختياري", field_gallery: "صور المشروع — اختياري (حتى 4 صور)",
     field_category: "التصنيف", select_category: "اختر تصنيفًا",
+    field_subcategory_food: "نوع المطبخ",
+    field_subcategory_crafts: "نوع الحرفة",
+    field_subcategory_apparel: "الفئة",
+    field_subcategory_profession: "نوع المهنة",
+    select_subcategory: "اختر خيارًا",
+    field_subcategory_filter: "التخصص / نوع المهنة",
+    filter_category_label: "التصنيف",
+    field_city_filter: "المدينة (اختياري)",
+    field_city_filter_ph: "اكتب اسم المدينة...",
+    state_online: "🌐 أونلاين",
+    subcat_filter_all: "كل التخصصات",
+    subcat_food_yemeni: "يمني",
+    subcat_food_egyptian: "مصري",
+    subcat_food_levantine: "شامي",
+    subcat_food_arab: "عربي عام",
+    subcat_food_other: "أخرى",
+    subcat_craft_sewing: "خياطة وتطريز",
+    subcat_craft_knitting: "حياكة صوف",
+    subcat_craft_woodwork: "أعمال خشبية",
+    subcat_craft_pottery: "فخار وسيراميك",
+    subcat_craft_jewelry: "مجوهرات يدوية",
+    subcat_craft_painting: "رسم ولوحات",
+    subcat_craft_candles: "شموع ومعطرات",
+    subcat_craft_leather: "أعمال جلدية",
+    subcat_craft_other: "أخرى",
+    subcat_apparel_men: "رجالي",
+    subcat_apparel_women: "نسائي",
+    subcat_apparel_kids: "أطفال",
+    subcat_apparel_other: "أخرى",
+    subcat_prof_electrician: "كهربائي",
+    subcat_prof_plumber: "سباك",
+    subcat_prof_carpenter: "نجار",
+    subcat_prof_painter: "دهان",
+    subcat_prof_mechanic: "ميكانيكي",
+    subcat_prof_cleaning: "تنظيف",
+    subcat_prof_design: "تصميم",
+    subcat_prof_tech: "برمجة وتقنية",
+    subcat_prof_tutoring: "تدريس خصوصي",
+    subcat_prof_photography: "تصوير",
+    subcat_prof_accounting: "محاسبة",
+    subcat_prof_other: "أخرى",
     field_city: "المدينة", field_state: "الولاية", select_state: "اختر ولاية",
     field_sms: "رقم الرسائل النصية — اختياري",
     field_call: "رقم الهاتف — اختياري",
@@ -973,6 +1076,47 @@ const translations = {
     field_bizname: "Business name", field_desc: "Description", field_desc_ph: "What do you make or offer?",
     field_logo: "Logo — optional", field_gallery: "Photos — optional (up to 4)",
     field_category: "Category", select_category: "Select a category",
+    field_subcategory_food: "Cuisine type",
+    field_subcategory_crafts: "Craft type",
+    field_subcategory_apparel: "Category",
+    field_subcategory_profession: "Profession type",
+    select_subcategory: "Select an option",
+    field_subcategory_filter: "Specialty / profession type",
+    filter_category_label: "Category",
+    field_city_filter: "City (optional)",
+    field_city_filter_ph: "Type a city name...",
+    state_online: "🌐 Online",
+    subcat_filter_all: "All specialties",
+    subcat_food_yemeni: "Yemeni",
+    subcat_food_egyptian: "Egyptian",
+    subcat_food_levantine: "Levantine",
+    subcat_food_arab: "General Arabic",
+    subcat_food_other: "Other",
+    subcat_craft_sewing: "Sewing & Embroidery",
+    subcat_craft_knitting: "Knitting",
+    subcat_craft_woodwork: "Woodwork",
+    subcat_craft_pottery: "Pottery & Ceramics",
+    subcat_craft_jewelry: "Handmade Jewelry",
+    subcat_craft_painting: "Painting & Art",
+    subcat_craft_candles: "Candles & Fragrance",
+    subcat_craft_leather: "Leatherwork",
+    subcat_craft_other: "Other",
+    subcat_apparel_men: "Men's",
+    subcat_apparel_women: "Women's",
+    subcat_apparel_kids: "Kids",
+    subcat_apparel_other: "Other",
+    subcat_prof_electrician: "Electrician",
+    subcat_prof_plumber: "Plumber",
+    subcat_prof_carpenter: "Carpenter",
+    subcat_prof_painter: "Painter",
+    subcat_prof_mechanic: "Mechanic",
+    subcat_prof_cleaning: "Cleaning",
+    subcat_prof_design: "Design",
+    subcat_prof_tech: "Programming & Tech",
+    subcat_prof_tutoring: "Private Tutoring",
+    subcat_prof_photography: "Photography",
+    subcat_prof_accounting: "Accounting",
+    subcat_prof_other: "Other",
     field_city: "City", field_state: "State", select_state: "Select a state",
     field_sms: "Text (SMS) number — optional",
     field_call: "Phone number — optional",
@@ -1089,6 +1233,53 @@ const CATEGORY_GRADIENTS = {
   "Apparel & Accessories": "linear-gradient(135deg,#4E7590,#28404F)"
 };
 
+const SUBCATEGORY_OPTIONS = {
+  "Food & Baking": [
+    { value: "Yemeni", key: "subcat_food_yemeni" },
+    { value: "Egyptian", key: "subcat_food_egyptian" },
+    { value: "Levantine", key: "subcat_food_levantine" },
+    { value: "Arab", key: "subcat_food_arab" },
+    { value: "Other", key: "subcat_food_other" }
+  ],
+  "Handmade Crafts": [
+    { value: "SewingEmbroidery", key: "subcat_craft_sewing" },
+    { value: "Knitting", key: "subcat_craft_knitting" },
+    { value: "Woodwork", key: "subcat_craft_woodwork" },
+    { value: "Pottery", key: "subcat_craft_pottery" },
+    { value: "Jewelry", key: "subcat_craft_jewelry" },
+    { value: "PaintingArt", key: "subcat_craft_painting" },
+    { value: "CandlesFragrance", key: "subcat_craft_candles" },
+    { value: "Leatherwork", key: "subcat_craft_leather" },
+    { value: "Other", key: "subcat_craft_other" }
+  ],
+  "Apparel & Accessories": [
+    { value: "Men", key: "subcat_apparel_men" },
+    { value: "Women", key: "subcat_apparel_women" },
+    { value: "Kids", key: "subcat_apparel_kids" },
+    { value: "Other", key: "subcat_apparel_other" }
+  ],
+  "Services": [
+    { value: "Electrician", key: "subcat_prof_electrician" },
+    { value: "Plumber", key: "subcat_prof_plumber" },
+    { value: "Carpenter", key: "subcat_prof_carpenter" },
+    { value: "Painter", key: "subcat_prof_painter" },
+    { value: "Mechanic", key: "subcat_prof_mechanic" },
+    { value: "Cleaning", key: "subcat_prof_cleaning" },
+    { value: "Design", key: "subcat_prof_design" },
+    { value: "Tech", key: "subcat_prof_tech" },
+    { value: "Tutoring", key: "subcat_prof_tutoring" },
+    { value: "Photography", key: "subcat_prof_photography" },
+    { value: "Accounting", key: "subcat_prof_accounting" },
+    { value: "Other", key: "subcat_prof_other" }
+  ]
+};
+const SUBCATEGORY_LABEL_KEY = {
+  "Food & Baking": "field_subcategory_food",
+  "Handmade Crafts": "field_subcategory_crafts",
+  "Apparel & Accessories": "field_subcategory_apparel",
+  "Services": "field_subcategory_profession"
+};
+
 /* ---------------- DOM REFS ---------------- */
 const addBusinessBtn = document.getElementById("addBusinessBtn");
 const langToggle = document.getElementById("langToggle");
@@ -1117,13 +1308,20 @@ const bizError = document.getElementById("bizError");
 const bizSubmitBtn = businessForm.querySelector("button[type=submit]");
 
 const bizLogoInput = document.getElementById("bizLogo");
+const bizCategorySelect = document.getElementById("bizCategory");
+const bizSubcategoryField = document.getElementById("bizSubcategoryField");
+const bizSubcategoryLabel = document.getElementById("bizSubcategoryLabel");
+const bizSubcategorySelect = document.getElementById("bizSubcategory");
 const bizGalleryInput = document.getElementById("bizGallery");
 const bizShowOwnerPhoto = document.getElementById("bizShowOwnerPhoto");
 const logoPreviewWrap = document.getElementById("logoPreviewWrap");
 const galleryPreviewWrap = document.getElementById("galleryPreviewWrap");
 
 const searchInput = document.getElementById("searchInput");
+const categoryFilterSelect = document.getElementById("categoryFilterSelect");
 const stateSelect = document.getElementById("stateSelect");
+const subcategoryFilterSelect = document.getElementById("subcategoryFilterSelect");
+const cityFilterInput = document.getElementById("cityFilterInput");
 const catGrid = document.getElementById("catGrid");
 const businessGrid = document.getElementById("businessGrid");
 
@@ -1161,9 +1359,56 @@ welcomeSkipBtn.addEventListener("click", () => {
 /* ---------------- INITIAL RENDER ---------------- */
 applyStaticTranslations();
 
+/* ---------------- SUBCATEGORY (cuisine / profession type) ---------------- */
+function updateSubcategoryField(selectedCategory, presetValue) {
+  const options = SUBCATEGORY_OPTIONS[selectedCategory];
+  if (!options) {
+    bizSubcategoryField.classList.add("hidden");
+    bizSubcategorySelect.innerHTML = `<option value="">${t("select_subcategory")}</option>`;
+    return;
+  }
+  bizSubcategoryLabel.textContent = t(SUBCATEGORY_LABEL_KEY[selectedCategory]);
+  bizSubcategorySelect.innerHTML = `<option value="">${t("select_subcategory")}</option>` +
+    options.map(o => `<option value="${o.value}">${escapeHtml(t(o.key))}</option>`).join("");
+  if (presetValue) bizSubcategorySelect.value = presetValue;
+  bizSubcategoryField.classList.remove("hidden");
+}
+const bizStateSelect = document.getElementById("bizState");
+bizCategorySelect.addEventListener("change", () => updateSubcategoryField(bizCategorySelect.value, ""));
+bizStateSelect.addEventListener("change", () => {
+  document.getElementById("bizCity").required = bizStateSelect.value !== "Online";
+});
+
+function populateSubcategoryFilterOptions(category, keepValue) {
+  const options = SUBCATEGORY_OPTIONS[category];
+  const currentVal = keepValue ? subcategoryFilterSelect.value : "";
+  if (!options) {
+    subcategoryFilterSelect.innerHTML = `<option value="">${t("subcat_filter_all")}</option>`;
+    subcategoryFilterSelect.disabled = true;
+    subcategoryFilterSelect.value = "";
+    return;
+  }
+  subcategoryFilterSelect.disabled = false;
+  subcategoryFilterSelect.innerHTML =
+    `<option value="">${t("subcat_filter_all")}</option>` +
+    options.map(o => `<option value="${o.value}">${escapeHtml(t(o.key))}</option>`).join("");
+  subcategoryFilterSelect.value = currentVal;
+}
+populateSubcategoryFilterOptions("", false);
+
+categoryFilterSelect.addEventListener("change", () => {
+  activeCategory = categoryFilterSelect.value;
+  document.querySelectorAll(".cat-tile").forEach(el => el.classList.toggle("active", el.dataset.cat === activeCategory));
+  populateSubcategoryFilterOptions(activeCategory, false);
+  renderGrid();
+});
+subcategoryFilterSelect.addEventListener("change", renderGrid);
+cityFilterInput.addEventListener("input", renderGrid);
+
 /* ---------------- LANGUAGE TOGGLE ---------------- */
 langToggle.addEventListener("click", () => {
   setLang(getLang() === "ar" ? "en" : "ar");
+  populateSubcategoryFilterOptions(activeCategory, true);
   renderGrid();
   if (!drawerOverlay.classList.contains("hidden")) renderDrawer();
 });
@@ -1209,7 +1454,7 @@ authForm.addEventListener("submit", async (e) => {
     }
     authModal.classList.add("hidden");
   } catch (err) {
-    authError.textContent = friendlyAuthError(err.code) + " [" + (err.code || err.message || "unknown") + "]";
+    authError.textContent = friendlyAuthError(err.code);
     authError.classList.remove("hidden");
   }
 });
@@ -1253,6 +1498,8 @@ function closeDrawer() {
 function goHome() {
   showOnlyMine = false;
   activeCategory = "";
+  categoryFilterSelect.value = "";
+  populateSubcategoryFilterOptions("", false);
   detailView.classList.add("hidden");
   categoryView.classList.add("hidden");
   currentScreen = "browse";
@@ -1432,11 +1679,13 @@ function openBusinessModal(business = null) {
     document.getElementById("bizCategory").value = business.category || "";
     document.getElementById("bizCity").value = business.city || "";
     document.getElementById("bizState").value = business.state || "";
+    document.getElementById("bizCity").required = business.state !== "Online";
     document.getElementById("bizSms").value = business.contact?.sms || "";
     document.getElementById("bizCall").value = business.contact?.call || "";
     document.getElementById("bizInsta").value = business.contact?.instagram || "";
     document.getElementById("bizWhatsapp").value = business.contact?.whatsapp || "";
     bizShowOwnerPhoto.checked = !!business.showOwnerPhoto;
+    updateSubcategoryField(business.category || "", business.subcategory || "");
 
     if (existingLogoUrl) {
       logoPreviewWrap.innerHTML = `<div class="preview-row"><div class="preview-thumb" style="background-image:url('${existingLogoUrl}')"></div></div>`;
@@ -1450,6 +1699,8 @@ function openBusinessModal(business = null) {
     existingImages = [];
     businessModalTitle.textContent = t("nav_add");
     bizSubmitBtn.textContent = t("publish_btn");
+    document.getElementById("bizCity").required = true;
+    updateSubcategoryField("", "");
   }
 
   businessModal.classList.remove("hidden");
@@ -1518,6 +1769,7 @@ businessForm.addEventListener("submit", async (e) => {
       name: document.getElementById("bizName").value.trim(),
       description: document.getElementById("bizDesc").value.trim(),
       category: document.getElementById("bizCategory").value,
+      subcategory: bizSubcategoryField.classList.contains("hidden") ? "" : bizSubcategorySelect.value,
       city: document.getElementById("bizCity").value.trim(),
       state: document.getElementById("bizState").value,
       contact,
@@ -1537,7 +1789,7 @@ businessForm.addEventListener("submit", async (e) => {
 
     businessModal.classList.add("hidden");
   } catch (err) {
-    bizError.textContent = t("biz_error_generic") + " [" + (err.code || err.message || "unknown") + "]";
+    bizError.textContent = t("biz_error_generic");
     bizError.classList.remove("hidden");
     console.error(err);
   } finally {
@@ -1549,14 +1801,18 @@ businessForm.addEventListener("submit", async (e) => {
 /* ---------------- BROWSE / LISTING ---------------- */
 const businessesQuery = query(collection(db, "businesses"), orderBy("createdAt", "desc"));
 onSnapshot(businessesQuery, (snapshot) => {
-  allBusinesses = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-  renderGrid();
-  if (!categoryView.classList.contains("hidden")) {
-    renderCategoryList();
-  }
-  // Keep an open detail view in sync with live data (e.g. after an edit).
-  if (!detailView.classList.contains("hidden") && detailCard.dataset.currentId) {
-    showDetail(detailCard.dataset.currentId);
+  try {
+    allBusinesses = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderGrid();
+    if (!categoryView.classList.contains("hidden")) {
+      renderCategoryList();
+    }
+    // Keep an open detail view in sync with live data (e.g. after an edit).
+    if (!detailView.classList.contains("hidden") && detailCard.dataset.currentId) {
+      showDetail(detailCard.dataset.currentId);
+    }
+  } catch (renderErr) {
+    console.error(renderErr);
   }
 }, (err) => {
   businessGrid.innerHTML = `<div class="empty-state">${t("load_error")}</div>`;
@@ -1566,11 +1822,15 @@ onSnapshot(businessesQuery, (snapshot) => {
 function renderGrid() {
   const searchTerm = searchInput.value.trim().toLowerCase();
   const stateFilter = stateSelect.value;
+  const subcategoryFilter = subcategoryFilterSelect.value;
+  const cityFilter = cityFilterInput.value.trim().toLowerCase();
 
   const filtered = allBusinesses.filter(b => {
     if (showOnlyMine && (!currentUser || b.ownerId !== currentUser.uid)) return false;
     if (activeCategory && b.category !== activeCategory) return false;
     if (stateFilter && b.state !== stateFilter) return false;
+    if (subcategoryFilter && b.subcategory !== subcategoryFilter) return false;
+    if (cityFilter && !(b.city || "").toLowerCase().includes(cityFilter)) return false;
     if (searchTerm) {
       const haystack = `${b.name} ${b.city}`.toLowerCase();
       if (!haystack.includes(searchTerm)) return false;
@@ -1628,6 +1888,14 @@ function attachBannerHandler() {
   }
 }
 
+function subcategoryLabel(category, value) {
+  if (!value) return "";
+  const opts = SUBCATEGORY_OPTIONS[category];
+  if (!opts) return "";
+  const found = opts.find(o => o.value === value);
+  return found ? t(found.key) : "";
+}
+
 function stateKey(state) {
   const map = { "Alabama": "state_al", "Alaska": "state_ak", "Arizona": "state_az", "Arkansas": "state_ar", "California": "state_ca", "Colorado": "state_co", "Connecticut": "state_ct", "Delaware": "state_de", "Florida": "state_fl", "Georgia": "state_ga", "Hawaii": "state_hi", "Idaho": "state_id", "Illinois": "state_il", "Indiana": "state_in_", "Iowa": "state_ia", "Kansas": "state_ks", "Kentucky": "state_ky", "Louisiana": "state_la", "Maine": "state_me", "Maryland": "state_md", "Massachusetts": "state_ma", "Michigan": "state_mi", "Minnesota": "state_mn", "Mississippi": "state_ms", "Missouri": "state_mo", "Montana": "state_mt", "Nebraska": "state_ne", "Nevada": "state_nv", "New Hampshire": "state_nh", "New Jersey": "state_nj", "New Mexico": "state_nm", "New York": "state_ny", "North Carolina": "state_nc", "North Dakota": "state_nd", "Ohio": "state_oh", "Oklahoma": "state_ok", "Oregon": "state_or_", "Pennsylvania": "state_pa", "Rhode Island": "state_ri", "South Carolina": "state_sc", "South Dakota": "state_sd", "Tennessee": "state_tn", "Texas": "state_tx", "Utah": "state_ut", "Vermont": "state_vt", "Virginia": "state_va", "Washington": "state_wa", "West Virginia": "state_wv", "Wisconsin": "state_wi", "Wyoming": "state_wy" };
   return map[state] || "state_all";
@@ -1644,8 +1912,12 @@ catGrid.addEventListener("click", (e) => {
   if (!cat) {
     // "All" tile: clear any active category and stay on the browse grid.
     activeCategory = "";
+    categoryFilterSelect.value = "";
+    populateSubcategoryFilterOptions("", false);
     renderGrid();
   } else {
+    categoryFilterSelect.value = cat;
+    populateSubcategoryFilterOptions(cat, false);
     openCategoryPage(cat);
   }
 });
@@ -1699,6 +1971,8 @@ function closeCategoryPage() {
   categoryView.classList.add("hidden");
   browseView.classList.remove("hidden");
   activeCategory = "";
+  categoryFilterSelect.value = "";
+  populateSubcategoryFilterOptions("", false);
   document.querySelectorAll(".cat-tile").forEach(el => el.classList.toggle("active", el.dataset.cat === ""));
   renderGrid();
 }
@@ -1819,7 +2093,7 @@ function attachRatingHandlers(businessId, isOwner) {
       msgEl.classList.remove("hidden");
     } catch (err) {
       console.error(err);
-      msgEl.textContent = "[" + (err.step || "?") + ":" + (err.code || err.message || "unknown") + "] uid=" + (currentUser ? currentUser.uid : "none") + " path=businesses/" + businessId + "/ratings/" + (currentUser ? currentUser.uid : "?");
+      msgEl.textContent = t("biz_error_generic");
       msgEl.classList.remove("hidden");
     } finally {
       submitBtn.disabled = false;
@@ -1910,7 +2184,10 @@ function showDetail(id) {
     </div>
     ${ratingBlockHtml}
     <p class="profile-desc">${escapeHtml(b.description || "")}</p>
-    <div class="profile-tags"><span class="tag">${escapeHtml(t(CATEGORY_KEYS[b.category] || "f_services"))}</span></div>
+    <div class="profile-tags">
+      <span class="tag">${escapeHtml(t(CATEGORY_KEYS[b.category] || "f_services"))}</span>
+      ${subcategoryLabel(b.category, b.subcategory) ? `<span class="tag">${escapeHtml(subcategoryLabel(b.category, b.subcategory))}</span>` : ""}
+    </div>
     <div class="contact-row">${contactButtons.join("") || `<span style='opacity:0.5; font-size:13px;'>${t("no_contact")}</span>`}</div>
     ${ownerActionsHtml}
     <p class="disclaimer">${t("disclaimer")}</p>
@@ -2085,7 +2362,7 @@ function showExitToast() {
   exitToastTimer = setTimeout(() => exitToastEl.classList.add("hidden"), EXIT_PRESS_WINDOW_MS);
 }
 
-if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+if (window.Capacitor && window.Capacitor.getPlatform && window.Capacitor.getPlatform() === "android" && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
   window.Capacitor.Plugins.App.addListener("backButton", () => {
     if (!lightbox.classList.contains("hidden")) {
       closeLightbox();
