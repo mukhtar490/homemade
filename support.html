@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الدعم والتواصل — السوق العربي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --paper:#F4F0E6; --ink:#211F1A; --wood:#B4703A; --line:rgba(33,31,26,0.12); }
+  *{box-sizing:border-box;}
+  body{background:var(--paper); color:var(--ink); font-family:'Tajawal', sans-serif; line-height:1.9; margin:0; padding:0;}
+  .wrap{max-width:640px; margin:0 auto; padding:56px 24px 90px;}
+  h1{font-family:'Cairo', sans-serif; font-weight:900; font-size:28px; margin-bottom:24px;}
+  h2{font-family:'Cairo', sans-serif; font-weight:800; font-size:18px; margin:28px 0 10px;}
+  p{margin-bottom:14px; font-size:15px; opacity:0.9;}
+  .card{background:#fff; border:1px solid var(--line); border-radius:16px; padding:22px 24px; margin:20px 0;}
+  .email-link{display:inline-block; background:var(--ink); color:#fff !important; text-decoration:none; padding:13px 24px; border-radius:999px; font-weight:700; font-size:14px; margin-top:6px;}
+  ul{margin:0 0 14px; padding-inline-start:22px;}
+  li{margin-bottom:10px; font-size:15px; opacity:0.9;}
+  .lang-toggle{position:fixed; top:16px; inset-inline-end:16px; background:#fff; border:1px solid var(--line); border-radius:999px; padding:8px 16px; font-size:13px; font-weight:700; cursor:pointer;}
+  .en{display:none;}
+  html[lang="en"] .ar{display:none;}
+  html[lang="en"] .en{display:block;}
+  html[lang="en"] body{direction:ltr;}
+</style>
+</head>
+<body>
+<button class="lang-toggle" onclick="document.documentElement.lang = document.documentElement.lang === 'ar' ? 'en' : 'ar'; document.documentElement.dir = document.documentElement.lang === 'ar' ? 'rtl' : 'ltr';">EN / عربي</button>
+
+<div class="wrap">
+  <div class="ar">
+    <h1>الدعم والتواصل</h1>
+    <p>لأي استفسار، مشكلة تقنية، أو اقتراح يخص تطبيق <strong>السوق العربي</strong>، تواصل معنا مباشرة:</p>
+
+    <div class="card">
+      <h2 style="margin-top:0;">راسلنا عبر البريد الإلكتروني</h2>
+      <p>نرد عادةً خلال 2-3 أيام عمل.</p>
+      <a class="email-link" href="mailto:aifary490@gmail.com">aifary490@gmail.com</a>
+    </div>
+
+    <h2>أسئلة شائعة</h2>
+    <ul>
+      <li><strong>نسيت كلمة المرور؟</strong> راسلنا بالبريد الإلكتروني المسجّل في حسابك وسنساعدك في استعادة الوصول.</li>
+      <li><strong>عايز تحذف حسابك؟</strong> من داخل التطبيق: القائمة الجانبية ← حذف الحساب.</li>
+      <li><strong>لاحظت مشروعًا مخالفًا أو محتوى غير لائق؟</strong> راسلنا بتفاصيل المشروع (الاسم أو الرابط) وسنراجعه فورًا.</li>
+      <li><strong>عندك اقتراح لتحسين التطبيق؟</strong> يسعدنا نسمعه على نفس البريد الإلكتروني.</li>
+    </ul>
+  </div>
+
+  <div class="en">
+    <h1>Support & Contact</h1>
+    <p>For any question, technical issue, or suggestion about the <strong>Al Souq Al Arabi</strong> app, reach out directly:</p>
+
+    <div class="card">
+      <h2 style="margin-top:0;">Email Us</h2>
+      <p>We typically respond within 2-3 business days.</p>
+      <a class="email-link" href="mailto:aifary490@gmail.com">aifary490@gmail.com</a>
+    </div>
+
+    <h2>Frequently Asked Questions</h2>
+    <ul>
+      <li><strong>Forgot your password?</strong> Email us from the address registered on your account and we'll help you regain access.</li>
+      <li><strong>Want to delete your account?</strong> In the app: side menu → Delete Account.</li>
+      <li><strong>Noticed a listing that violates guidelines or contains inappropriate content?</strong> Email us the business name or link and we'll review it promptly.</li>
+      <li><strong>Have a suggestion to improve the app?</strong> We'd love to hear it at the same email.</li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>
