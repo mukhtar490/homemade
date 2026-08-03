@@ -185,6 +185,7 @@ html[dir="rtl"] .fab-add{padding:15px 18px 15px 22px;}
   font-size:13px; font-weight:700; padding:12px 16px; border-radius:12px;
 }
 .filter-banner span[id]{text-decoration:underline; cursor:pointer;}
+.ships-badge{font-size:11px; font-weight:700; background:rgba(92,110,78,0.14); color:var(--sage); padding:4px 10px; border-radius:999px; display:inline-flex; align-items:center; gap:4px;}
 
 /* CATEGORY PAGE */
 .category-header{
@@ -309,12 +310,17 @@ html[dir="ltr"] .category-back{transform:scaleX(-1);}
 .review-stars{display:flex; gap:2px;}
 .review-stars .star-fixed{font-size:13px;}
 .review-comment{font-size:13px; line-height:1.6; opacity:0.8; white-space:pre-wrap;}
+.review-actions{display:flex; gap:12px; margin-top:8px;}
+.review-action-link{font-size:12px; font-weight:700; opacity:0.65; cursor:pointer; text-decoration:underline; background:none; border:none; padding:0; color:inherit; font-family:inherit;}
+.review-action-link.danger{color:var(--danger); opacity:0.85;}
 input[type="file"]{font-family:'Tajawal', sans-serif; font-size:13px; padding:9px 10px; border-radius:10px; border:1px dashed var(--line); background:#fff;}
 .preview-row{display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;}
 .preview-thumb{width:56px; height:56px; border-radius:8px; background-size:cover; background-position:center; border:1px solid var(--line);}
 .upload-status{font-size:12px; opacity:0.6; margin-top:6px;}
 .info-modal-body{font-size:13.5px; line-height:1.8; opacity:0.85; max-height:60vh; overflow-y:auto;}
 .info-modal-body p{margin-bottom:12px;}
+.auth-forgot-link{font-size:12.5px; font-weight:700; opacity:0.7; cursor:pointer; text-decoration:underline; margin-top:-6px; align-self:flex-start;}
+.auth-msg{font-size:12.5px; font-weight:700; color:var(--sage); margin-top:4px;}
 
 /* MODAL */
 .modal-overlay{position:fixed; inset:0; background:rgba(33,31,26,0.55); display:flex; align-items:center; justify-content:center; z-index:100; padding:20px;}
@@ -515,6 +521,13 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
       <input class="search-input" id="cityFilterInput" data-t-placeholder="field_city_filter_ph" placeholder="Type a city name...">
     </div>
 
+    <div class="field">
+      <label class="checkbox-row">
+        <input type="checkbox" id="shipsFilterCheckbox">
+        <span data-t="ships_filter_label">Ships to all US states &amp; Canada only</span>
+      </label>
+    </div>
+
     <div class="grid" id="businessGrid">
       <div class="loading-text" data-t="loading">Loading businesses…</div>
     </div>
@@ -584,7 +597,9 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
         <label data-t="field_password">Password</label>
         <input type="password" id="authPassword" required placeholder="At least 6 characters" minlength="6">
       </div>
+      <span class="auth-forgot-link hidden" id="forgotPasswordLink" data-t="forgot_password_link">Forgot password?</span>
       <div class="form-error hidden" id="authError"></div>
+      <div class="auth-msg hidden" id="authMsg"></div>
       <div class="modal-actions">
         <button type="submit" class="btn btn-primary" style="flex:1;" id="authSubmitBtn" data-t="tab_login">Log in</button>
       </div>
@@ -716,6 +731,12 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
           <span data-t="show_owner_photo_label">Show my personal photo next to my name</span>
         </label>
       </div>
+      <div class="field">
+        <label class="checkbox-row">
+          <input type="checkbox" id="bizShipsAll">
+          <span data-t="ships_all_label">Ships to all US states &amp; Canada</span>
+        </label>
+      </div>
       <div class="form-error hidden" id="bizError"></div>
       <div class="modal-actions">
         <button type="submit" class="btn btn-primary" style="flex:1;" data-t="publish_btn">Publish business</button>
@@ -749,7 +770,8 @@ import {
   setPersistence,
   browserLocalPersistence,
   indexedDBLocalPersistence,
-  inMemoryPersistence
+  inMemoryPersistence,
+  sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 import {
   initializeFirestore,
@@ -951,6 +973,9 @@ const translations = {
     field_wa: "رقم واتساب — اختياري",
     publish_btn: "نشر المشروع",
     show_owner_photo_label: "إظهار صورتي الشخصية بجانب اسمي في صفحة المشروع",
+    ships_all_label: "يشحن لكل الولايات المتحدة وكندا",
+    ships_filter_label: "يشحن لكل الولايات وكندا فقط",
+    ships_badge: "🚚 شحن لكل أمريكا وكندا",
     biz_error_contact: "يُرجى إضافة وسيلة تواصل واحدة على الأقل.",
     biz_error_generic: "تعذّر نشر المشروع. يُرجى المحاولة مرة أخرى.",
     edit_business_title: "تعديل المشروع",
@@ -968,12 +993,20 @@ const translations = {
     rating_saved: "تم حفظ تقييمك، شكرًا لك!",
     reviews_title: "التقييمات والتعليقات",
     no_reviews: "لا توجد تعليقات بعد.",
+    review_edit: "تعديل",
+    review_delete: "حذف",
+    confirm_delete_review: "هل تريد حذف تعليقك وتقييمك؟ لا يمكن التراجع عن هذا الإجراء.",
+    review_deleted: "تم حذف تعليقك.",
     auth_err_email_in_use: "هذا البريد الإلكتروني مسجَّل بالفعل — يمكنك تسجيل الدخول بدلاً من ذلك.",
     auth_err_invalid_email: "صيغة البريد الإلكتروني غير صحيحة.",
     auth_err_weak_password: "يجب ألا تقل كلمة المرور عن 6 أحرف أو أرقام.",
     auth_err_invalid_credential: "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
     auth_err_generic: "حدث خطأ، يُرجى المحاولة مرة أخرى.",
     auth_err_name_required: "يُرجى إدخال اسمك.",
+    forgot_password_link: "نسيت كلمة المرور؟",
+    forgot_password_need_email: "يُرجى كتابة بريدك الإلكتروني في الحقل أعلاه أولاً.",
+    reset_email_sent: "تم إرسال رابط استعادة كلمة المرور إلى بريدك الإلكتروني.",
+    reset_email_error: "تعذّر إرسال رابط الاستعادة. تأكد من صحة البريد الإلكتروني.",
     logout: "تسجيل الخروج",
     my_businesses: "مشاريعي",
     drawer_home: "الرئيسية",
@@ -1124,6 +1157,9 @@ const translations = {
     field_wa: "WhatsApp number — optional",
     publish_btn: "Publish business",
     show_owner_photo_label: "Show my personal photo next to my name",
+    ships_all_label: "Ships to all US states & Canada",
+    ships_filter_label: "Ships to all US states & Canada only",
+    ships_badge: "🚚 Ships to all US & Canada",
     biz_error_contact: "Please add at least one way for people to reach you.",
     biz_error_generic: "Couldn't publish your business. Please try again.",
     edit_business_title: "Edit your business",
@@ -1141,12 +1177,20 @@ const translations = {
     rating_saved: "Your rating has been saved. Thank you!",
     reviews_title: "Reviews",
     no_reviews: "No reviews yet.",
+    review_edit: "Edit",
+    review_delete: "Delete",
+    confirm_delete_review: "Delete your review and rating? This can't be undone.",
+    review_deleted: "Your review has been deleted.",
     auth_err_email_in_use: "That email is already registered — try logging in instead.",
     auth_err_invalid_email: "That email doesn't look right.",
     auth_err_weak_password: "Password should be at least 6 characters.",
     auth_err_invalid_credential: "Incorrect email or password.",
     auth_err_generic: "Something went wrong. Please try again.",
     auth_err_name_required: "Please enter your name.",
+    forgot_password_link: "Forgot password?",
+    forgot_password_need_email: "Please enter your email in the field above first.",
+    reset_email_sent: "A password reset link has been sent to your email.",
+    reset_email_error: "Couldn't send the reset link. Check that the email is correct.",
     logout: "Log out",
     my_businesses: "My Businesses",
     drawer_home: "Home",
@@ -1296,6 +1340,8 @@ const closeAuthModal = document.getElementById("closeAuthModal");
 const authForm = document.getElementById("authForm");
 const authTitle = document.getElementById("authTitle");
 const authError = document.getElementById("authError");
+const authMsg = document.getElementById("authMsg");
+const forgotPasswordLink = document.getElementById("forgotPasswordLink");
 const nameField = document.getElementById("nameField");
 const authSubmitBtn = document.getElementById("authSubmitBtn");
 let authMode = "login";
@@ -1314,6 +1360,7 @@ const bizSubcategoryLabel = document.getElementById("bizSubcategoryLabel");
 const bizSubcategorySelect = document.getElementById("bizSubcategory");
 const bizGalleryInput = document.getElementById("bizGallery");
 const bizShowOwnerPhoto = document.getElementById("bizShowOwnerPhoto");
+const bizShipsAll = document.getElementById("bizShipsAll");
 const logoPreviewWrap = document.getElementById("logoPreviewWrap");
 const galleryPreviewWrap = document.getElementById("galleryPreviewWrap");
 
@@ -1322,6 +1369,7 @@ const categoryFilterSelect = document.getElementById("categoryFilterSelect");
 const stateSelect = document.getElementById("stateSelect");
 const subcategoryFilterSelect = document.getElementById("subcategoryFilterSelect");
 const cityFilterInput = document.getElementById("cityFilterInput");
+const shipsFilterCheckbox = document.getElementById("shipsFilterCheckbox");
 const catGrid = document.getElementById("catGrid");
 const businessGrid = document.getElementById("businessGrid");
 
@@ -1404,6 +1452,7 @@ categoryFilterSelect.addEventListener("change", () => {
 });
 subcategoryFilterSelect.addEventListener("change", renderGrid);
 cityFilterInput.addEventListener("input", renderGrid);
+shipsFilterCheckbox.addEventListener("change", renderGrid);
 
 /* ---------------- LANGUAGE TOGGLE ---------------- */
 langToggle.addEventListener("click", () => {
@@ -1420,9 +1469,11 @@ function openAuthModal(mode) {
     btn.classList.toggle("active", btn.dataset.authtab === mode);
   });
   nameField.classList.toggle("hidden", mode !== "signup");
+  forgotPasswordLink.classList.toggle("hidden", mode !== "login");
   authTitle.textContent = mode === "signup" ? t("auth_title_signup") : t("auth_title_login");
   authSubmitBtn.textContent = mode === "signup" ? t("auth_submit_signup") : t("auth_submit_login");
   authError.classList.add("hidden");
+  authMsg.classList.add("hidden");
   authForm.reset();
   authModal.classList.remove("hidden");
 }
@@ -1431,9 +1482,30 @@ document.querySelectorAll("[data-authtab]").forEach(btn => {
   btn.addEventListener("click", () => openAuthModal(btn.dataset.authtab));
 });
 
+forgotPasswordLink.addEventListener("click", async () => {
+  authError.classList.add("hidden");
+  authMsg.classList.add("hidden");
+  const email = document.getElementById("authEmail").value.trim();
+  if (!email) {
+    authError.textContent = t("forgot_password_need_email");
+    authError.classList.remove("hidden");
+    return;
+  }
+  try {
+    await sendPasswordResetEmail(auth, email);
+    authMsg.textContent = t("reset_email_sent");
+    authMsg.classList.remove("hidden");
+  } catch (err) {
+    console.error(err);
+    authError.textContent = t("reset_email_error");
+    authError.classList.remove("hidden");
+  }
+});
+
 authForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   authError.classList.add("hidden");
+  authMsg.classList.add("hidden");
   const email = document.getElementById("authEmail").value.trim();
   const password = document.getElementById("authPassword").value;
   const name = document.getElementById("authName").value.trim();
@@ -1685,6 +1757,7 @@ function openBusinessModal(business = null) {
     document.getElementById("bizInsta").value = business.contact?.instagram || "";
     document.getElementById("bizWhatsapp").value = business.contact?.whatsapp || "";
     bizShowOwnerPhoto.checked = !!business.showOwnerPhoto;
+    bizShipsAll.checked = !!business.shipsAll;
     updateSubcategoryField(business.category || "", business.subcategory || "");
 
     if (existingLogoUrl) {
@@ -1776,6 +1849,7 @@ businessForm.addEventListener("submit", async (e) => {
       logoUrl,
       images,
       showOwnerPhoto: bizShowOwnerPhoto.checked,
+      shipsAll: bizShipsAll.checked,
       ownerPhotoURL: currentUser.photoURL || ""
     };
 
@@ -1824,6 +1898,7 @@ function renderGrid() {
   const stateFilter = stateSelect.value;
   const subcategoryFilter = subcategoryFilterSelect.value;
   const cityFilter = cityFilterInput.value.trim().toLowerCase();
+  const shipsOnly = shipsFilterCheckbox.checked;
 
   const filtered = allBusinesses.filter(b => {
     if (showOnlyMine && (!currentUser || b.ownerId !== currentUser.uid)) return false;
@@ -1831,6 +1906,7 @@ function renderGrid() {
     if (stateFilter && b.state !== stateFilter) return false;
     if (subcategoryFilter && b.subcategory !== subcategoryFilter) return false;
     if (cityFilter && !(b.city || "").toLowerCase().includes(cityFilter)) return false;
+    if (shipsOnly && !b.shipsAll) return false;
     if (searchTerm) {
       const haystack = `${b.name} ${b.city}`.toLowerCase();
       if (!haystack.includes(searchTerm)) return false;
@@ -1855,6 +1931,7 @@ function renderGrid() {
     const ratingHtml = b.ratingCount
       ? `<span class="card-rating">★ ${b.ratingAvg.toFixed(1)} <span class="rc">(${b.ratingCount})</span></span>`
       : "";
+    const shipsHtml = b.shipsAll ? `<span class="ships-badge">${t("ships_badge")}</span>` : "";
     return `
     <div class="card" data-id="${b.id}">
       <div class="card-media" style="${mediaStyle}">
@@ -1863,6 +1940,7 @@ function renderGrid() {
       <div class="card-body">
         <div class="card-title">${escapeHtml(b.name)}</div>
         <div class="card-owner">${t("owner_label")} ${escapeHtml(safeOwnerName(b.ownerName))}</div>
+        ${shipsHtml}
         <div class="card-footer">
           <span class="city">📍 ${escapeHtml(b.city)}, ${escapeHtml(t(stateKey(b.state)))}</span>
           ${ratingHtml}
@@ -2004,7 +2082,7 @@ async function loadReviews(businessId) {
   try {
     const snap = await getDocs(collection(db, "businesses", businessId, "ratings"));
     const reviews = snap.docs
-      .map(d => d.data())
+      .map(d => ({ id: d.id, ...d.data() }))
       .filter(r => r.comment && r.comment.trim())
       .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
@@ -2016,15 +2094,55 @@ async function loadReviews(businessId) {
       return;
     }
 
-    listEl.innerHTML = reviews.map(r => `
+    listEl.innerHTML = reviews.map(r => {
+      const isMine = currentUser && currentUser.uid === r.id;
+      const actionsHtml = isMine
+        ? `<div class="review-actions">
+             <button type="button" class="review-action-link" data-review-edit="${r.id}">${t("review_edit")}</button>
+             <button type="button" class="review-action-link danger" data-review-delete="${r.id}">${t("review_delete")}</button>
+           </div>`
+        : "";
+      return `
       <div class="review-item">
         <div class="review-top">
           <span class="review-name">${escapeHtml(r.userName || "")}</span>
           <span class="review-stars">${starsDisplay(r.stars)}</span>
         </div>
         <p class="review-comment">${escapeHtml(r.comment)}</p>
+        ${actionsHtml}
       </div>
-    `).join("");
+    `;
+    }).join("");
+
+    listEl.querySelectorAll("[data-review-edit]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const ratingForm = document.getElementById("ratingForm");
+        if (ratingForm) ratingForm.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    });
+    listEl.querySelectorAll("[data-review-delete]").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        if (!confirm(t("confirm_delete_review"))) return;
+        try {
+          await deleteDoc(doc(db, "businesses", businessId, "ratings", btn.dataset.reviewDelete));
+          await recomputeRatingAggregate(businessId);
+          selectedRatingStars = 0;
+          const commentEl = document.getElementById("ratingComment");
+          if (commentEl) commentEl.value = "";
+          const wrap = document.getElementById("ratingInput");
+          if (wrap) wrap.querySelectorAll(".rate-star").forEach(s => s.classList.remove("active"));
+          const msgEl = document.getElementById("ratingMsg");
+          if (msgEl) {
+            msgEl.textContent = t("review_deleted");
+            msgEl.classList.remove("hidden");
+          }
+          loadReviews(businessId);
+        } catch (err) {
+          console.error(err);
+          alert(t("biz_error_generic"));
+        }
+      });
+    });
   } catch (err) {
     console.error(err);
     listEl.innerHTML = `<div class="empty-state" style="padding:24px 0;">${t("load_error")}</div>`;
@@ -2091,6 +2209,7 @@ function attachRatingHandlers(businessId, isOwner) {
       await submitRating(businessId, selectedRatingStars, commentEl.value.trim());
       msgEl.textContent = t("rating_saved");
       msgEl.classList.remove("hidden");
+      loadReviews(businessId);
     } catch (err) {
       console.error(err);
       msgEl.textContent = t("biz_error_generic");
@@ -2175,6 +2294,8 @@ function showDetail(id) {
     ? `<span class="owner-mini-avatar" style="background-image:url('${ownerAvatarUrl}')"></span>`
     : `<span>${t("member_prefix")}</span>`;
 
+  const shipsTagHtml = b.shipsAll ? `<span class="tag">${t("ships_badge")}</span>` : "";
+
   detailCard.innerHTML = `
     <div class="profile-logo ${b.logoUrl ? "zoomable" : ""}" ${b.logoUrl ? `data-group="logo"` : ""} style="${b.logoUrl ? `background-image:url('${b.logoUrl}'); background-size:cover; background-position:center;` : ""}"></div>
     <h2 class="profile-name">${escapeHtml(b.name)}</h2>
@@ -2187,6 +2308,7 @@ function showDetail(id) {
     <div class="profile-tags">
       <span class="tag">${escapeHtml(t(CATEGORY_KEYS[b.category] || "f_services"))}</span>
       ${subcategoryLabel(b.category, b.subcategory) ? `<span class="tag">${escapeHtml(subcategoryLabel(b.category, b.subcategory))}</span>` : ""}
+      ${shipsTagHtml}
     </div>
     <div class="contact-row">${contactButtons.join("") || `<span style='opacity:0.5; font-size:13px;'>${t("no_contact")}</span>`}</div>
     ${ownerActionsHtml}
@@ -2405,4 +2527,3 @@ if (window.Capacitor && window.Capacitor.getPlatform && window.Capacitor.getPlat
 </script>
 </body>
 </html>
-
