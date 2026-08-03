@@ -2303,8 +2303,8 @@ function showDetail(id) {
       <span class="owner-line">${ownerAvatarHtml} ${escapeHtml(safeOwnerName(b.ownerName))}</span>
       <span>📍 ${escapeHtml(b.city)}, ${escapeHtml(t(stateKey(b.state)))}</span>
     </div>
-    ${ratingBlockHtml}
     <p class="profile-desc">${escapeHtml(b.description || "")}</p>
+    ${ratingBlockHtml}
     <div class="profile-tags">
       <span class="tag">${escapeHtml(t(CATEGORY_KEYS[b.category] || "f_services"))}</span>
       ${subcategoryLabel(b.category, b.subcategory) ? `<span class="tag">${escapeHtml(subcategoryLabel(b.category, b.subcategory))}</span>` : ""}
