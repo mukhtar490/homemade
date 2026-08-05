@@ -413,6 +413,22 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
           <div class="cat-icon slate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
           <span class="cat-label" data-t="f_all">All</span>
         </div>
+        <div class="cat-tile" data-cat="Services">
+          <div class="cat-icon slate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M8 14l2.5 2.5L16 11"/></svg></div>
+          <span class="cat-label" data-t="f_services">Services</span>
+        </div>
+        <div class="cat-tile" data-cat="Legal Services">
+          <div class="cat-icon slate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M5 7l-3 6a3 3 0 0 0 6 0z"/><path d="M19 7l-3 6a3 3 0 0 0 6 0z"/><path d="M5 7h14"/><path d="M8 21h8"/></svg></div>
+          <span class="cat-label" data-t="f_legal">Legal Services</span>
+        </div>
+        <div class="cat-tile" data-cat="Legal Translation">
+          <div class="cat-icon wood"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h9"/><path d="M8.5 3v2"/><path d="M6 5c0 4 2.5 6.5 6 8"/><path d="M11 5c-1 3.5-4 6-8 7"/><path d="M14 21l4-9 4 9"/><path d="M15.2 18h5.6"/></svg></div>
+          <span class="cat-label" data-t="f_legal_translation">Legal Translation</span>
+        </div>
+        <div class="cat-tile" data-cat="Tax Services">
+          <div class="cat-icon sage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8"/><path d="M8 12h8"/><path d="M8 16h5"/></svg></div>
+          <span class="cat-label" data-t="f_tax">Tax Services</span>
+        </div>
         <div class="cat-tile" data-cat="Food & Baking">
           <div class="cat-icon wood"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12c0-4.4 3.6-8 8-8s8 3.6 8 8"/><path d="M3 12h18l-1.5 8h-15z"/><path d="M12 4V2"/></svg></div>
           <span class="cat-label" data-t="f_food">Food &amp; Baking</span>
@@ -424,10 +440,6 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
         <div class="cat-tile" data-cat="Gifts">
           <div class="cat-icon wood"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="1.5"/><path d="M3 12h18"/><path d="M12 8v13"/><path d="M12 8c-1.5-4-6-4-6-1.5S9 8 12 8z"/><path d="M12 8c1.5-4 6-4 6-1.5S15 8 12 8z"/></svg></div>
           <span class="cat-label" data-t="f_gifts">Gifts</span>
-        </div>
-        <div class="cat-tile" data-cat="Services">
-          <div class="cat-icon slate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M8 14l2.5 2.5L16 11"/></svg></div>
-          <span class="cat-label" data-t="f_services">Services</span>
         </div>
         <div class="cat-tile" data-cat="Apparel & Accessories">
           <div class="cat-icon sage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4L4 7l2 3 2-1.5V21h8V8.5L18 10l2-3-4-3-2 2h-4z"/></svg></div>
@@ -445,10 +457,13 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
         <label data-t="filter_category_label">Category</label>
         <select class="state-select" id="categoryFilterSelect">
           <option value="" data-t="f_all">All</option>
+          <option value="Services" data-t="f_services">Services</option>
+          <option value="Legal Services" data-t="f_legal">Legal Services</option>
+          <option value="Legal Translation" data-t="f_legal_translation">Legal Translation</option>
+          <option value="Tax Services" data-t="f_tax">Tax Services</option>
           <option value="Food & Baking" data-t="f_food">Food &amp; Baking</option>
           <option value="Handmade Crafts" data-t="f_crafts">Handmade Crafts</option>
           <option value="Gifts" data-t="f_gifts">Gifts</option>
-          <option value="Services" data-t="f_services">Services</option>
           <option value="Apparel & Accessories" data-t="f_apparel">Apparel &amp; Accessories</option>
         </select>
       </div>
@@ -463,6 +478,7 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
         <select class="state-select" id="stateSelect">
           <option value="" data-t="state_all">All States</option>
           <option value="Online" data-t="state_online">🌐 Online</option>
+          <option value="Nationwide" data-t="state_nationwide">Nationwide (All States)</option>
           <option value="Alabama" data-t="state_al">Alabama</option>
           <option value="Alaska" data-t="state_ak">Alaska</option>
           <option value="Arizona" data-t="state_az">Arizona</option>
@@ -636,10 +652,13 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
         <label data-t="field_category">Category</label>
         <select id="bizCategory" required>
           <option value="" data-t="select_category">Select a category</option>
+          <option value="Services" data-t="f_services">Services</option>
+          <option value="Legal Services" data-t="f_legal">Legal Services</option>
+          <option value="Legal Translation" data-t="f_legal_translation">Legal Translation</option>
+          <option value="Tax Services" data-t="f_tax">Tax Services</option>
           <option value="Food & Baking" data-t="f_food">Food & Baking</option>
           <option value="Handmade Crafts" data-t="f_crafts">Handmade Crafts</option>
           <option value="Gifts" data-t="f_gifts">Gifts</option>
-          <option value="Services" data-t="f_services">Services</option>
           <option value="Apparel & Accessories" data-t="f_apparel">Apparel & Accessories</option>
         </select>
       </div>
@@ -658,6 +677,7 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
         <select id="bizState" required>
           <option value="" data-t="select_state">Select a state</option>
           <option value="Online" data-t="state_online">🌐 Online</option>
+          <option value="Nationwide" data-t="state_nationwide">Nationwide (All States)</option>
           <option value="Alabama" data-t="state_al">Alabama</option>
           <option value="Alaska" data-t="state_ak">Alaska</option>
           <option value="Arizona" data-t="state_az">Arizona</option>
@@ -908,6 +928,7 @@ const translations = {
     state_wy: "وايومنغ",
     cat_section_label: "تصفح حسب التصنيف",
     f_all: "الكل", f_food: "أطعمة وحلويات", f_crafts: "حرف يدوية", f_gifts: "هدايا", f_services: "خدمات", f_apparel: "ملابس وإكسسوارات",
+    f_legal: "محاماة", f_legal_translation: "ترجمة قانونية", f_tax: "خدمات الضرائب",
     loading: "جارٍ تحميل المشاريع…",
     empty_state: "لا توجد مشاريع في هذا التصنيف بعد — كن أول من يضيف مشروعه.",
     load_error: "تعذّر تحميل المشاريع حاليًا.",
@@ -930,17 +951,21 @@ const translations = {
     field_subcategory_crafts: "نوع الحرفة",
     field_subcategory_apparel: "الفئة",
     field_subcategory_profession: "نوع المهنة",
+    field_subcategory_legal: "نوع القضية",
+    field_subcategory_translation: "نوع الترجمة",
+    field_subcategory_tax: "نوع الخدمة الضريبية",
     select_subcategory: "اختر خيارًا",
     field_subcategory_filter: "التخصص / نوع المهنة",
     filter_category_label: "التصنيف",
     field_city_filter: "المدينة (اختياري)",
     field_city_filter_ph: "اكتب اسم المدينة...",
     state_online: "🌐 أونلاين",
+    state_nationwide: "جميع الولايات",
     subcat_filter_all: "كل التخصصات",
-    subcat_food_yemeni: "يمني",
-    subcat_food_egyptian: "مصري",
-    subcat_food_levantine: "شامي",
-    subcat_food_arab: "عربي عام",
+    subcat_food_yemeni: "المطبخ اليمني",
+    subcat_food_egyptian: "المطبخ المصري",
+    subcat_food_levantine: "المطبخ الشامي",
+    subcat_food_arab: "المطبخ العربي العام",
     subcat_food_other: "أخرى",
     subcat_craft_sewing: "خياطة وتطريز",
     subcat_craft_knitting: "حياكة صوف",
@@ -960,6 +985,7 @@ const translations = {
     subcat_prof_carpenter: "نجار",
     subcat_prof_painter: "دهان",
     subcat_prof_mechanic: "ميكانيكي",
+    subcat_prof_truck_mechanic: "ميكانيكي شاحنات",
     subcat_prof_cleaning: "تنظيف",
     subcat_prof_design: "تصميم",
     subcat_prof_tech: "برمجة وتقنية",
@@ -967,6 +993,25 @@ const translations = {
     subcat_prof_photography: "تصوير",
     subcat_prof_accounting: "محاسبة",
     subcat_prof_other: "أخرى",
+    subcat_legal_business: "القانون التجاري",
+    subcat_legal_family: "قانون الأسرة",
+    subcat_legal_criminal: "قانون الجنايات",
+    subcat_legal_realestate: "قانون العقارات",
+    subcat_legal_labor: "قانون العمل",
+    subcat_legal_immigration: "قانون الهجرة",
+    subcat_legal_other: "أخرى",
+    subcat_translation_court: "ترجمة أحكام ومحاكم",
+    subcat_translation_contracts: "ترجمة عقود",
+    subcat_translation_interpretation: "ترجمة فورية",
+    subcat_translation_certified: "ترجمة معتمدة",
+    subcat_translation_official: "ترجمة وثائق رسمية",
+    subcat_translation_other: "أخرى",
+    subcat_tax_individual: "إقرارات ضريبية فردية",
+    subcat_tax_planning: "التخطيط الضريبي",
+    subcat_tax_irs: "تمثيل أمام مصلحة الضرائب",
+    subcat_tax_business: "ضرائب الشركات",
+    subcat_tax_selfemployed: "ضرائب العاملين لحسابهم الخاص",
+    subcat_tax_other: "أخرى",
     field_city: "المدينة", field_state: "الولاية", select_state: "اختر ولاية",
     field_sms: "رقم الرسائل النصية — اختياري",
     field_call: "رقم الهاتف — اختياري",
@@ -1092,6 +1137,7 @@ const translations = {
     state_wy: "Wyoming",
     cat_section_label: "Browse by category",
     f_all: "All", f_food: "Food & Baking", f_crafts: "Handmade Crafts", f_gifts: "Gifts", f_services: "Services", f_apparel: "Apparel & Accessories",
+    f_legal: "Legal Services", f_legal_translation: "Legal Translation", f_tax: "Tax Services",
     loading: "Loading businesses…",
     empty_state: "No businesses match yet — be the first to add one in this category.",
     load_error: "Couldn't load businesses right now.",
@@ -1114,17 +1160,21 @@ const translations = {
     field_subcategory_crafts: "Craft type",
     field_subcategory_apparel: "Category",
     field_subcategory_profession: "Profession type",
+    field_subcategory_legal: "Practice area",
+    field_subcategory_translation: "Translation type",
+    field_subcategory_tax: "Tax service type",
     select_subcategory: "Select an option",
     field_subcategory_filter: "Specialty / profession type",
     filter_category_label: "Category",
     field_city_filter: "City (optional)",
     field_city_filter_ph: "Type a city name...",
     state_online: "🌐 Online",
+    state_nationwide: "Nationwide (All States)",
     subcat_filter_all: "All specialties",
-    subcat_food_yemeni: "Yemeni",
-    subcat_food_egyptian: "Egyptian",
-    subcat_food_levantine: "Levantine",
-    subcat_food_arab: "General Arabic",
+    subcat_food_yemeni: "Yemeni Cuisine",
+    subcat_food_egyptian: "Egyptian Cuisine",
+    subcat_food_levantine: "Levantine Cuisine",
+    subcat_food_arab: "General Arabic Cuisine",
     subcat_food_other: "Other",
     subcat_craft_sewing: "Sewing & Embroidery",
     subcat_craft_knitting: "Knitting",
@@ -1144,6 +1194,7 @@ const translations = {
     subcat_prof_carpenter: "Carpenter",
     subcat_prof_painter: "Painter",
     subcat_prof_mechanic: "Mechanic",
+    subcat_prof_truck_mechanic: "Truck Mechanic",
     subcat_prof_cleaning: "Cleaning",
     subcat_prof_design: "Design",
     subcat_prof_tech: "Programming & Tech",
@@ -1151,6 +1202,25 @@ const translations = {
     subcat_prof_photography: "Photography",
     subcat_prof_accounting: "Accounting",
     subcat_prof_other: "Other",
+    subcat_legal_business: "Business Law",
+    subcat_legal_family: "Family Law",
+    subcat_legal_criminal: "Criminal Law",
+    subcat_legal_realestate: "Real Estate Law",
+    subcat_legal_labor: "Labor Law",
+    subcat_legal_immigration: "Immigration Law",
+    subcat_legal_other: "Other",
+    subcat_translation_court: "Court Documents Translation",
+    subcat_translation_contracts: "Contract Translation",
+    subcat_translation_interpretation: "Legal Interpretation",
+    subcat_translation_certified: "Certified Translation",
+    subcat_translation_official: "Official Documents Translation",
+    subcat_translation_other: "Other",
+    subcat_tax_individual: "Individual Tax Returns",
+    subcat_tax_planning: "Tax Planning",
+    subcat_tax_irs: "IRS Representation",
+    subcat_tax_business: "Business Taxes",
+    subcat_tax_selfemployed: "Self-Employed Taxes",
+    subcat_tax_other: "Other",
     field_city: "City", field_state: "State", select_state: "Select a state",
     field_sms: "Text (SMS) number — optional",
     field_call: "Phone number — optional",
@@ -1268,61 +1338,96 @@ const CATEGORY_KEYS = {
   "Handmade Crafts": "f_crafts",
   "Gifts": "f_gifts",
   "Services": "f_services",
-  "Apparel & Accessories": "f_apparel"
+  "Apparel & Accessories": "f_apparel",
+  "Legal Services": "f_legal",
+  "Legal Translation": "f_legal_translation",
+  "Tax Services": "f_tax"
 };
 const CATEGORY_GRADIENTS = {
   "Food & Baking": "linear-gradient(135deg,#D9A15C,#9C6A2E)",
   "Handmade Crafts": "linear-gradient(135deg,#8FA377,#556B44)",
   "Gifts": "linear-gradient(135deg,#C98849,#8A5427)",
   "Services": "linear-gradient(135deg,#5A87A3,#2E4A5C)",
-  "Apparel & Accessories": "linear-gradient(135deg,#4E7590,#28404F)"
+  "Apparel & Accessories": "linear-gradient(135deg,#4E7590,#28404F)",
+  "Legal Services": "linear-gradient(135deg,#6E7C99,#374057)",
+  "Legal Translation": "linear-gradient(135deg,#C98849,#8A5427)",
+  "Tax Services": "linear-gradient(135deg,#7A9A6E,#455E3D)"
 };
 
 const SUBCATEGORY_OPTIONS = {
   "Food & Baking": [
-    { value: "Yemeni", key: "subcat_food_yemeni" },
-    { value: "Egyptian", key: "subcat_food_egyptian" },
     { value: "Levantine", key: "subcat_food_levantine" },
     { value: "Arab", key: "subcat_food_arab" },
+    { value: "Egyptian", key: "subcat_food_egyptian" },
+    { value: "Yemeni", key: "subcat_food_yemeni" },
     { value: "Other", key: "subcat_food_other" }
   ],
   "Handmade Crafts": [
-    { value: "SewingEmbroidery", key: "subcat_craft_sewing" },
-    { value: "Knitting", key: "subcat_craft_knitting" },
+    { value: "Leatherwork", key: "subcat_craft_leather" },
     { value: "Woodwork", key: "subcat_craft_woodwork" },
-    { value: "Pottery", key: "subcat_craft_pottery" },
-    { value: "Jewelry", key: "subcat_craft_jewelry" },
+    { value: "Knitting", key: "subcat_craft_knitting" },
+    { value: "SewingEmbroidery", key: "subcat_craft_sewing" },
     { value: "PaintingArt", key: "subcat_craft_painting" },
     { value: "CandlesFragrance", key: "subcat_craft_candles" },
-    { value: "Leatherwork", key: "subcat_craft_leather" },
+    { value: "Pottery", key: "subcat_craft_pottery" },
+    { value: "Jewelry", key: "subcat_craft_jewelry" },
     { value: "Other", key: "subcat_craft_other" }
   ],
   "Apparel & Accessories": [
+    { value: "Kids", key: "subcat_apparel_kids" },
     { value: "Men", key: "subcat_apparel_men" },
     { value: "Women", key: "subcat_apparel_women" },
-    { value: "Kids", key: "subcat_apparel_kids" },
     { value: "Other", key: "subcat_apparel_other" }
   ],
   "Services": [
-    { value: "Electrician", key: "subcat_prof_electrician" },
-    { value: "Plumber", key: "subcat_prof_plumber" },
-    { value: "Carpenter", key: "subcat_prof_carpenter" },
-    { value: "Painter", key: "subcat_prof_painter" },
-    { value: "Mechanic", key: "subcat_prof_mechanic" },
-    { value: "Cleaning", key: "subcat_prof_cleaning" },
-    { value: "Design", key: "subcat_prof_design" },
     { value: "Tech", key: "subcat_prof_tech" },
     { value: "Tutoring", key: "subcat_prof_tutoring" },
+    { value: "Design", key: "subcat_prof_design" },
     { value: "Photography", key: "subcat_prof_photography" },
+    { value: "Cleaning", key: "subcat_prof_cleaning" },
+    { value: "Painter", key: "subcat_prof_painter" },
+    { value: "Plumber", key: "subcat_prof_plumber" },
+    { value: "Electrician", key: "subcat_prof_electrician" },
     { value: "Accounting", key: "subcat_prof_accounting" },
+    { value: "Mechanic", key: "subcat_prof_mechanic" },
+    { value: "TruckMechanic", key: "subcat_prof_truck_mechanic" },
+    { value: "Carpenter", key: "subcat_prof_carpenter" },
     { value: "Other", key: "subcat_prof_other" }
+  ],
+  "Legal Services": [
+    { value: "BusinessLaw", key: "subcat_legal_business" },
+    { value: "FamilyLaw", key: "subcat_legal_family" },
+    { value: "CriminalLaw", key: "subcat_legal_criminal" },
+    { value: "RealEstateLaw", key: "subcat_legal_realestate" },
+    { value: "LaborLaw", key: "subcat_legal_labor" },
+    { value: "Immigration", key: "subcat_legal_immigration" },
+    { value: "Other", key: "subcat_legal_other" }
+  ],
+  "Legal Translation": [
+    { value: "CourtDocs", key: "subcat_translation_court" },
+    { value: "ContractTranslation", key: "subcat_translation_contracts" },
+    { value: "Interpretation", key: "subcat_translation_interpretation" },
+    { value: "Certified", key: "subcat_translation_certified" },
+    { value: "OfficialDocs", key: "subcat_translation_official" },
+    { value: "Other", key: "subcat_translation_other" }
+  ],
+  "Tax Services": [
+    { value: "IndividualTax", key: "subcat_tax_individual" },
+    { value: "TaxPlanning", key: "subcat_tax_planning" },
+    { value: "IRSRepresentation", key: "subcat_tax_irs" },
+    { value: "BusinessTax", key: "subcat_tax_business" },
+    { value: "SelfEmployedTax", key: "subcat_tax_selfemployed" },
+    { value: "Other", key: "subcat_tax_other" }
   ]
 };
 const SUBCATEGORY_LABEL_KEY = {
   "Food & Baking": "field_subcategory_food",
   "Handmade Crafts": "field_subcategory_crafts",
   "Apparel & Accessories": "field_subcategory_apparel",
-  "Services": "field_subcategory_profession"
+  "Services": "field_subcategory_profession",
+  "Legal Services": "field_subcategory_legal",
+  "Legal Translation": "field_subcategory_translation",
+  "Tax Services": "field_subcategory_tax"
 };
 
 /* ---------------- DOM REFS ---------------- */
@@ -1425,12 +1530,34 @@ function updateSubcategoryField(selectedCategory, presetValue) {
 const bizStateSelect = document.getElementById("bizState");
 bizCategorySelect.addEventListener("change", () => updateSubcategoryField(bizCategorySelect.value, ""));
 bizStateSelect.addEventListener("change", () => {
-  document.getElementById("bizCity").required = bizStateSelect.value !== "Online";
+  document.getElementById("bizCity").required = bizStateSelect.value !== "Online" && bizStateSelect.value !== "Nationwide";
 });
 
 function populateSubcategoryFilterOptions(category, keepValue) {
-  const options = SUBCATEGORY_OPTIONS[category];
   const currentVal = keepValue ? subcategoryFilterSelect.value : "";
+  let options = SUBCATEGORY_OPTIONS[category];
+
+  if (!category) {
+    // "All" category selected: merge every category's specialties into one
+    // deduplicated list, prioritizing Services first (most commonly searched),
+    // then the rest of the categories in their tile order. Each category's
+    // own list is already alphabetized internally.
+    const CATEGORY_PRIORITY_ORDER = [
+      "Services", "Legal Services", "Legal Translation", "Tax Services",
+      "Food & Baking", "Handmade Crafts", "Gifts", "Apparel & Accessories"
+    ];
+    const seen = new Set();
+    options = [];
+    CATEGORY_PRIORITY_ORDER.forEach(cat => {
+      (SUBCATEGORY_OPTIONS[cat] || []).forEach(o => {
+        if (!seen.has(o.value)) {
+          seen.add(o.value);
+          options.push(o);
+        }
+      });
+    });
+  }
+
   if (!options) {
     subcategoryFilterSelect.innerHTML = `<option value="">${t("subcat_filter_all")}</option>`;
     subcategoryFilterSelect.disabled = true;
@@ -1752,7 +1879,7 @@ function openBusinessModal(business = null) {
     document.getElementById("bizCategory").value = business.category || "";
     document.getElementById("bizCity").value = business.city || "";
     document.getElementById("bizState").value = business.state || "";
-    document.getElementById("bizCity").required = business.state !== "Online";
+    document.getElementById("bizCity").required = business.state !== "Online" && business.state !== "Nationwide";
     document.getElementById("bizSms").value = business.contact?.sms || "";
     document.getElementById("bizCall").value = business.contact?.call || "";
     document.getElementById("bizInsta").value = business.contact?.instagram || "";
@@ -1976,7 +2103,7 @@ function subcategoryLabel(category, value) {
 }
 
 function stateKey(state) {
-  const map = { "Alabama": "state_al", "Alaska": "state_ak", "Arizona": "state_az", "Arkansas": "state_ar", "California": "state_ca", "Colorado": "state_co", "Connecticut": "state_ct", "Delaware": "state_de", "Florida": "state_fl", "Georgia": "state_ga", "Hawaii": "state_hi", "Idaho": "state_id", "Illinois": "state_il", "Indiana": "state_in_", "Iowa": "state_ia", "Kansas": "state_ks", "Kentucky": "state_ky", "Louisiana": "state_la", "Maine": "state_me", "Maryland": "state_md", "Massachusetts": "state_ma", "Michigan": "state_mi", "Minnesota": "state_mn", "Mississippi": "state_ms", "Missouri": "state_mo", "Montana": "state_mt", "Nebraska": "state_ne", "Nevada": "state_nv", "New Hampshire": "state_nh", "New Jersey": "state_nj", "New Mexico": "state_nm", "New York": "state_ny", "North Carolina": "state_nc", "North Dakota": "state_nd", "Ohio": "state_oh", "Oklahoma": "state_ok", "Oregon": "state_or_", "Pennsylvania": "state_pa", "Rhode Island": "state_ri", "South Carolina": "state_sc", "South Dakota": "state_sd", "Tennessee": "state_tn", "Texas": "state_tx", "Utah": "state_ut", "Vermont": "state_vt", "Virginia": "state_va", "Washington": "state_wa", "West Virginia": "state_wv", "Wisconsin": "state_wi", "Wyoming": "state_wy" };
+  const map = { "Online": "state_online", "Nationwide": "state_nationwide", "Alabama": "state_al", "Alaska": "state_ak", "Arizona": "state_az", "Arkansas": "state_ar", "California": "state_ca", "Colorado": "state_co", "Connecticut": "state_ct", "Delaware": "state_de", "Florida": "state_fl", "Georgia": "state_ga", "Hawaii": "state_hi", "Idaho": "state_id", "Illinois": "state_il", "Indiana": "state_in_", "Iowa": "state_ia", "Kansas": "state_ks", "Kentucky": "state_ky", "Louisiana": "state_la", "Maine": "state_me", "Maryland": "state_md", "Massachusetts": "state_ma", "Michigan": "state_mi", "Minnesota": "state_mn", "Mississippi": "state_ms", "Missouri": "state_mo", "Montana": "state_mt", "Nebraska": "state_ne", "Nevada": "state_nv", "New Hampshire": "state_nh", "New Jersey": "state_nj", "New Mexico": "state_nm", "New York": "state_ny", "North Carolina": "state_nc", "North Dakota": "state_nd", "Ohio": "state_oh", "Oklahoma": "state_ok", "Oregon": "state_or_", "Pennsylvania": "state_pa", "Rhode Island": "state_ri", "South Carolina": "state_sc", "South Dakota": "state_sd", "Tennessee": "state_tn", "Texas": "state_tx", "Utah": "state_ut", "Vermont": "state_vt", "Virginia": "state_va", "Washington": "state_wa", "West Virginia": "state_wv", "Wisconsin": "state_wi", "Wyoming": "state_wy" };
   return map[state] || "state_all";
 }
 
