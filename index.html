@@ -67,6 +67,12 @@ header{border-bottom:1px solid var(--line); position:sticky; top:0; z-index:30; 
 .header-brand-group{display:flex; align-items:center; gap:12px;}
 .logo{font-family:'Cairo', sans-serif; font-weight:900; font-size:20px; display:flex; align-items:center; gap:8px; cursor:pointer; flex-shrink:0;}
 .logo .chip{width:11px; height:11px; border-radius:3px; background:var(--wood); transform:rotate(8deg); display:inline-block;}
+.admin-badge{
+  font-family:'IBM Plex Mono', monospace; font-size:11px; font-weight:700; letter-spacing:0.03em;
+  padding:5px 11px; border-radius:999px; color:#fff; flex-shrink:0;
+  background:linear-gradient(135deg,#B0432F,#7A2A1C);
+  box-shadow:0 3px 8px rgba(176,67,47,0.35);
+}
 .btn{font-weight:700; font-size:13.5px; padding:9px 16px; border-radius:999px; border:none; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease; white-space:nowrap;}
 .btn-primary{background:var(--ink); color:var(--paper);}
 .btn-primary:hover{transform:translateY(-1px); box-shadow:0 6px 14px rgba(33,31,26,0.25);}
@@ -97,6 +103,7 @@ html[dir="rtl"] .fab-add{padding:15px 18px 15px 22px;}
 @media (max-width:640px){
   .header-inner{gap:10px; padding:12px 16px;}
   .logo{font-size:17px;}
+  .admin-badge{font-size:10px; padding:4px 8px;}
 }
 
 /* SIDE DRAWER */
@@ -274,9 +281,13 @@ html[dir="ltr"] .category-back{transform:scaleX(-1);}
 .back-link{display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; opacity:0.7; margin-top:20px; cursor:pointer;}
 .gallery{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:24px;}
 .gallery-item{aspect-ratio:1; border-radius:10px; background-size:cover; background-position:center; background-color:var(--line);}
-.owner-actions{display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;}
+.owner-actions{display:flex; gap:10px; margin-top:16px; flex-wrap:wrap; align-items:center;}
 .owner-actions button{font-size:13px; font-weight:700; padding:9px 16px; border-radius:10px; border:1px solid var(--line); background:var(--card-bg); cursor:pointer;}
 .owner-actions .delete-action{color:var(--danger); border-color:rgba(176,67,47,0.3);}
+.owner-actions.admin-mode{padding:10px 12px; border-radius:12px; background:rgba(176,67,47,0.06); border:1px dashed rgba(176,67,47,0.35);}
+.owner-actions.admin-mode button{background:#fff; border-color:rgba(176,67,47,0.4); color:#7A2A1C;}
+.owner-actions.admin-mode .delete-action{background:var(--danger); color:#fff; border-color:var(--danger);}
+.admin-mode-label{font-size:11px; font-weight:700; color:#7A2A1C; width:100%; display:block; margin-bottom:2px;}
 
 /* RATINGS */
 .rating-block{margin:6px 0 16px; display:flex; flex-direction:column; gap:12px;}
@@ -316,9 +327,12 @@ html[dir="ltr"] .category-back{transform:scaleX(-1);}
 .job-card-desc{font-size:13.5px; line-height:1.6; opacity:0.85; margin-bottom:14px; white-space:pre-wrap;}
 .job-card-actions{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
 .jobs-disclaimer-mini{font-size:11px; opacity:0.55; line-height:1.6; margin:-4px 0 4px;}
-.job-owner-actions{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; padding-top:10px; border-top:1px solid var(--line);}
+.job-owner-actions{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; padding-top:10px; border-top:1px solid var(--line); align-items:center;}
 .job-owner-actions button{font-size:12.5px; font-weight:700; padding:8px 14px; border-radius:10px; border:1px solid var(--line); background:var(--paper); cursor:pointer;}
 .job-owner-actions .delete-action{color:var(--danger); border-color:rgba(176,67,47,0.3);}
+.job-owner-actions.admin-mode{padding:10px; border-radius:12px; background:rgba(176,67,47,0.06); border-top:1px dashed rgba(176,67,47,0.35);}
+.job-owner-actions.admin-mode button{background:#fff; border-color:rgba(176,67,47,0.4); color:#7A2A1C;}
+.job-owner-actions.admin-mode .delete-action{background:var(--danger); color:#fff; border-color:var(--danger);}
 
 /* REVIEWS */
 .reviews-section{margin-top:28px; padding-top:20px; border-top:1px solid var(--line);}
@@ -398,6 +412,7 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
         </svg>
       </button>
       <div class="logo" id="logoHome"><span class="chip"></span><span data-t="brand_name">السوق العربي</span></div>
+      <span class="admin-badge hidden" id="adminBadge" data-t="admin_badge">Admin</span>
     </div>
     <button class="lang-toggle" id="langToggle" aria-label="Change language" title="Change language">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -1062,6 +1077,8 @@ const translations = {
     page_title: "السوق العربي — دليل الأعمال والخدمات العربية",
     brand_name: "السوق العربي",
     nav_login: "تسجيل الدخول",
+    admin_badge: "مسؤول 🛡️",
+    admin_action_label: "تعديل إداري — هذا المحتوى ليس ملكك",
     nav_add: "أضف مشروعك/مهنتك",
     eyebrow: "دليل الأعمال والخدمات العربية",
     welcome_headline: "تطبيق واحد لكل مشاريعك وخدماتك",
@@ -1311,6 +1328,8 @@ const translations = {
     page_title: "Al Souq Al Arabi — Arabic Business & Services Directory",
     brand_name: "Al Souq Al Arabi",
     nav_login: "Log in",
+    admin_badge: "Admin 🛡️",
+    admin_action_label: "Admin action — this isn't your content",
     nav_add: "Add your business/profession",
     eyebrow: "A directory of Arabic businesses & services",
     welcome_headline: "One app for all your businesses and services",
@@ -1602,10 +1621,14 @@ document.documentElement.dir = currentLang === "ar" ? "rtl" : "ltr";
 
 /* ---------------- STATE ---------------- */
 let currentUser = null;
+const ADMIN_UID = "jsnUFtm7O8ei2CwaFu2ija9pY7J3"; // aifary490@gmail.com — can edit/delete any listing or job post
 let allBusinesses = [];
 let activeCategory = "";
 let showOnlyMine = false;
 let editingBusinessId = null;
+let editingBusinessOwnerId = null;
+let editingBusinessOwnerName = "";
+let editingBusinessOwnerPhotoURL = "";
 let existingLogoUrl = "";
 let existingImages = [];
 
@@ -1787,6 +1810,7 @@ const detailHero = document.getElementById("detailHero");
 const detailCard = document.getElementById("detailCard");
 const backToBrowse = document.getElementById("backToBrowse");
 const logoHome = document.getElementById("logoHome");
+const adminBadge = document.getElementById("adminBadge");
 
 const jobsView = document.getElementById("jobsView");
 const jobsBackBtn = document.getElementById("jobsBackBtn");
@@ -1997,6 +2021,7 @@ function friendlyAuthError(code) {
 
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
+  adminBadge.classList.toggle("hidden", !(user && user.uid === ADMIN_UID));
   if (!drawerOverlay.classList.contains("hidden")) renderDrawer();
   // Re-render the open detail view (if any) so owner actions appear/disappear correctly.
   if (!detailView.classList.contains("hidden") && detailCard.dataset.currentId) {
@@ -2201,6 +2226,9 @@ function openBusinessModal(business = null) {
 
   if (business) {
     editingBusinessId = business.id;
+    editingBusinessOwnerId = business.ownerId || null;
+    editingBusinessOwnerName = business.ownerName || "";
+    editingBusinessOwnerPhotoURL = business.ownerPhotoURL || "";
     existingLogoUrl = business.logoUrl || "";
     existingImages = business.images || [];
     businessModalTitle.textContent = t("edit_business_title");
@@ -2228,6 +2256,9 @@ function openBusinessModal(business = null) {
     }
   } else {
     editingBusinessId = null;
+    editingBusinessOwnerId = null;
+    editingBusinessOwnerName = "";
+    editingBusinessOwnerPhotoURL = "";
     existingLogoUrl = "";
     existingImages = [];
     businessModalTitle.textContent = t("nav_add");
@@ -2297,8 +2328,8 @@ businessForm.addEventListener("submit", async (e) => {
     }
 
     const data = {
-      ownerId: currentUser.uid,
-      ownerName: currentUser.displayName || t("owner_generic"),
+      ownerId: editingBusinessId ? editingBusinessOwnerId : currentUser.uid,
+      ownerName: editingBusinessId ? editingBusinessOwnerName : (currentUser.displayName || t("owner_generic")),
       name: document.getElementById("bizName").value.trim(),
       description: document.getElementById("bizDesc").value.trim(),
       category: document.getElementById("bizCategory").value,
@@ -2310,7 +2341,7 @@ businessForm.addEventListener("submit", async (e) => {
       images,
       showOwnerPhoto: bizShowOwnerPhoto.checked,
       shipsAll: bizShipsAll.checked,
-      ownerPhotoURL: currentUser.photoURL || ""
+      ownerPhotoURL: editingBusinessId ? editingBusinessOwnerPhotoURL : (currentUser.photoURL || "")
     };
 
     if (editingBusinessId) {
@@ -2437,7 +2468,9 @@ function renderJobs() {
   }
 
   jobList.innerHTML = filtered.map(j => {
-    const isOwner = currentUser && currentUser.uid === j.ownerId;
+    const isRealOwner = currentUser && currentUser.uid === j.ownerId;
+    const isOwner = isRealOwner || (currentUser && currentUser.uid === ADMIN_UID);
+    const isAdminAction = isOwner && !isRealOwner;
     const typeBadge = j.status === "filled"
       ? `<span class="job-badge filled">${t("job_status_filled_label")}</span>`
       : `<span class="job-badge ${j.type}">${t(j.type === "hiring" ? "job_type_hiring" : "job_type_seeking")}</span>`;
@@ -2456,7 +2489,8 @@ function renderJobs() {
     if (j.contact?.instagram) contactButtons.push(`<a class="contact-btn icon-insta" target="_blank" rel="noopener" href="https://instagram.com/${encodeURIComponent(j.contact.instagram)}">${t("contact_insta")}</a>`);
 
     const ownerActionsHtml = isOwner ? `
-      <div class="job-owner-actions">
+      <div class="job-owner-actions${isAdminAction ? " admin-mode" : ""}">
+        ${isAdminAction ? `<span class="admin-mode-label">${t("admin_action_label")}</span>` : ""}
         <button data-job-toggle="${j.id}" data-current-status="${j.status || "open"}">${j.status === "filled" ? t("job_reopen") : t("job_mark_filled")}</button>
         <button class="delete-action" data-job-delete="${j.id}">${t("job_delete_btn")}</button>
       </div>` : "";
@@ -2984,9 +3018,12 @@ function showDetail(id) {
     ? `<div class="gallery">${b.images.map((u, i) => `<div class="gallery-item zoomable" data-group="gallery" data-index="${i}" style="background-image:url('${u}')"></div>`).join("")}</div>`
     : "";
 
-  const isOwner = currentUser && currentUser.uid === b.ownerId;
+  const isRealOwner = currentUser && currentUser.uid === b.ownerId;
+  const isOwner = isRealOwner || (currentUser && currentUser.uid === ADMIN_UID);
+  const isAdminAction = isOwner && !isRealOwner;
   const ownerActionsHtml = isOwner
-    ? `<div class="owner-actions">
+    ? `<div class="owner-actions${isAdminAction ? " admin-mode" : ""}">
+         ${isAdminAction ? `<span class="admin-mode-label">${t("admin_action_label")}</span>` : ""}
          <button id="editBizBtn">${t("edit_btn")}</button>
          <button id="deleteBizBtn" class="delete-action">${t("delete_btn")}</button>
        </div>`
