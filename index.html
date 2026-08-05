@@ -301,6 +301,25 @@ html[dir="ltr"] .category-back{transform:scaleX(-1);}
 .card-rating{font-size:12px; font-weight:700; color:var(--wood); display:flex; align-items:center; gap:3px;}
 .card-rating .rc{opacity:0.55; font-weight:400;}
 
+/* JOBS */
+.jobs-intro{font-size:13.5px; opacity:0.7; padding:20px 0 4px; max-width:560px;}
+.jobs-type-tabs{margin:16px 0 18px;}
+.job-list{display:flex; flex-direction:column; gap:14px; padding:8px 0 90px;}
+.job-card{background:var(--card-bg); border:1px solid var(--line); border-radius:14px; padding:18px;}
+.job-card-top{display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:8px; flex-wrap:wrap;}
+.job-card-title{font-weight:800; font-size:16px;}
+.job-badge{font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px; flex-shrink:0; white-space:nowrap;}
+.job-badge.seeking{background:rgba(92,110,78,0.14); color:var(--sage);}
+.job-badge.hiring{background:rgba(180,112,58,0.14); color:var(--wood);}
+.job-badge.filled{background:rgba(176,67,47,0.12); color:var(--danger);}
+.job-card-meta{font-size:12px; opacity:0.6; margin-bottom:10px; display:flex; gap:10px; flex-wrap:wrap;}
+.job-card-desc{font-size:13.5px; line-height:1.6; opacity:0.85; margin-bottom:14px; white-space:pre-wrap;}
+.job-card-actions{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+.jobs-disclaimer-mini{font-size:11px; opacity:0.55; line-height:1.6; margin:-4px 0 4px;}
+.job-owner-actions{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; padding-top:10px; border-top:1px solid var(--line);}
+.job-owner-actions button{font-size:12.5px; font-weight:700; padding:8px 14px; border-radius:10px; border:1px solid var(--line); background:var(--paper); cursor:pointer;}
+.job-owner-actions .delete-action{color:var(--danger); border-color:rgba(176,67,47,0.3);}
+
 /* REVIEWS */
 .reviews-section{margin-top:28px; padding-top:20px; border-top:1px solid var(--line);}
 .reviews-title{font-size:16px; margin-bottom:14px;}
@@ -409,13 +428,21 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
     <div class="cat-section cat-section-top">
       <h3 data-t="cat_section_label">Browse by category</h3>
       <div class="cat-grid" id="catGrid">
-        <div class="cat-tile active" data-cat="">
-          <div class="cat-icon slate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
-          <span class="cat-label" data-t="f_all">All</span>
+        <div class="cat-tile" data-cat="Handmade Crafts">
+          <div class="cat-icon sage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.5 8L20 19"/><path d="M8.5 16L20 5"/></svg></div>
+          <span class="cat-label" data-t="f_crafts">Handmade Crafts</span>
+        </div>
+        <div class="cat-tile" data-jobs="true">
+          <div class="cat-icon wood"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/></svg></div>
+          <span class="cat-label" data-t="f_jobs">Jobs</span>
         </div>
         <div class="cat-tile" data-cat="Services">
           <div class="cat-icon slate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M8 14l2.5 2.5L16 11"/></svg></div>
           <span class="cat-label" data-t="f_services">Services</span>
+        </div>
+        <div class="cat-tile" data-cat="Education & Tutoring">
+          <div class="cat-icon slate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5-10-5z"/><path d="M6 11.5V17c0 1.5 2.7 3 6 3s6-1.5 6-3v-5.5"/></svg></div>
+          <span class="cat-label" data-t="f_education">Education &amp; Tutoring</span>
         </div>
         <div class="cat-tile" data-cat="Legal Services">
           <div class="cat-icon slate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M5 7l-3 6a3 3 0 0 0 6 0z"/><path d="M19 7l-3 6a3 3 0 0 0 6 0z"/><path d="M5 7h14"/><path d="M8 21h8"/></svg></div>
@@ -433,19 +460,24 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
           <div class="cat-icon wood"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12c0-4.4 3.6-8 8-8s8 3.6 8 8"/><path d="M3 12h18l-1.5 8h-15z"/><path d="M12 4V2"/></svg></div>
           <span class="cat-label" data-t="f_food">Food &amp; Baking</span>
         </div>
-        <div class="cat-tile" data-cat="Handmade Crafts">
-          <div class="cat-icon sage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.5 8L20 19"/><path d="M8.5 16L20 5"/></svg></div>
-          <span class="cat-label" data-t="f_crafts">Handmade Crafts</span>
-        </div>
-        <div class="cat-tile" data-cat="Gifts">
-          <div class="cat-icon wood"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="1.5"/><path d="M3 12h18"/><path d="M12 8v13"/><path d="M12 8c-1.5-4-6-4-6-1.5S9 8 12 8z"/><path d="M12 8c1.5-4 6-4 6-1.5S15 8 12 8z"/></svg></div>
-          <span class="cat-label" data-t="f_gifts">Gifts</span>
+        <div class="cat-tile" data-cat="Beauty & Personal Care">
+          <div class="cat-icon wood"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6"/><circle cx="12" cy="13" r="7"/><path d="M9.5 13a2.5 2.5 0 0 1 5 0"/></svg></div>
+          <span class="cat-label" data-t="f_beauty">Beauty &amp; Personal Care</span>
         </div>
         <div class="cat-tile" data-cat="Apparel & Accessories">
           <div class="cat-icon sage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4L4 7l2 3 2-1.5V21h8V8.5L18 10l2-3-4-3-2 2h-4z"/></svg></div>
           <span class="cat-label" data-t="f_apparel">Apparel &amp; Accessories</span>
         </div>
+        <div class="cat-tile" data-cat="Gifts">
+          <div class="cat-icon wood"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="1.5"/><path d="M3 12h18"/><path d="M12 8v13"/><path d="M12 8c-1.5-4-6-4-6-1.5S9 8 12 8z"/><path d="M12 8c1.5-4 6-4 6-1.5S15 8 12 8z"/></svg></div>
+          <span class="cat-label" data-t="f_gifts">Gifts</span>
+        </div>
+        <div class="cat-tile active" data-cat="">
+          <div class="cat-icon slate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+          <span class="cat-label" data-t="f_all">All</span>
+        </div>
       </div>
+
     </div>
 
     <div class="search-row">
@@ -462,6 +494,8 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
           <option value="Legal Translation" data-t="f_legal_translation">Legal Translation</option>
           <option value="Tax Services" data-t="f_tax">Tax Services</option>
           <option value="Food & Baking" data-t="f_food">Food &amp; Baking</option>
+          <option value="Beauty & Personal Care" data-t="f_beauty">Beauty &amp; Personal Care</option>
+          <option value="Education & Tutoring" data-t="f_education">Education &amp; Tutoring</option>
           <option value="Handmade Crafts" data-t="f_crafts">Handmade Crafts</option>
           <option value="Gifts" data-t="f_gifts">Gifts</option>
           <option value="Apparel & Accessories" data-t="f_apparel">Apparel &amp; Accessories</option>
@@ -567,6 +601,47 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
   </div>
 </div>
 
+<!-- ============ JOBS VIEW ============ -->
+<div id="jobsView" class="hidden">
+  <div class="category-header">
+    <button class="category-back" id="jobsBackBtn" aria-label="Back">→</button>
+    <h2 data-t="jobs_page_title">Job Opportunities</h2>
+  </div>
+  <div class="wrap">
+    <p class="jobs-intro" data-t="jobs_intro">Post that you're looking for work, or that you're looking to hire someone.</p>
+
+    <div class="tab-switch jobs-type-tabs">
+      <button class="active" data-jobtype="" data-t="job_filter_all">All</button>
+      <button data-jobtype="seeking" data-t="job_type_seeking">Looking for work</button>
+      <button data-jobtype="hiring" data-t="job_type_hiring">Looking to hire</button>
+    </div>
+
+    <div class="filter-grid">
+      <div class="field">
+        <label data-t="field_subcategory_filter">Specialty / profession type</label>
+        <select class="state-select" id="jobSpecialtyFilterSelect">
+          <option value="" data-t="subcat_filter_all">All specialties</option>
+        </select>
+      </div>
+      <div class="field">
+        <label data-t="field_state">State</label>
+        <select class="state-select" id="jobStateFilterSelect">
+          <option value="" data-t="state_all">All States</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="job-list" id="jobList">
+      <div class="loading-text" data-t="loading">Loading…</div>
+    </div>
+  </div>
+
+  <button class="fab-add" id="addJobBtn" aria-label="Post a job">
+    <span class="fab-plus">+</span>
+    <span class="fab-label" data-t="job_post_btn">Post</span>
+  </button>
+</div>
+
 <!-- ============ DETAIL VIEW ============ -->
 <div id="detailView" class="hidden">
   <div class="wrap">
@@ -657,6 +732,8 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
           <option value="Legal Translation" data-t="f_legal_translation">Legal Translation</option>
           <option value="Tax Services" data-t="f_tax">Tax Services</option>
           <option value="Food & Baking" data-t="f_food">Food & Baking</option>
+          <option value="Beauty & Personal Care" data-t="f_beauty">Beauty & Personal Care</option>
+          <option value="Education & Tutoring" data-t="f_education">Education & Tutoring</option>
           <option value="Handmade Crafts" data-t="f_crafts">Handmade Crafts</option>
           <option value="Gifts" data-t="f_gifts">Gifts</option>
           <option value="Apparel & Accessories" data-t="f_apparel">Apparel & Accessories</option>
@@ -761,6 +838,125 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
       <div class="form-error hidden" id="bizError"></div>
       <div class="modal-actions">
         <button type="submit" class="btn btn-primary" style="flex:1;" data-t="publish_btn">Publish business</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============ ADD/EDIT JOB MODAL ============ -->
+<div class="modal-overlay hidden" id="jobModal">
+  <div class="modal">
+    <button class="modal-close" id="closeJobModal">×</button>
+    <h2 data-t="job_modal_title" id="jobModalTitle">Post a job</h2>
+    <div class="tab-switch">
+      <button class="active" data-jobformtype="seeking" id="jobTypeSeekingBtn" data-t="job_type_seeking">Looking for work</button>
+      <button data-jobformtype="hiring" id="jobTypeHiringBtn" data-t="job_type_hiring">Looking to hire</button>
+    </div>
+    <form id="jobForm">
+      <div class="field">
+        <label id="jobTitleLabel" data-t="field_job_title">Title</label>
+        <input type="text" id="jobTitle" required placeholder="Delivery driver">
+      </div>
+      <div class="field">
+        <label data-t="field_job_desc">Description</label>
+        <textarea id="jobDesc" required data-t-placeholder="field_job_desc_ph" placeholder="Details about the role or the work you're looking for..."></textarea>
+      </div>
+      <div class="field">
+        <label data-t="field_job_specialty">Specialty</label>
+        <select id="jobSpecialty">
+          <option value="" data-t="subcat_filter_all">All specialties</option>
+        </select>
+      </div>
+      <div class="field">
+        <label data-t="field_employment_type">Employment type</label>
+        <select id="jobEmploymentType">
+          <option value="" data-t="employment_any">Not specified</option>
+          <option value="FullTime" data-t="employment_fulltime">Full-time</option>
+          <option value="PartTime" data-t="employment_parttime">Part-time</option>
+        </select>
+      </div>
+      <div class="field">
+        <label data-t="field_city">City</label>
+        <input type="text" id="jobCity" placeholder="Austin">
+      </div>
+      <div class="field">
+        <label data-t="field_state">State</label>
+        <select id="jobState" required>
+          <option value="" data-t="select_state">Select a state</option>
+          <option value="Online" data-t="state_online">🌐 Online</option>
+          <option value="Nationwide" data-t="state_nationwide">Nationwide (All States)</option>
+          <option value="Alabama" data-t="state_al">Alabama</option>
+          <option value="Alaska" data-t="state_ak">Alaska</option>
+          <option value="Arizona" data-t="state_az">Arizona</option>
+          <option value="Arkansas" data-t="state_ar">Arkansas</option>
+          <option value="California" data-t="state_ca">California</option>
+          <option value="Colorado" data-t="state_co">Colorado</option>
+          <option value="Connecticut" data-t="state_ct">Connecticut</option>
+          <option value="Delaware" data-t="state_de">Delaware</option>
+          <option value="Florida" data-t="state_fl">Florida</option>
+          <option value="Georgia" data-t="state_ga">Georgia</option>
+          <option value="Hawaii" data-t="state_hi">Hawaii</option>
+          <option value="Idaho" data-t="state_id">Idaho</option>
+          <option value="Illinois" data-t="state_il">Illinois</option>
+          <option value="Indiana" data-t="state_in_">Indiana</option>
+          <option value="Iowa" data-t="state_ia">Iowa</option>
+          <option value="Kansas" data-t="state_ks">Kansas</option>
+          <option value="Kentucky" data-t="state_ky">Kentucky</option>
+          <option value="Louisiana" data-t="state_la">Louisiana</option>
+          <option value="Maine" data-t="state_me">Maine</option>
+          <option value="Maryland" data-t="state_md">Maryland</option>
+          <option value="Massachusetts" data-t="state_ma">Massachusetts</option>
+          <option value="Michigan" data-t="state_mi">Michigan</option>
+          <option value="Minnesota" data-t="state_mn">Minnesota</option>
+          <option value="Mississippi" data-t="state_ms">Mississippi</option>
+          <option value="Missouri" data-t="state_mo">Missouri</option>
+          <option value="Montana" data-t="state_mt">Montana</option>
+          <option value="Nebraska" data-t="state_ne">Nebraska</option>
+          <option value="Nevada" data-t="state_nv">Nevada</option>
+          <option value="New Hampshire" data-t="state_nh">New Hampshire</option>
+          <option value="New Jersey" data-t="state_nj">New Jersey</option>
+          <option value="New Mexico" data-t="state_nm">New Mexico</option>
+          <option value="New York" data-t="state_ny">New York</option>
+          <option value="North Carolina" data-t="state_nc">North Carolina</option>
+          <option value="North Dakota" data-t="state_nd">North Dakota</option>
+          <option value="Ohio" data-t="state_oh">Ohio</option>
+          <option value="Oklahoma" data-t="state_ok">Oklahoma</option>
+          <option value="Oregon" data-t="state_or_">Oregon</option>
+          <option value="Pennsylvania" data-t="state_pa">Pennsylvania</option>
+          <option value="Rhode Island" data-t="state_ri">Rhode Island</option>
+          <option value="South Carolina" data-t="state_sc">South Carolina</option>
+          <option value="South Dakota" data-t="state_sd">South Dakota</option>
+          <option value="Tennessee" data-t="state_tn">Tennessee</option>
+          <option value="Texas" data-t="state_tx">Texas</option>
+          <option value="Utah" data-t="state_ut">Utah</option>
+          <option value="Vermont" data-t="state_vt">Vermont</option>
+          <option value="Virginia" data-t="state_va">Virginia</option>
+          <option value="Washington" data-t="state_wa">Washington</option>
+          <option value="West Virginia" data-t="state_wv">West Virginia</option>
+          <option value="Wisconsin" data-t="state_wi">Wisconsin</option>
+          <option value="Wyoming" data-t="state_wy">Wyoming</option>
+        </select>
+      </div>
+      <div class="field">
+        <label data-t="field_sms">Text (SMS) number — optional</label>
+        <input type="tel" id="jobSms" placeholder="+1 512 555 0100">
+      </div>
+      <div class="field">
+        <label data-t="field_call">Phone number — optional</label>
+        <input type="tel" id="jobCall" placeholder="+1 512 555 0100">
+      </div>
+      <div class="field">
+        <label data-t="field_wa">WhatsApp number — optional</label>
+        <input type="tel" id="jobWhatsapp" placeholder="+1 512 555 0100">
+      </div>
+      <div class="field">
+        <label data-t="field_insta">Instagram handle — optional</label>
+        <input type="text" id="jobInsta" placeholder="@handle">
+      </div>
+      <p class="jobs-disclaimer-mini" data-t="jobs_form_disclaimer">Al Souq Al Arabi is a contact directory only and does not verify job postings or applicants.</p>
+      <div class="form-error hidden" id="jobError"></div>
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-primary" style="flex:1;" data-t="job_publish_btn">Post</button>
       </div>
     </form>
   </div>
@@ -928,7 +1124,8 @@ const translations = {
     state_wy: "وايومنغ",
     cat_section_label: "تصفح حسب التصنيف",
     f_all: "الكل", f_food: "أطعمة وحلويات", f_crafts: "حرف يدوية", f_gifts: "هدايا", f_services: "خدمات", f_apparel: "ملابس وإكسسوارات",
-    f_legal: "محاماة", f_legal_translation: "ترجمة قانونية", f_tax: "خدمات الضرائب",
+    f_legal: "محاماة", f_legal_translation: "ترجمة قانونية", f_tax: "خدمات الضرائب", f_jobs: "فرص عمل",
+    f_beauty: "العناية الشخصية والتجميل", f_education: "التعليم والتدريب",
     loading: "جارٍ تحميل المشاريع…",
     empty_state: "لا توجد مشاريع في هذا التصنيف بعد — كن أول من يضيف مشروعه.",
     load_error: "تعذّر تحميل المشاريع حاليًا.",
@@ -954,6 +1151,8 @@ const translations = {
     field_subcategory_legal: "نوع القضية",
     field_subcategory_translation: "نوع الترجمة",
     field_subcategory_tax: "نوع الخدمة الضريبية",
+    field_subcategory_beauty: "نوع الخدمة",
+    field_subcategory_education: "نوع التعليم",
     select_subcategory: "اختر خيارًا",
     field_subcategory_filter: "التخصص / نوع المهنة",
     filter_category_label: "التصنيف",
@@ -982,6 +1181,7 @@ const translations = {
     subcat_apparel_other: "أخرى",
     subcat_prof_electrician: "كهربائي",
     subcat_prof_plumber: "سباك",
+    subcat_prof_general_labor: "عامل عام",
     subcat_prof_carpenter: "نجار",
     subcat_prof_painter: "دهان",
     subcat_prof_mechanic: "ميكانيكي",
@@ -989,6 +1189,7 @@ const translations = {
     subcat_prof_cleaning: "تنظيف",
     subcat_prof_design: "تصميم",
     subcat_prof_tech: "برمجة وتقنية",
+    subcat_prof_hvac: "تبريد وتكييف",
     subcat_prof_tutoring: "تدريس خصوصي",
     subcat_prof_photography: "تصوير",
     subcat_prof_accounting: "محاسبة",
@@ -1012,6 +1213,16 @@ const translations = {
     subcat_tax_business: "ضرائب الشركات",
     subcat_tax_selfemployed: "ضرائب العاملين لحسابهم الخاص",
     subcat_tax_other: "أخرى",
+    subcat_beauty_hair: "تصفيف شعر",
+    subcat_beauty_henna: "حناء",
+    subcat_beauty_skincare: "عناية بالبشرة",
+    subcat_beauty_makeup: "مكياج",
+    subcat_beauty_other: "أخرى",
+    subcat_edu_quran: "تحفيظ قرآن",
+    subcat_edu_vocational: "تدريب مهني",
+    subcat_edu_general: "دروس خصوصية عامة",
+    subcat_edu_arabic: "لغة عربية",
+    subcat_edu_other: "أخرى",
     field_city: "المدينة", field_state: "الولاية", select_state: "اختر ولاية",
     field_sms: "رقم الرسائل النصية — اختياري",
     field_call: "رقم الهاتف — اختياري",
@@ -1069,7 +1280,32 @@ const translations = {
     delete_account_success: "تم حذف حسابك بنجاح.",
     showing_mine_label: "يتم عرض مشاريعك فقط",
     clear_filter: "عرض جميع المشاريع",
-    member_prefix: "👤"
+    member_prefix: "👤",
+    drawer_jobs: "فرص عمل",
+    jobs_page_title: "فرص عمل",
+    jobs_intro: "انشر إنك بتدوّر على شغل، أو إنك محتاج حد يشتغل عندك.",
+    job_filter_all: "الكل",
+    job_type_seeking: "أبحث عن عمل",
+    job_type_hiring: "نبحث عن عامل",
+    job_post_btn: "نشر إعلان",
+    job_modal_title: "نشر إعلان",
+    field_job_title: "العنوان",
+    field_job_desc: "الوصف",
+    field_job_desc_ph: "تفاصيل عن الوظيفة أو الشغل اللي بتدوّر عليه...",
+    field_job_specialty: "التخصص",
+    field_employment_type: "نوع الدوام",
+    employment_any: "غير محدد",
+    employment_fulltime: "دوام كامل",
+    employment_parttime: "دوام جزئي",
+    job_publish_btn: "نشر",
+    jobs_form_disclaimer: "السوق العربي دليل تواصل فقط، ولا يتحقق من صحة إعلانات الوظائف أو المتقدمين.",
+    job_empty_state: "لا توجد إعلانات بعد.",
+    job_mark_filled: "تم الشغل ✓",
+    job_reopen: "إعادة الفتح",
+    job_delete_btn: "حذف",
+    job_confirm_delete: "هل تريد حذف هذا الإعلان؟ لا يمكن التراجع عن هذا الإجراء.",
+    job_status_filled_label: "تم الشغل",
+    job_owner_label: "بواسطة:"
   },
   en: {
     page_title: "Al Souq Al Arabi — Arabic Business & Services Directory",
@@ -1137,7 +1373,8 @@ const translations = {
     state_wy: "Wyoming",
     cat_section_label: "Browse by category",
     f_all: "All", f_food: "Food & Baking", f_crafts: "Handmade Crafts", f_gifts: "Gifts", f_services: "Services", f_apparel: "Apparel & Accessories",
-    f_legal: "Legal Services", f_legal_translation: "Legal Translation", f_tax: "Tax Services",
+    f_legal: "Legal Services", f_legal_translation: "Legal Translation", f_tax: "Tax Services", f_jobs: "Jobs",
+    f_beauty: "Beauty & Personal Care", f_education: "Education & Tutoring",
     loading: "Loading businesses…",
     empty_state: "No businesses match yet — be the first to add one in this category.",
     load_error: "Couldn't load businesses right now.",
@@ -1163,6 +1400,8 @@ const translations = {
     field_subcategory_legal: "Practice area",
     field_subcategory_translation: "Translation type",
     field_subcategory_tax: "Tax service type",
+    field_subcategory_beauty: "Service type",
+    field_subcategory_education: "Education type",
     select_subcategory: "Select an option",
     field_subcategory_filter: "Specialty / profession type",
     filter_category_label: "Category",
@@ -1191,6 +1430,7 @@ const translations = {
     subcat_apparel_other: "Other",
     subcat_prof_electrician: "Electrician",
     subcat_prof_plumber: "Plumber",
+    subcat_prof_general_labor: "General Worker / Laborer",
     subcat_prof_carpenter: "Carpenter",
     subcat_prof_painter: "Painter",
     subcat_prof_mechanic: "Mechanic",
@@ -1198,6 +1438,7 @@ const translations = {
     subcat_prof_cleaning: "Cleaning",
     subcat_prof_design: "Design",
     subcat_prof_tech: "Programming & Tech",
+    subcat_prof_hvac: "HVAC / Air Conditioning",
     subcat_prof_tutoring: "Private Tutoring",
     subcat_prof_photography: "Photography",
     subcat_prof_accounting: "Accounting",
@@ -1221,6 +1462,16 @@ const translations = {
     subcat_tax_business: "Business Taxes",
     subcat_tax_selfemployed: "Self-Employed Taxes",
     subcat_tax_other: "Other",
+    subcat_beauty_hair: "Hairstyling",
+    subcat_beauty_henna: "Henna",
+    subcat_beauty_skincare: "Skincare",
+    subcat_beauty_makeup: "Makeup",
+    subcat_beauty_other: "Other",
+    subcat_edu_quran: "Quran Memorization",
+    subcat_edu_vocational: "Vocational Training",
+    subcat_edu_general: "General Tutoring",
+    subcat_edu_arabic: "Arabic Language",
+    subcat_edu_other: "Other",
     field_city: "City", field_state: "State", select_state: "Select a state",
     field_sms: "Text (SMS) number — optional",
     field_call: "Phone number — optional",
@@ -1278,7 +1529,32 @@ const translations = {
     delete_account_success: "Your account has been deleted.",
     showing_mine_label: "Showing your businesses only",
     clear_filter: "Show all businesses",
-    member_prefix: "👤"
+    member_prefix: "👤",
+    drawer_jobs: "Job Opportunities",
+    jobs_page_title: "Job Opportunities",
+    jobs_intro: "Post that you're looking for work, or that you're looking to hire someone.",
+    job_filter_all: "All",
+    job_type_seeking: "Looking for work",
+    job_type_hiring: "Looking to hire",
+    job_post_btn: "Post",
+    job_modal_title: "Post a job",
+    field_job_title: "Title",
+    field_job_desc: "Description",
+    field_job_desc_ph: "Details about the role or the work you're looking for...",
+    field_job_specialty: "Specialty",
+    field_employment_type: "Employment type",
+    employment_any: "Not specified",
+    employment_fulltime: "Full-time",
+    employment_parttime: "Part-time",
+    job_publish_btn: "Post",
+    jobs_form_disclaimer: "Al Souq Al Arabi is a contact directory only and does not verify job postings or applicants.",
+    job_empty_state: "No job posts yet.",
+    job_mark_filled: "Mark as filled ✓",
+    job_reopen: "Reopen",
+    job_delete_btn: "Delete",
+    job_confirm_delete: "Delete this job post? This can't be undone.",
+    job_status_filled_label: "Filled",
+    job_owner_label: "Posted by:"
   }
 };
 
@@ -1341,7 +1617,9 @@ const CATEGORY_KEYS = {
   "Apparel & Accessories": "f_apparel",
   "Legal Services": "f_legal",
   "Legal Translation": "f_legal_translation",
-  "Tax Services": "f_tax"
+  "Tax Services": "f_tax",
+  "Beauty & Personal Care": "f_beauty",
+  "Education & Tutoring": "f_education"
 };
 const CATEGORY_GRADIENTS = {
   "Food & Baking": "linear-gradient(135deg,#D9A15C,#9C6A2E)",
@@ -1351,7 +1629,9 @@ const CATEGORY_GRADIENTS = {
   "Apparel & Accessories": "linear-gradient(135deg,#4E7590,#28404F)",
   "Legal Services": "linear-gradient(135deg,#6E7C99,#374057)",
   "Legal Translation": "linear-gradient(135deg,#C98849,#8A5427)",
-  "Tax Services": "linear-gradient(135deg,#7A9A6E,#455E3D)"
+  "Tax Services": "linear-gradient(135deg,#7A9A6E,#455E3D)",
+  "Beauty & Personal Care": "linear-gradient(135deg,#D08FA0,#8A4A5C)",
+  "Education & Tutoring": "linear-gradient(135deg,#5A87A3,#2E4A5C)"
 };
 
 const SUBCATEGORY_OPTIONS = {
@@ -1381,12 +1661,14 @@ const SUBCATEGORY_OPTIONS = {
   ],
   "Services": [
     { value: "Tech", key: "subcat_prof_tech" },
+    { value: "HVAC", key: "subcat_prof_hvac" },
     { value: "Tutoring", key: "subcat_prof_tutoring" },
     { value: "Design", key: "subcat_prof_design" },
     { value: "Photography", key: "subcat_prof_photography" },
     { value: "Cleaning", key: "subcat_prof_cleaning" },
     { value: "Painter", key: "subcat_prof_painter" },
     { value: "Plumber", key: "subcat_prof_plumber" },
+    { value: "GeneralLabor", key: "subcat_prof_general_labor" },
     { value: "Electrician", key: "subcat_prof_electrician" },
     { value: "Accounting", key: "subcat_prof_accounting" },
     { value: "Mechanic", key: "subcat_prof_mechanic" },
@@ -1418,6 +1700,20 @@ const SUBCATEGORY_OPTIONS = {
     { value: "BusinessTax", key: "subcat_tax_business" },
     { value: "SelfEmployedTax", key: "subcat_tax_selfemployed" },
     { value: "Other", key: "subcat_tax_other" }
+  ],
+  "Beauty & Personal Care": [
+    { value: "Hairstyling", key: "subcat_beauty_hair" },
+    { value: "Henna", key: "subcat_beauty_henna" },
+    { value: "Skincare", key: "subcat_beauty_skincare" },
+    { value: "Makeup", key: "subcat_beauty_makeup" },
+    { value: "Other", key: "subcat_beauty_other" }
+  ],
+  "Education & Tutoring": [
+    { value: "QuranMemorization", key: "subcat_edu_quran" },
+    { value: "VocationalTraining", key: "subcat_edu_vocational" },
+    { value: "GeneralTutoring", key: "subcat_edu_general" },
+    { value: "ArabicLanguage", key: "subcat_edu_arabic" },
+    { value: "Other", key: "subcat_edu_other" }
   ]
 };
 const SUBCATEGORY_LABEL_KEY = {
@@ -1427,7 +1723,9 @@ const SUBCATEGORY_LABEL_KEY = {
   "Services": "field_subcategory_profession",
   "Legal Services": "field_subcategory_legal",
   "Legal Translation": "field_subcategory_translation",
-  "Tax Services": "field_subcategory_tax"
+  "Tax Services": "field_subcategory_tax",
+  "Beauty & Personal Care": "field_subcategory_beauty",
+  "Education & Tutoring": "field_subcategory_education"
 };
 
 /* ---------------- DOM REFS ---------------- */
@@ -1490,6 +1788,28 @@ const detailCard = document.getElementById("detailCard");
 const backToBrowse = document.getElementById("backToBrowse");
 const logoHome = document.getElementById("logoHome");
 
+const jobsView = document.getElementById("jobsView");
+const jobsBackBtn = document.getElementById("jobsBackBtn");
+const jobList = document.getElementById("jobList");
+const addJobBtn = document.getElementById("addJobBtn");
+const jobSpecialtyFilterSelect = document.getElementById("jobSpecialtyFilterSelect");
+const jobStateFilterSelect = document.getElementById("jobStateFilterSelect");
+const jobModal = document.getElementById("jobModal");
+const jobModalTitle = document.getElementById("jobModalTitle");
+const closeJobModal = document.getElementById("closeJobModal");
+const jobForm = document.getElementById("jobForm");
+const jobError = document.getElementById("jobError");
+const jobSubmitBtn = jobForm.querySelector("button[type=submit]");
+const jobTitleInput = document.getElementById("jobTitle");
+const jobTitleLabel = document.getElementById("jobTitleLabel");
+const jobDescInput = document.getElementById("jobDesc");
+const jobSpecialtySelect = document.getElementById("jobSpecialty");
+const jobEmploymentTypeSelect = document.getElementById("jobEmploymentType");
+const jobCityInput = document.getElementById("jobCity");
+const jobStateSelect = document.getElementById("jobState");
+const jobTypeSeekingBtn = document.getElementById("jobTypeSeekingBtn");
+const jobTypeHiringBtn = document.getElementById("jobTypeHiringBtn");
+
 let currentScreen = "browse"; // "browse" | "category" | "detail"
 let detailReturnScreen = "browse";
 
@@ -1544,6 +1864,7 @@ function populateSubcategoryFilterOptions(category, keepValue) {
     // own list is already alphabetized internally.
     const CATEGORY_PRIORITY_ORDER = [
       "Services", "Legal Services", "Legal Translation", "Tax Services",
+      "Beauty & Personal Care", "Education & Tutoring",
       "Food & Baking", "Handmade Crafts", "Gifts", "Apparel & Accessories"
     ];
     const seen = new Set();
@@ -1588,6 +1909,9 @@ langToggle.addEventListener("click", () => {
   populateSubcategoryFilterOptions(activeCategory, true);
   renderGrid();
   if (!drawerOverlay.classList.contains("hidden")) renderDrawer();
+  if (typeof populateJobSpecialtySelects === "function") populateJobSpecialtySelects();
+  if (typeof populateJobStateFilterOptions === "function") populateJobStateFilterOptions();
+  if (!jobsView.classList.contains("hidden")) renderJobs();
 });
 
 /* ---------------- AUTH UI ---------------- */
@@ -1702,6 +2026,7 @@ function goHome() {
   populateSubcategoryFilterOptions("", false);
   detailView.classList.add("hidden");
   categoryView.classList.add("hidden");
+  jobsView.classList.add("hidden");
   currentScreen = "browse";
   browseView.classList.remove("hidden");
   document.querySelectorAll(".cat-tile").forEach(el => el.classList.toggle("active", el.dataset.cat === ""));
@@ -1713,6 +2038,7 @@ function goToMyBusinesses() {
   showOnlyMine = true;
   detailView.classList.add("hidden");
   categoryView.classList.add("hidden");
+  jobsView.classList.add("hidden");
   currentScreen = "browse";
   browseView.classList.remove("hidden");
   renderGrid();
@@ -1722,6 +2048,7 @@ function goToMyBusinesses() {
 function goToSearch() {
   detailView.classList.add("hidden");
   categoryView.classList.add("hidden");
+  jobsView.classList.add("hidden");
   currentScreen = "browse";
   browseView.classList.remove("hidden");
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1752,6 +2079,10 @@ function renderDrawer() {
     <button class="drawer-item" id="drawerSearch">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
       <span>${t("drawer_search")}</span>
+    </button>
+    <button class="drawer-item" id="drawerJobs">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/></svg>
+      <span>${t("drawer_jobs")}</span>
     </button>
     <button class="drawer-item" id="drawerTerms">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
@@ -1847,6 +2178,7 @@ function renderDrawer() {
   document.getElementById("drawerCloseBtn").addEventListener("click", closeDrawer);
   document.getElementById("drawerHome").addEventListener("click", () => { closeDrawer(); goHome(); });
   document.getElementById("drawerSearch").addEventListener("click", () => { closeDrawer(); goToSearch(); });
+  document.getElementById("drawerJobs").addEventListener("click", () => { closeDrawer(); goToJobs(); });
   document.getElementById("drawerTerms").addEventListener("click", () => { closeDrawer(); openInfoModal("terms_title", "terms_body"); });
   document.getElementById("drawerPrivacy").addEventListener("click", () => { closeDrawer(); openInfoModal("privacy_title", "privacy_body"); });
 }
@@ -2000,6 +2332,261 @@ businessForm.addEventListener("submit", async (e) => {
   }
 });
 
+/* ---------------- JOBS ---------------- */
+let allJobs = [];
+let activeJobTypeFilter = ""; // "" | "seeking" | "hiring"
+let currentJobFormType = "seeking";
+
+const JOB_CATEGORY_PRIORITY_ORDER = [
+  "Services", "Legal Services", "Legal Translation", "Tax Services",
+  "Beauty & Personal Care", "Education & Tutoring",
+  "Food & Baking", "Handmade Crafts", "Gifts", "Apparel & Accessories"
+];
+
+function getAllSpecialtyOptionsFlat() {
+  const seen = new Set();
+  const options = [];
+  JOB_CATEGORY_PRIORITY_ORDER.forEach(cat => {
+    (SUBCATEGORY_OPTIONS[cat] || []).forEach(o => {
+      if (!seen.has(o.value)) {
+        seen.add(o.value);
+        options.push(o);
+      }
+    });
+  });
+  return options;
+}
+
+function specialtyDisplayLabel(value) {
+  const found = getAllSpecialtyOptionsFlat().find(o => o.value === value);
+  return found ? t(found.key) : "";
+}
+
+function populateJobSpecialtySelects() {
+  const flat = getAllSpecialtyOptionsFlat();
+  const optionsHtml = flat.map(o => `<option value="${o.value}">${escapeHtml(t(o.key))}</option>`).join("");
+
+  const filterCurrentVal = jobSpecialtyFilterSelect.value;
+  jobSpecialtyFilterSelect.innerHTML = `<option value="">${t("subcat_filter_all")}</option>` + optionsHtml;
+  jobSpecialtyFilterSelect.value = filterCurrentVal;
+
+  const formCurrentVal = jobSpecialtySelect.value;
+  jobSpecialtySelect.innerHTML = `<option value="">${t("subcat_filter_all")}</option>` + optionsHtml;
+  jobSpecialtySelect.value = formCurrentVal;
+}
+
+function populateJobStateFilterOptions() {
+  const currentVal = jobStateFilterSelect.value;
+  const opts = Array.from(jobStateSelect.options)
+    .filter(o => o.value !== "")
+    .map(o => {
+      const key = o.getAttribute("data-t");
+      const label = key ? t(key) : o.textContent;
+      return `<option value="${o.value}">${escapeHtml(label)}</option>`;
+    })
+    .join("");
+  jobStateFilterSelect.innerHTML = `<option value="">${t("state_all")}</option>` + opts;
+  jobStateFilterSelect.value = currentVal;
+}
+
+populateJobSpecialtySelects();
+populateJobStateFilterOptions();
+
+function goToJobs() {
+  browseView.classList.add("hidden");
+  categoryView.classList.add("hidden");
+  detailView.classList.add("hidden");
+  jobsView.classList.remove("hidden");
+  currentScreen = "jobs";
+  renderJobs();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+function closeJobsView() {
+  jobsView.classList.add("hidden");
+  currentScreen = "browse";
+  browseView.classList.remove("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+jobsBackBtn.addEventListener("click", closeJobsView);
+
+document.querySelectorAll(".jobs-type-tabs [data-jobtype]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".jobs-type-tabs [data-jobtype]").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    activeJobTypeFilter = btn.dataset.jobtype;
+    renderJobs();
+  });
+});
+jobSpecialtyFilterSelect.addEventListener("change", renderJobs);
+jobStateFilterSelect.addEventListener("change", renderJobs);
+
+function renderJobs() {
+  const specialtyFilter = jobSpecialtyFilterSelect.value;
+  const stateFilter = jobStateFilterSelect.value;
+
+  const filtered = allJobs.filter(j => {
+    if (activeJobTypeFilter && j.type !== activeJobTypeFilter) return false;
+    if (specialtyFilter && j.specialty !== specialtyFilter) return false;
+    if (stateFilter && j.state !== stateFilter) return false;
+    return true;
+  });
+
+  if (!filtered.length) {
+    jobList.innerHTML = `<div class="empty-state">${t("job_empty_state")}</div>`;
+    return;
+  }
+
+  jobList.innerHTML = filtered.map(j => {
+    const isOwner = currentUser && currentUser.uid === j.ownerId;
+    const typeBadge = j.status === "filled"
+      ? `<span class="job-badge filled">${t("job_status_filled_label")}</span>`
+      : `<span class="job-badge ${j.type}">${t(j.type === "hiring" ? "job_type_hiring" : "job_type_seeking")}</span>`;
+    const specialtyLabel = j.specialty ? specialtyDisplayLabel(j.specialty) : "";
+    const employmentLabel = j.employmentType ? t(j.employmentType === "FullTime" ? "employment_fulltime" : "employment_parttime") : "";
+    const stateLabel = j.state ? t(stateKey(j.state)) : "";
+    const locationLabel = [j.city, stateLabel].filter(Boolean).join(", ");
+
+    const contactButtons = [];
+    if (j.contact?.sms) contactButtons.push(`<a class="contact-btn icon-sms" href="sms:${encodeURIComponent(j.contact.sms)}">${t("contact_sms")}</a>`);
+    if (j.contact?.call) contactButtons.push(`<a class="contact-btn icon-call" href="tel:${encodeURIComponent(j.contact.call)}">${t("contact_call")}</a>`);
+    if (j.contact?.whatsapp) {
+      const digits = j.contact.whatsapp.replace(/[^\d]/g, "");
+      contactButtons.push(`<a class="contact-btn icon-wa" target="_blank" rel="noopener" href="https://wa.me/${digits}">${t("contact_wa")}</a>`);
+    }
+    if (j.contact?.instagram) contactButtons.push(`<a class="contact-btn icon-insta" target="_blank" rel="noopener" href="https://instagram.com/${encodeURIComponent(j.contact.instagram)}">${t("contact_insta")}</a>`);
+
+    const ownerActionsHtml = isOwner ? `
+      <div class="job-owner-actions">
+        <button data-job-toggle="${j.id}" data-current-status="${j.status || "open"}">${j.status === "filled" ? t("job_reopen") : t("job_mark_filled")}</button>
+        <button class="delete-action" data-job-delete="${j.id}">${t("job_delete_btn")}</button>
+      </div>` : "";
+
+    return `
+      <div class="job-card">
+        <div class="job-card-top">
+          <span class="job-card-title">${escapeHtml(j.title)}</span>
+          ${typeBadge}
+        </div>
+        <div class="job-card-meta">
+          ${specialtyLabel ? `<span>${escapeHtml(specialtyLabel)}</span>` : ""}
+          ${employmentLabel ? `<span>${escapeHtml(employmentLabel)}</span>` : ""}
+          ${locationLabel ? `<span>📍 ${escapeHtml(locationLabel)}</span>` : ""}
+          <span>${t("job_owner_label")} ${escapeHtml(safeOwnerName(j.ownerName))}</span>
+        </div>
+        <p class="job-card-desc">${escapeHtml(j.description || "")}</p>
+        <div class="job-card-actions">${contactButtons.join("") || `<span style='opacity:0.5; font-size:13px;'>${t("no_contact")}</span>`}</div>
+        ${ownerActionsHtml}
+      </div>
+    `;
+  }).join("");
+
+  jobList.querySelectorAll("[data-job-toggle]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.dataset.jobToggle;
+      const newStatus = btn.dataset.currentStatus === "filled" ? "open" : "filled";
+      try {
+        await updateDoc(doc(db, "jobPosts", id), { status: newStatus });
+      } catch (err) {
+        console.error(err);
+      }
+    });
+  });
+  jobList.querySelectorAll("[data-job-delete]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      if (!confirm(t("job_confirm_delete"))) return;
+      try {
+        await deleteDoc(doc(db, "jobPosts", btn.dataset.jobDelete));
+      } catch (err) {
+        console.error(err);
+      }
+    });
+  });
+}
+
+const jobsQuery = query(collection(db, "jobPosts"), orderBy("createdAt", "desc"));
+onSnapshot(jobsQuery, (snapshot) => {
+  try {
+    allJobs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (!jobsView.classList.contains("hidden")) renderJobs();
+  } catch (err) {
+    console.error(err);
+  }
+}, (err) => {
+  jobList.innerHTML = `<div class="empty-state">${t("load_error")}</div>`;
+  console.error(err);
+});
+
+function setJobFormType(type) {
+  currentJobFormType = type;
+  jobTypeSeekingBtn.classList.toggle("active", type === "seeking");
+  jobTypeHiringBtn.classList.toggle("active", type === "hiring");
+  jobTitleInput.placeholder = type === "hiring" ? "Delivery driver" : "Delivery driver work wanted";
+}
+jobTypeSeekingBtn.addEventListener("click", () => setJobFormType("seeking"));
+jobTypeHiringBtn.addEventListener("click", () => setJobFormType("hiring"));
+
+function openJobModal() {
+  if (!currentUser) {
+    openAuthModal("login");
+    return;
+  }
+  jobError.classList.add("hidden");
+  jobForm.reset();
+  setJobFormType("seeking");
+  jobModalTitle.textContent = t("job_modal_title");
+  jobSubmitBtn.textContent = t("job_publish_btn");
+  jobModal.classList.remove("hidden");
+}
+addJobBtn.addEventListener("click", openJobModal);
+closeJobModal.addEventListener("click", () => jobModal.classList.add("hidden"));
+
+jobForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  jobError.classList.add("hidden");
+
+  const contact = {
+    sms: document.getElementById("jobSms").value.trim(),
+    call: document.getElementById("jobCall").value.trim(),
+    whatsapp: document.getElementById("jobWhatsapp").value.trim(),
+    instagram: document.getElementById("jobInsta").value.trim().replace(/^@/, "")
+  };
+
+  if (!contact.sms && !contact.call && !contact.whatsapp && !contact.instagram) {
+    jobError.textContent = t("biz_error_contact");
+    jobError.classList.remove("hidden");
+    return;
+  }
+
+  jobSubmitBtn.disabled = true;
+  const originalText = jobSubmitBtn.textContent;
+
+  try {
+    const data = {
+      type: currentJobFormType,
+      title: jobTitleInput.value.trim(),
+      description: jobDescInput.value.trim(),
+      specialty: jobSpecialtySelect.value,
+      employmentType: jobEmploymentTypeSelect.value,
+      city: jobCityInput.value.trim(),
+      state: jobStateSelect.value,
+      contact,
+      ownerId: currentUser.uid,
+      ownerName: currentUser.displayName || t("owner_generic"),
+      status: "open",
+      createdAt: serverTimestamp()
+    };
+    await addDoc(collection(db, "jobPosts"), data);
+    jobModal.classList.add("hidden");
+  } catch (err) {
+    jobError.textContent = t("biz_error_generic");
+    jobError.classList.remove("hidden");
+    console.error(err);
+  } finally {
+    jobSubmitBtn.disabled = false;
+    jobSubmitBtn.textContent = originalText;
+  }
+});
+
 /* ---------------- BROWSE / LISTING ---------------- */
 const businessesQuery = query(collection(db, "businesses"), orderBy("createdAt", "desc"));
 onSnapshot(businessesQuery, (snapshot) => {
@@ -2112,6 +2699,11 @@ stateSelect.addEventListener("change", renderGrid);
 catGrid.addEventListener("click", (e) => {
   const tile = e.target.closest(".cat-tile");
   if (!tile) return;
+  if (tile.dataset.jobs === "true") {
+    // "Jobs" tile: navigate to the dedicated jobs page instead of filtering businesses.
+    goToJobs();
+    return;
+  }
   document.querySelectorAll(".cat-tile").forEach(el => el.classList.remove("active"));
   tile.classList.add("active");
   const cat = tile.dataset.cat;
@@ -2489,6 +3081,7 @@ backToBrowse.addEventListener("click", () => {
 logoHome.addEventListener("click", () => {
   detailView.classList.add("hidden");
   categoryView.classList.add("hidden");
+  jobsView.classList.add("hidden");
   currentScreen = "browse";
   browseView.classList.remove("hidden");
 });
@@ -2622,6 +3215,8 @@ if (window.Capacitor && window.Capacitor.getPlatform && window.Capacitor.getPlat
       closeDrawer();
     } else if (!businessModal.classList.contains("hidden")) {
       businessModal.classList.add("hidden");
+    } else if (!jobModal.classList.contains("hidden")) {
+      jobModal.classList.add("hidden");
     } else if (!authModal.classList.contains("hidden")) {
       authModal.classList.add("hidden");
     } else if (!welcomeScreen.classList.contains("hidden")) {
@@ -2637,6 +3232,8 @@ if (window.Capacitor && window.Capacitor.getPlatform && window.Capacitor.getPlat
       }
     } else if (!categoryView.classList.contains("hidden")) {
       closeCategoryPage();
+    } else if (!jobsView.classList.contains("hidden")) {
+      closeJobsView();
     } else if (showOnlyMine) {
       showOnlyMine = false;
       renderGrid();
