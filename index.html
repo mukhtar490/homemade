@@ -181,6 +181,8 @@ html[dir="rtl"] .fab-add{padding:15px 18px 15px 22px;}
 .card:hover{transform:translateY(-4px); box-shadow:0 14px 28px rgba(33,31,26,0.12);}
 .card-media{height:130px; position:relative;}
 .card-tag{position:absolute; top:12px; inset-inline-start:12px; font-family:'IBM Plex Mono', monospace; font-size:11px; background:rgba(255,255,255,0.92); padding:4px 10px; border-radius:999px;}
+.featured-badge{position:absolute; top:12px; inset-inline-end:12px; font-size:11px; font-weight:700; background:linear-gradient(135deg,#E3A93C,#B4703A); color:#fff; padding:4px 10px; border-radius:999px; box-shadow:0 3px 8px rgba(180,112,58,0.35);}
+.featured-card{border-color:rgba(227,169,60,0.5); box-shadow:0 0 0 1px rgba(227,169,60,0.3), 0 10px 22px rgba(180,112,58,0.12);}
 .card-body{padding:16px 18px 18px; display:flex; flex-direction:column; gap:8px;}
 .card-title{font-size:16px; font-weight:700;}
 .card-owner{font-size:12px; opacity:0.6;}
@@ -288,6 +290,12 @@ html[dir="ltr"] .category-back{transform:scaleX(-1);}
 .owner-actions.admin-mode button{background:#fff; border-color:rgba(176,67,47,0.4); color:#7A2A1C;}
 .owner-actions.admin-mode .delete-action{background:var(--danger); color:#fff; border-color:var(--danger);}
 .admin-mode-label{font-size:11px; font-weight:700; color:#7A2A1C; width:100%; display:block; margin-bottom:2px;}
+.feature-toggle-row{margin-top:10px;}
+.feature-toggle-row .feature-btn, .feature-toggle-row .unfeature-btn{
+  font-size:13px; font-weight:700; padding:9px 16px; border-radius:10px; border:1px solid; cursor:pointer; width:100%;
+}
+.feature-toggle-row .feature-btn{background:linear-gradient(135deg,#E3A93C,#B4703A); color:#fff; border-color:#B4703A;}
+.feature-toggle-row .unfeature-btn{background:var(--card-bg); color:var(--ink); border-color:var(--line);}
 
 /* RATINGS */
 .rating-block{margin:6px 0 16px; display:flex; flex-direction:column; gap:12px;}
@@ -1082,6 +1090,9 @@ const translations = {
     nav_login: "تسجيل الدخول",
     admin_badge: "مسؤول 🛡️",
     admin_action_label: "تعديل إداري — هذا المحتوى ليس ملكك",
+    featured_badge: "⭐ مميز",
+    admin_feature_btn: "⭐ تثبيت في الأعلى",
+    admin_unfeature_btn: "إلغاء التثبيت",
     nav_add: "أضف مشروعك/مهنتك",
     eyebrow: "دليل الأعمال والخدمات العربية",
     welcome_headline: "تطبيق واحد لكل مشاريعك وخدماتك",
@@ -1209,6 +1220,7 @@ const translations = {
     subcat_prof_mechanic: "ميكانيكي",
     subcat_prof_truck_mechanic: "ميكانيكي شاحنات",
     subcat_prof_cleaning: "تنظيف",
+    subcat_prof_realestate: "خدمات عقارات",
     subcat_prof_design: "تصميم",
     subcat_prof_tech: "برمجة وتقنية",
     subcat_prof_hvac: "تبريد وتكييف",
@@ -1338,6 +1350,9 @@ const translations = {
     nav_login: "Log in",
     admin_badge: "Admin 🛡️",
     admin_action_label: "Admin action — this isn't your content",
+    featured_badge: "⭐ Featured",
+    admin_feature_btn: "⭐ Pin to top",
+    admin_unfeature_btn: "Unpin",
     nav_add: "Add your business/profession",
     eyebrow: "A directory of Arabic businesses & services",
     welcome_headline: "One app for all your businesses and services",
@@ -1465,6 +1480,7 @@ const translations = {
     subcat_prof_mechanic: "Mechanic",
     subcat_prof_truck_mechanic: "Truck Mechanic",
     subcat_prof_cleaning: "Cleaning",
+    subcat_prof_realestate: "Real Estate Services",
     subcat_prof_design: "Design",
     subcat_prof_tech: "Programming & Tech",
     subcat_prof_hvac: "HVAC / Air Conditioning",
@@ -1702,6 +1718,7 @@ const SUBCATEGORY_OPTIONS = {
     { value: "Design", key: "subcat_prof_design" },
     { value: "Photography", key: "subcat_prof_photography" },
     { value: "Cleaning", key: "subcat_prof_cleaning" },
+    { value: "RealEstate", key: "subcat_prof_realestate" },
     { value: "Painter", key: "subcat_prof_painter" },
     { value: "Dispatcher", key: "subcat_prof_dispatcher" },
     { value: "TruckDriver", key: "subcat_prof_truck_driver" },
@@ -2506,9 +2523,9 @@ function renderJobs() {
     if (j.contact?.call) contactButtons.push(`<a class="contact-btn icon-call" href="tel:${encodeURIComponent(j.contact.call)}">${t("contact_call")}</a>`);
     if (j.contact?.whatsapp) {
       const digits = j.contact.whatsapp.replace(/[^\d]/g, "");
-      contactButtons.push(`<a class="contact-btn icon-wa" target="_blank" rel="noopener" href="https://wa.me/${digits}">${t("contact_wa")}</a>`);
+      contactButtons.push(`<a class="contact-btn icon-wa" href="javascript:void(0)" data-external-url="https://wa.me/${digits}">${t("contact_wa")}</a>`);
     }
-    if (j.contact?.instagram) contactButtons.push(`<a class="contact-btn icon-insta" target="_blank" rel="noopener" href="https://instagram.com/${encodeURIComponent(j.contact.instagram)}">${t("contact_insta")}</a>`);
+    if (j.contact?.instagram) contactButtons.push(`<a class="contact-btn icon-insta" href="javascript:void(0)" data-external-url="https://instagram.com/${encodeURIComponent(j.contact.instagram)}">${t("contact_insta")}</a>`);
 
     const ownerActionsHtml = isOwner ? `
       <div class="job-owner-actions${isAdminAction ? " admin-mode" : ""}">
@@ -2664,6 +2681,25 @@ onSnapshot(businessesQuery, (snapshot) => {
   console.error(err);
 });
 
+// Featured/pinned businesses (admin-controlled) float to the top, most
+// recently featured first. Non-featured businesses keep their existing
+// relative order (which is createdAt desc, since that's how the Firestore
+// query is sorted) — Array.prototype.sort is stable in modern engines, so
+// returning 0 for that group preserves it without needing a composite index.
+function sortWithFeatured(list) {
+  return [...list].sort((a, b) => {
+    const af = a.featured ? 1 : 0;
+    const bf = b.featured ? 1 : 0;
+    if (af !== bf) return bf - af;
+    if (af && bf) {
+      const at = a.featuredAt?.seconds || 0;
+      const bt = b.featuredAt?.seconds || 0;
+      return bt - at;
+    }
+    return 0;
+  });
+}
+
 function renderGrid() {
   const searchTerm = searchInput.value.trim().toLowerCase();
   const stateFilter = stateSelect.value;
@@ -2671,7 +2707,7 @@ function renderGrid() {
   const cityFilter = cityFilterInput.value.trim().toLowerCase();
   const shipsOnly = shipsFilterCheckbox.checked;
 
-  const filtered = allBusinesses.filter(b => {
+  const filtered = sortWithFeatured(allBusinesses.filter(b => {
     if (showOnlyMine && (!currentUser || b.ownerId !== currentUser.uid)) return false;
     if (activeCategory && b.category !== activeCategory) return false;
     if (stateFilter && b.state !== stateFilter) return false;
@@ -2683,7 +2719,7 @@ function renderGrid() {
       if (!haystack.includes(searchTerm)) return false;
     }
     return true;
-  });
+  }));
 
   const bannerHtml = showOnlyMine
     ? `<div class="filter-banner">${t("showing_mine_label")} <span id="clearMineFilter">${t("clear_filter")}</span></div>`
@@ -2703,10 +2739,12 @@ function renderGrid() {
       ? `<span class="card-rating">★ ${b.ratingAvg.toFixed(1)} <span class="rc">(${b.ratingCount})</span></span>`
       : "";
     const shipsHtml = b.shipsAll ? `<span class="ships-badge">${t("ships_badge")}</span>` : "";
+    const featuredHtml = b.featured ? `<span class="featured-badge">${t("featured_badge")}</span>` : "";
     return `
-    <div class="card" data-id="${b.id}">
+    <div class="card${b.featured ? " featured-card" : ""}" data-id="${b.id}">
       <div class="card-media" style="${mediaStyle}">
         <span class="card-tag">${escapeHtml(t(CATEGORY_KEYS[b.category] || "f_services"))}</span>
+        ${featuredHtml}
       </div>
       <div class="card-body">
         <div class="card-title">${escapeHtml(b.name)}</div>
@@ -2789,7 +2827,7 @@ function openCategoryPage(cat) {
 }
 
 function renderCategoryList() {
-  const items = allBusinesses.filter(b => b.category === activeCategory);
+  const items = sortWithFeatured(allBusinesses.filter(b => b.category === activeCategory));
 
   if (items.length === 0) {
     categoryList.innerHTML = `<div class="empty-state">${t("empty_state")}</div>`;
@@ -3029,11 +3067,11 @@ function showDetail(id) {
     contactButtons.push(`<a class="contact-btn icon-call" href="tel:${encodeURIComponent(b.contact.call)}">${t("contact_call")}</a>`);
   }
   if (b.contact?.instagram) {
-    contactButtons.push(`<a class="contact-btn icon-insta" target="_blank" rel="noopener" href="https://instagram.com/${encodeURIComponent(b.contact.instagram)}">${t("contact_insta")}</a>`);
+    contactButtons.push(`<a class="contact-btn icon-insta" href="javascript:void(0)" data-external-url="https://instagram.com/${encodeURIComponent(b.contact.instagram)}">${t("contact_insta")}</a>`);
   }
   if (b.contact?.whatsapp) {
     const digits = b.contact.whatsapp.replace(/[^\d]/g, "");
-    contactButtons.push(`<a class="contact-btn icon-wa" target="_blank" rel="noopener" href="https://wa.me/${digits}">${t("contact_wa")}</a>`);
+    contactButtons.push(`<a class="contact-btn icon-wa" href="javascript:void(0)" data-external-url="https://wa.me/${digits}">${t("contact_wa")}</a>`);
   }
 
   const galleryHtml = (b.images && b.images.length)
@@ -3048,6 +3086,15 @@ function showDetail(id) {
          ${isAdminAction ? `<span class="admin-mode-label">${t("admin_action_label")}</span>` : ""}
          <button id="editBizBtn">${t("edit_btn")}</button>
          <button id="deleteBizBtn" class="delete-action">${t("delete_btn")}</button>
+       </div>`
+    : "";
+
+  const isAdmin = currentUser && currentUser.uid === ADMIN_UID;
+  const featureToggleHtml = isAdmin
+    ? `<div class="feature-toggle-row">
+         <button id="toggleFeaturedBtn" class="${b.featured ? "unfeature-btn" : "feature-btn"}">
+           ${b.featured ? t("admin_unfeature_btn") : t("admin_feature_btn")}
+         </button>
        </div>`
     : "";
 
@@ -3091,6 +3138,7 @@ function showDetail(id) {
     </div>
     <div class="contact-row">${contactButtons.join("") || `<span style='opacity:0.5; font-size:13px;'>${t("no_contact")}</span>`}</div>
     ${ownerActionsHtml}
+    ${featureToggleHtml}
     <p class="disclaimer">${t("disclaimer")}</p>
     ${galleryHtml}
     <div class="reviews-section">
@@ -3117,6 +3165,23 @@ function showDetail(id) {
         console.error(err);
       }
     });
+  }
+
+  if (isAdmin) {
+    const toggleBtn = document.getElementById("toggleFeaturedBtn");
+    if (toggleBtn) {
+      toggleBtn.addEventListener("click", async () => {
+        try {
+          if (b.featured) {
+            await updateDoc(doc(db, "businesses", b.id), { featured: false });
+          } else {
+            await updateDoc(doc(db, "businesses", b.id), { featured: true, featuredAt: serverTimestamp() });
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      });
+    }
   }
 
   browseView.classList.add("hidden");
@@ -3146,6 +3211,22 @@ logoHome.addEventListener("click", () => {
 });
 
 /* ---------------- UTIL ---------------- */
+// External links (Instagram, WhatsApp) must open in the device's system browser
+// rather than navigate inside the app's own WebView. Capacitor blocks in-webview
+// navigation to domains outside the app by default (resulting in a blank screen),
+// so these links are rendered as data-external-url buttons and opened here via
+// window.open(url, "_system") — the target Capacitor's core patches to launch
+// the external browser. This works both inside the native app and on the web
+// (where "_system" behaves like a normal new-tab open).
+document.addEventListener("click", (e) => {
+  const trigger = e.target.closest("[data-external-url]");
+  if (!trigger) return;
+  e.preventDefault();
+  const url = trigger.getAttribute("data-external-url");
+  if (!url) return;
+  window.open(url, "_system");
+});
+
 function escapeHtml(str) {
   if (!str) return "";
   return str.replace(/[&<>"']/g, m => ({
