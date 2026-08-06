@@ -374,6 +374,13 @@ input[type="file"]{font-family:'Tajawal', sans-serif; font-size:13px; padding:9p
   padding:11px 14px; border-radius:10px; border:1px solid var(--line); background:#fff; font-family:'Tajawal', sans-serif; font-size:14px;
 }
 .field textarea{resize:vertical; min-height:70px;}
+.ai-helper-btn{
+  align-self:flex-start; margin-top:2px; font-size:12.5px; font-weight:700; padding:8px 14px; border-radius:999px;
+  border:1px solid rgba(180,112,58,0.35); background:linear-gradient(135deg, rgba(227,169,60,0.14), rgba(180,112,58,0.14));
+  color:var(--wood); cursor:pointer;
+}
+.ai-helper-btn:disabled{opacity:0.6; cursor:default;}
+.ai-helper-hint{font-size:11px; opacity:0.55; margin-top:-2px;}
 .checkbox-row{display:flex; align-items:center; gap:8px; font-size:13px;}
 .modal-actions{display:flex; gap:10px; margin-top:18px;}
 .modal-close{position:absolute; top:18px; inset-inline-end:18px; cursor:pointer; opacity:0.5; font-size:20px; background:none; border:none;}
@@ -745,6 +752,8 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
       <div class="field">
         <label data-t="field_desc">Description</label>
         <textarea id="bizDesc" required data-t-placeholder="field_desc_ph" placeholder="What do you make or offer?"></textarea>
+        <button type="button" class="ai-helper-btn" id="aiDescHelperBtn" data-t="ai_helper_btn">✨ Help me write this</button>
+        <p class="ai-helper-hint" data-t="ai_helper_hint">Write a few rough words above, then tap the button to polish them with AI.</p>
       </div>
       <div class="field">
         <label data-t="field_category">Category</label>
@@ -1039,6 +1048,15 @@ import {
   uploadBytes,
   getDownloadURL
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-storage.js";
+import {
+  initializeAppCheck,
+  ReCaptchaV3Provider
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app-check.js";
+import {
+  getAI,
+  getGenerativeModel,
+  GoogleAIBackend
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-ai.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAoKzoPNe3rUDyNvSDjAxg4VOW6PH2kJR4",
@@ -1050,10 +1068,17 @@ const firebaseConfig = {
   measurementId: "G-8D128M6D63"
 };
 
-let app, auth, db, storage;
+let app, auth, db, storage, aiModel;
 
 try {
   app = initializeApp(firebaseConfig);
+
+  // Firebase App Check protects the Gemini API (via AI Logic) from abuse.
+  // reCAPTCHA v3 runs invisibly in the background — no user-facing challenge.
+  initializeAppCheck(app, {
+    provider: new ReCaptchaV3Provider("6LeQo3gtAAAAAJBWvHXU8l-S7IxZxTGSBum7Bmnq"),
+    isTokenAutoRefreshEnabled: true
+  });
 
   auth = getAuth(app);
   // Explicit, minimal Firestore setup: memory-only cache (no IndexedDB) and
@@ -1064,6 +1089,15 @@ try {
     experimentalForceLongPolling: true
   });
   storage = getStorage(app);
+
+  // Firebase AI Logic (Gemini) — powers the "help me write this" description
+  // assistant in the Add Business form.
+  try {
+    const ai = getAI(app, { backend: new GoogleAIBackend() });
+    aiModel = getGenerativeModel(ai, { model: "gemini-3.5-flash" });
+  } catch (aiErr) {
+    console.warn("Firebase AI Logic init failed (AI helper will be unavailable):", aiErr);
+  }
 
   // WKWebView (iOS, especially the Simulator) has a known-buggy IndexedDB
   // implementation that can crash Firebase Auth's default persistence layer
@@ -1173,6 +1207,11 @@ const translations = {
     auth_submit_login: "تسجيل الدخول", auth_submit_signup: "إنشاء الحساب",
     field_name: "الاسم", field_email: "البريد الإلكتروني", field_password: "كلمة المرور",
     field_bizname: "اسم المشروع", field_desc: "الوصف", field_desc_ph: "ما الذي تقدّمه أو تصنعه؟",
+    ai_helper_btn: "✨ ساعدني أكتب الوصف",
+    ai_helper_hint: "اكتب كام كلمة بسيطة فوق، وبعدين دوس الزرار عشان الذكاء الاصطناعي يصيغها بشكل احترافي.",
+    ai_generating: "جارٍ الكتابة…",
+    ai_empty_input: "اكتب كام كلمة عن مشروعك الأول في الحقل فوق.",
+    ai_error: "تعذّر إنشاء الوصف حاليًا. يُرجى المحاولة مرة أخرى.",
     field_logo: "الشعار — اختياري", field_gallery: "صور المشروع — اختياري (حتى 4 صور)",
     field_category: "التصنيف", select_category: "اختر تصنيفًا",
     field_subcategory_food: "نوع المطبخ",
@@ -1433,6 +1472,11 @@ const translations = {
     auth_submit_login: "Log in", auth_submit_signup: "Create account",
     field_name: "Your name", field_email: "Email", field_password: "Password",
     field_bizname: "Business name", field_desc: "Description", field_desc_ph: "What do you make or offer?",
+    ai_helper_btn: "✨ Help me write this",
+    ai_helper_hint: "Jot a few rough words above, then tap the button to have AI polish them.",
+    ai_generating: "Writing…",
+    ai_empty_input: "Write a few words about your business first.",
+    ai_error: "Couldn't generate a description right now. Please try again.",
     field_logo: "Logo — optional", field_gallery: "Photos — optional (up to 4)",
     field_category: "Category", select_category: "Select a category",
     field_subcategory_food: "Cuisine type",
@@ -1811,6 +1855,7 @@ const closeBusinessModal = document.getElementById("closeBusinessModal");
 const businessForm = document.getElementById("businessForm");
 const bizError = document.getElementById("bizError");
 const bizSubmitBtn = businessForm.querySelector("button[type=submit]");
+const aiDescHelperBtn = document.getElementById("aiDescHelperBtn");
 
 const bizLogoInput = document.getElementById("bizLogo");
 const bizCategorySelect = document.getElementById("bizCategory");
@@ -2325,6 +2370,46 @@ async function uploadImage(file, pathPrefix) {
   await uploadBytes(storageRef, file);
   return getDownloadURL(storageRef);
 }
+
+/* ---------------- AI DESCRIPTION HELPER (Gemini via Firebase AI Logic) ---------------- */
+aiDescHelperBtn.addEventListener("click", async () => {
+  const bizDescInput = document.getElementById("bizDesc");
+  const roughInput = bizDescInput.value.trim();
+  if (!roughInput) {
+    alert(t("ai_empty_input"));
+    return;
+  }
+  if (!aiModel) {
+    alert(t("ai_error"));
+    return;
+  }
+
+  const originalLabel = aiDescHelperBtn.textContent;
+  aiDescHelperBtn.disabled = true;
+  aiDescHelperBtn.textContent = t("ai_generating");
+
+  try {
+    const name = document.getElementById("bizName").value.trim();
+    const categoryLabel = t(CATEGORY_KEYS[bizCategorySelect.value] || "");
+    const prompt = `You are helping a small business owner write a short, polished listing description for a community business directory app (similar in spirit to a local classifieds/yellow-pages app).
+
+Business name: ${name || "(not provided)"}
+Category: ${categoryLabel || "(not provided)"}
+Owner's rough notes: "${roughInput}"
+
+Rewrite the owner's rough notes into a polished, warm, professional description, 2 to 4 sentences long. Write it in the SAME language as the owner's notes (Arabic or English — detect automatically from the notes). Do not invent facts, credentials, years of experience, awards, or any claim not present in the notes. Output ONLY the description text itself — no quotation marks, no labels, no extra commentary.`;
+
+    const result = await aiModel.generateContent(prompt);
+    const text = result.response.text().trim();
+    if (text) bizDescInput.value = text;
+  } catch (err) {
+    console.error(err);
+    alert(t("ai_error"));
+  } finally {
+    aiDescHelperBtn.disabled = false;
+    aiDescHelperBtn.textContent = originalLabel;
+  }
+});
 
 businessForm.addEventListener("submit", async (e) => {
   e.preventDefault();
