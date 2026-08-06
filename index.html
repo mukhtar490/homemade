@@ -888,6 +888,9 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
           <option value="" data-t="employment_any">Not specified</option>
           <option value="FullTime" data-t="employment_fulltime">Full-time</option>
           <option value="PartTime" data-t="employment_parttime">Part-time</option>
+          <option value="CompanyDriver" data-t="employment_company_driver">Company Driver</option>
+          <option value="OwnerOperator" data-t="employment_owner_operator">Owner Operator</option>
+          <option value="LeasePurchase" data-t="employment_lease_purchase">Lease Purchase</option>
         </select>
       </div>
       <div class="field">
@@ -1201,6 +1204,8 @@ const translations = {
     subcat_prof_general_labor: "عامل عام",
     subcat_prof_carpenter: "نجار",
     subcat_prof_painter: "دهان",
+    subcat_prof_dispatcher: "ديسباتشر",
+    subcat_prof_truck_driver: "سائق شاحنة",
     subcat_prof_mechanic: "ميكانيكي",
     subcat_prof_truck_mechanic: "ميكانيكي شاحنات",
     subcat_prof_cleaning: "تنظيف",
@@ -1314,6 +1319,9 @@ const translations = {
     employment_any: "غير محدد",
     employment_fulltime: "دوام كامل",
     employment_parttime: "دوام جزئي",
+    employment_company_driver: "سائق شركة",
+    employment_owner_operator: "سائق مستقل (أوونر أوبريتور)",
+    employment_lease_purchase: "ليز-تو-بيرتشيس",
     job_publish_btn: "نشر",
     jobs_form_disclaimer: "السوق العربي دليل تواصل فقط، ولا يتحقق من صحة إعلانات الوظائف أو المتقدمين.",
     job_empty_state: "لا توجد إعلانات بعد.",
@@ -1452,6 +1460,8 @@ const translations = {
     subcat_prof_general_labor: "General Worker / Laborer",
     subcat_prof_carpenter: "Carpenter",
     subcat_prof_painter: "Painter",
+    subcat_prof_dispatcher: "Dispatcher",
+    subcat_prof_truck_driver: "Truck Driver",
     subcat_prof_mechanic: "Mechanic",
     subcat_prof_truck_mechanic: "Truck Mechanic",
     subcat_prof_cleaning: "Cleaning",
@@ -1565,6 +1575,9 @@ const translations = {
     employment_any: "Not specified",
     employment_fulltime: "Full-time",
     employment_parttime: "Part-time",
+    employment_company_driver: "Company Driver",
+    employment_owner_operator: "Owner Operator",
+    employment_lease_purchase: "Lease Purchase",
     job_publish_btn: "Post",
     jobs_form_disclaimer: "Al Souq Al Arabi is a contact directory only and does not verify job postings or applicants.",
     job_empty_state: "No job posts yet.",
@@ -1690,6 +1703,8 @@ const SUBCATEGORY_OPTIONS = {
     { value: "Photography", key: "subcat_prof_photography" },
     { value: "Cleaning", key: "subcat_prof_cleaning" },
     { value: "Painter", key: "subcat_prof_painter" },
+    { value: "Dispatcher", key: "subcat_prof_dispatcher" },
+    { value: "TruckDriver", key: "subcat_prof_truck_driver" },
     { value: "Plumber", key: "subcat_prof_plumber" },
     { value: "GeneralLabor", key: "subcat_prof_general_labor" },
     { value: "Electrician", key: "subcat_prof_electrician" },
@@ -2373,6 +2388,13 @@ const JOB_CATEGORY_PRIORITY_ORDER = [
   "Beauty & Personal Care", "Education & Tutoring",
   "Food & Baking", "Handmade Crafts", "Gifts", "Apparel & Accessories"
 ];
+const EMPLOYMENT_TYPE_KEYS = {
+  FullTime: "employment_fulltime",
+  PartTime: "employment_parttime",
+  CompanyDriver: "employment_company_driver",
+  OwnerOperator: "employment_owner_operator",
+  LeasePurchase: "employment_lease_purchase"
+};
 
 function getAllSpecialtyOptionsFlat() {
   const seen = new Set();
@@ -2475,7 +2497,7 @@ function renderJobs() {
       ? `<span class="job-badge filled">${t("job_status_filled_label")}</span>`
       : `<span class="job-badge ${j.type}">${t(j.type === "hiring" ? "job_type_hiring" : "job_type_seeking")}</span>`;
     const specialtyLabel = j.specialty ? specialtyDisplayLabel(j.specialty) : "";
-    const employmentLabel = j.employmentType ? t(j.employmentType === "FullTime" ? "employment_fulltime" : "employment_parttime") : "";
+    const employmentLabel = j.employmentType ? t(EMPLOYMENT_TYPE_KEYS[j.employmentType] || "employment_any") : "";
     const stateLabel = j.state ? t(stateKey(j.state)) : "";
     const locationLabel = [j.city, stateLabel].filter(Boolean).join(", ");
 
