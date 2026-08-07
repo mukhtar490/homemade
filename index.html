@@ -339,6 +339,7 @@ html[dir="ltr"] .category-back{transform:scaleX(-1);}
 .job-badge.seeking{background:rgba(92,110,78,0.14); color:var(--sage);}
 .job-badge.hiring{background:rgba(180,112,58,0.14); color:var(--wood);}
 .job-badge.filled{background:rgba(176,67,47,0.12); color:var(--danger);}
+.job-badge.reach{background:rgba(92,110,78,0.14); color:var(--sage);}
 .job-card-meta{font-size:12px; opacity:0.6; margin-bottom:10px; display:flex; gap:10px; flex-wrap:wrap;}
 .job-card-desc{font-size:13.5px; line-height:1.6; opacity:0.85; margin-bottom:14px; white-space:pre-wrap;}
 .job-card-actions{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
@@ -552,8 +553,6 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
         <label data-t="field_state">State</label>
         <select class="state-select" id="stateSelect">
           <option value="" data-t="state_all">All States</option>
-          <option value="Online" data-t="state_online">🌐 Online</option>
-          <option value="Nationwide" data-t="state_nationwide">Nationwide (All States)</option>
           <option value="Alabama" data-t="state_al">Alabama</option>
           <option value="Alaska" data-t="state_ak">Alaska</option>
           <option value="Arizona" data-t="state_az">Arizona</option>
@@ -620,6 +619,20 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
       </label>
     </div>
 
+    <div class="field">
+      <label class="checkbox-row">
+        <input type="checkbox" id="onlineFilterCheckbox">
+        <span data-t="online_filter_label">🌐 Also offers this service online</span>
+      </label>
+    </div>
+
+    <div class="field">
+      <label class="checkbox-row">
+        <input type="checkbox" id="nationwideFilterCheckbox">
+        <span data-t="nationwide_filter_label">Also available nationwide</span>
+      </label>
+    </div>
+
     <div class="grid" id="businessGrid">
       <div class="loading-text" data-t="loading">Loading businesses…</div>
     </div>
@@ -670,6 +683,20 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
           <option value="" data-t="state_all">All States</option>
         </select>
       </div>
+    </div>
+
+    <div class="field">
+      <label class="checkbox-row">
+        <input type="checkbox" id="jobOnlineFilterCheckbox">
+        <span data-t="online_filter_label">🌐 Also offers this service online</span>
+      </label>
+    </div>
+
+    <div class="field">
+      <label class="checkbox-row">
+        <input type="checkbox" id="jobNationwideFilterCheckbox">
+        <span data-t="nationwide_filter_label">Also available nationwide</span>
+      </label>
     </div>
 
     <div class="job-list" id="jobList">
@@ -796,8 +823,6 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
         <label data-t="field_state">State</label>
         <select id="bizState" required>
           <option value="" data-t="select_state">Select a state</option>
-          <option value="Online" data-t="state_online">🌐 Online</option>
-          <option value="Nationwide" data-t="state_nationwide">Nationwide (All States)</option>
           <option value="Alabama" data-t="state_al">Alabama</option>
           <option value="Alaska" data-t="state_ak">Alaska</option>
           <option value="Arizona" data-t="state_az">Arizona</option>
@@ -878,6 +903,18 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
           <span data-t="ships_all_label">Ships to all US states &amp; Canada</span>
         </label>
       </div>
+      <div class="field">
+        <label class="checkbox-row">
+          <input type="checkbox" id="bizIsOnline">
+          <span data-t="is_online_label">🌐 Also offers this service online</span>
+        </label>
+      </div>
+      <div class="field">
+        <label class="checkbox-row">
+          <input type="checkbox" id="bizIsNationwide">
+          <span data-t="is_nationwide_label">Also available nationwide (all US states)</span>
+        </label>
+      </div>
       <div class="form-error hidden" id="bizError"></div>
       <div class="modal-actions">
         <button type="submit" class="btn btn-primary" style="flex:1;" data-t="publish_btn">Publish business</button>
@@ -929,8 +966,6 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
         <label data-t="field_state">State</label>
         <select id="jobState" required>
           <option value="" data-t="select_state">Select a state</option>
-          <option value="Online" data-t="state_online">🌐 Online</option>
-          <option value="Nationwide" data-t="state_nationwide">Nationwide (All States)</option>
           <option value="Alabama" data-t="state_al">Alabama</option>
           <option value="Alaska" data-t="state_ak">Alaska</option>
           <option value="Arizona" data-t="state_az">Arizona</option>
@@ -982,6 +1017,18 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
           <option value="Wisconsin" data-t="state_wi">Wisconsin</option>
           <option value="Wyoming" data-t="state_wy">Wyoming</option>
         </select>
+      </div>
+      <div class="field">
+        <label class="checkbox-row">
+          <input type="checkbox" id="jobIsOnline">
+          <span data-t="is_online_label">🌐 Also offers this service online</span>
+        </label>
+      </div>
+      <div class="field">
+        <label class="checkbox-row">
+          <input type="checkbox" id="jobIsNationwide">
+          <span data-t="is_nationwide_label">Also available nationwide (all US states)</span>
+        </label>
       </div>
       <div class="field">
         <label data-t="field_sms">Text (SMS) number — optional</label>
@@ -1322,6 +1369,10 @@ const translations = {
     show_owner_photo_label: "إظهار صورتي الشخصية بجانب اسمي في صفحة المشروع",
     ships_all_label: "متوفر شحن أمريكا وكندا",
     ships_filter_label: "متوفر شحن أمريكا وكندا فقط",
+    is_online_label: "🌐 يقدَّم هذا كخدمة أونلاين أيضًا",
+    is_nationwide_label: "متوفر أيضًا في جميع الولايات",
+    online_filter_label: "🌐 يقدَّم أونلاين أيضًا",
+    nationwide_filter_label: "متوفر في جميع الولايات أيضًا",
     ships_badge: "📦 متوفر شحن أمريكا وكندا",
     biz_error_contact: "يُرجى إضافة وسيلة تواصل واحدة على الأقل.",
     biz_error_generic: "تعذّر نشر المشروع. يُرجى المحاولة مرة أخرى.",
@@ -1593,6 +1644,10 @@ const translations = {
     show_owner_photo_label: "Show my personal photo next to my name",
     ships_all_label: "US & Canada shipping available",
     ships_filter_label: "US & Canada shipping available only",
+    is_online_label: "🌐 Also offers this service online",
+    is_nationwide_label: "Also available nationwide (all US states)",
+    online_filter_label: "🌐 Also offers this service online",
+    nationwide_filter_label: "Also available nationwide",
     ships_badge: "📦 US & Canada shipping available",
     biz_error_contact: "Please add at least one way for people to reach you.",
     biz_error_generic: "Couldn't publish your business. Please try again.",
@@ -1888,6 +1943,8 @@ const bizSubcategorySelect = document.getElementById("bizSubcategory");
 const bizGalleryInput = document.getElementById("bizGallery");
 const bizShowOwnerPhoto = document.getElementById("bizShowOwnerPhoto");
 const bizShipsAll = document.getElementById("bizShipsAll");
+const bizIsOnline = document.getElementById("bizIsOnline");
+const bizIsNationwide = document.getElementById("bizIsNationwide");
 const logoPreviewWrap = document.getElementById("logoPreviewWrap");
 const galleryPreviewWrap = document.getElementById("galleryPreviewWrap");
 
@@ -1899,6 +1956,8 @@ const stateSelect = document.getElementById("stateSelect");
 const subcategoryFilterSelect = document.getElementById("subcategoryFilterSelect");
 const cityFilterInput = document.getElementById("cityFilterInput");
 const shipsFilterCheckbox = document.getElementById("shipsFilterCheckbox");
+const onlineFilterCheckbox = document.getElementById("onlineFilterCheckbox");
+const nationwideFilterCheckbox = document.getElementById("nationwideFilterCheckbox");
 const catGrid = document.getElementById("catGrid");
 const businessGrid = document.getElementById("businessGrid");
 
@@ -1920,6 +1979,8 @@ const jobList = document.getElementById("jobList");
 const addJobBtn = document.getElementById("addJobBtn");
 const jobSpecialtyFilterSelect = document.getElementById("jobSpecialtyFilterSelect");
 const jobStateFilterSelect = document.getElementById("jobStateFilterSelect");
+const jobOnlineFilterCheckbox = document.getElementById("jobOnlineFilterCheckbox");
+const jobNationwideFilterCheckbox = document.getElementById("jobNationwideFilterCheckbox");
 const jobModal = document.getElementById("jobModal");
 const jobModalTitle = document.getElementById("jobModalTitle");
 const closeJobModal = document.getElementById("closeJobModal");
@@ -1933,6 +1994,8 @@ const jobSpecialtySelect = document.getElementById("jobSpecialty");
 const jobEmploymentTypeSelect = document.getElementById("jobEmploymentType");
 const jobCityInput = document.getElementById("jobCity");
 const jobStateSelect = document.getElementById("jobState");
+const jobIsOnline = document.getElementById("jobIsOnline");
+const jobIsNationwide = document.getElementById("jobIsNationwide");
 const jobTypeSeekingBtn = document.getElementById("jobTypeSeekingBtn");
 const jobTypeHiringBtn = document.getElementById("jobTypeHiringBtn");
 
@@ -1975,9 +2038,6 @@ function updateSubcategoryField(selectedCategory, presetValue) {
 }
 const bizStateSelect = document.getElementById("bizState");
 bizCategorySelect.addEventListener("change", () => updateSubcategoryField(bizCategorySelect.value, ""));
-bizStateSelect.addEventListener("change", () => {
-  document.getElementById("bizCity").required = bizStateSelect.value !== "Online" && bizStateSelect.value !== "Nationwide";
-});
 
 function populateSubcategoryFilterOptions(category, keepValue) {
   const currentVal = keepValue ? subcategoryFilterSelect.value : "";
@@ -2028,6 +2088,8 @@ categoryFilterSelect.addEventListener("change", () => {
 subcategoryFilterSelect.addEventListener("change", renderGrid);
 cityFilterInput.addEventListener("input", renderGrid);
 shipsFilterCheckbox.addEventListener("change", renderGrid);
+onlineFilterCheckbox.addEventListener("change", renderGrid);
+nationwideFilterCheckbox.addEventListener("change", renderGrid);
 
 /* ---------------- LANGUAGE TOGGLE ---------------- */
 langToggle.addEventListener("click", () => {
@@ -2341,13 +2403,14 @@ function openBusinessModal(business = null) {
     document.getElementById("bizCategory").value = business.category || "";
     document.getElementById("bizCity").value = business.city || "";
     document.getElementById("bizState").value = business.state || "";
-    document.getElementById("bizCity").required = business.state !== "Online" && business.state !== "Nationwide";
     document.getElementById("bizSms").value = business.contact?.sms || "";
     document.getElementById("bizCall").value = business.contact?.call || "";
     document.getElementById("bizInsta").value = business.contact?.instagram || "";
     document.getElementById("bizWhatsapp").value = business.contact?.whatsapp || "";
     bizShowOwnerPhoto.checked = !!business.showOwnerPhoto;
     bizShipsAll.checked = !!business.shipsAll;
+    bizIsOnline.checked = !!business.isOnline;
+    bizIsNationwide.checked = !!business.isNationwide;
     updateSubcategoryField(business.category || "", business.subcategory || "");
 
     if (existingLogoUrl) {
@@ -2479,12 +2542,13 @@ Available categories and their specialty values:
 ${categoryLines}
 
 Available state values (use exact spelling): ${stateLines}
-Also allowed for state: "Online" (remote/no physical location) and "Nationwide" (serves all US states).
+
+Separately from state, the user might mention that they want a business that also serves customers online (remotely) or nationwide (across all US states) — these are independent yes/no flags, not state values.
 
 User's search sentence: "${query}"
 
 Return ONLY a JSON object with this exact shape, no markdown, no commentary:
-{"category": "<one exact category value from the list above, or empty string if unclear>", "subcategory": "<one exact specialty value belonging to that category, or empty string>", "state": "<one exact state value from the list above, or empty string if not mentioned>", "city": "<city name as plain text if mentioned, or empty string>"}
+{"category": "<one exact category value from the list above, or empty string if unclear>", "subcategory": "<one exact specialty value belonging to that category, or empty string>", "state": "<one exact state value from the list above, or empty string if not mentioned>", "city": "<city name as plain text if mentioned, or empty string>", "online": <true if the user explicitly wants an online/remote service, otherwise false>, "nationwide": <true if the user explicitly wants a business available nationwide, otherwise false>}
 
 If the sentence doesn't clearly map to a category or state, leave that field as an empty string rather than guessing.`;
 
@@ -2503,6 +2567,8 @@ If the sentence doesn't clearly map to a category or state, leave that field as 
     populateSubcategoryFilterOptions("", false);
     stateSelect.value = "";
     cityFilterInput.value = "";
+    onlineFilterCheckbox.checked = false;
+    nationwideFilterCheckbox.checked = false;
 
     let applied = false;
 
@@ -2526,6 +2592,16 @@ If the sentence doesn't clearly map to a category or state, leave that field as 
 
     if (parsed.city) {
       cityFilterInput.value = parsed.city;
+      applied = true;
+    }
+
+    if (parsed.online === true) {
+      onlineFilterCheckbox.checked = true;
+      applied = true;
+    }
+
+    if (parsed.nationwide === true) {
+      nationwideFilterCheckbox.checked = true;
       applied = true;
     }
 
@@ -2597,6 +2673,8 @@ businessForm.addEventListener("submit", async (e) => {
       images,
       showOwnerPhoto: bizShowOwnerPhoto.checked,
       shipsAll: bizShipsAll.checked,
+      isOnline: bizIsOnline.checked,
+      isNationwide: bizIsNationwide.checked,
       ownerPhotoURL: editingBusinessId ? editingBusinessOwnerPhotoURL : (currentUser.photoURL || "")
     };
 
@@ -2713,15 +2791,21 @@ document.querySelectorAll(".jobs-type-tabs [data-jobtype]").forEach(btn => {
 });
 jobSpecialtyFilterSelect.addEventListener("change", renderJobs);
 jobStateFilterSelect.addEventListener("change", renderJobs);
+jobOnlineFilterCheckbox.addEventListener("change", renderJobs);
+jobNationwideFilterCheckbox.addEventListener("change", renderJobs);
 
 function renderJobs() {
   const specialtyFilter = jobSpecialtyFilterSelect.value;
   const stateFilter = jobStateFilterSelect.value;
+  const onlineOnly = jobOnlineFilterCheckbox.checked;
+  const nationwideOnly = jobNationwideFilterCheckbox.checked;
 
   const filtered = allJobs.filter(j => {
     if (activeJobTypeFilter && j.type !== activeJobTypeFilter) return false;
     if (specialtyFilter && j.specialty !== specialtyFilter) return false;
     if (stateFilter && j.state !== stateFilter) return false;
+    if (onlineOnly && !j.isOnline) return false;
+    if (nationwideOnly && !j.isNationwide) return false;
     return true;
   });
 
@@ -2741,6 +2825,10 @@ function renderJobs() {
     const employmentLabel = j.employmentType ? t(EMPLOYMENT_TYPE_KEYS[j.employmentType] || "employment_any") : "";
     const stateLabel = j.state ? t(stateKey(j.state)) : "";
     const locationLabel = [j.city, stateLabel].filter(Boolean).join(", ");
+    const reachBadges = [
+      j.isOnline ? `<span class="job-badge reach">${t("online_filter_label")}</span>` : "",
+      j.isNationwide ? `<span class="job-badge reach">${t("nationwide_filter_label")}</span>` : ""
+    ].join("");
 
     const contactButtons = [];
     if (j.contact?.sms) contactButtons.push(`<a class="contact-btn icon-sms" href="sms:${encodeURIComponent(j.contact.sms)}">${t("contact_sms")}</a>`);
@@ -2768,6 +2856,7 @@ function renderJobs() {
           ${specialtyLabel ? `<span>${escapeHtml(specialtyLabel)}</span>` : ""}
           ${employmentLabel ? `<span>${escapeHtml(employmentLabel)}</span>` : ""}
           ${locationLabel ? `<span>📍 ${escapeHtml(locationLabel)}</span>` : ""}
+          ${reachBadges}
           <span>${t("job_owner_label")} ${escapeHtml(safeOwnerName(j.ownerName))}</span>
         </div>
         <p class="job-card-desc">${escapeHtml(j.description || "")}</p>
@@ -2866,6 +2955,8 @@ jobForm.addEventListener("submit", async (e) => {
       employmentType: jobEmploymentTypeSelect.value,
       city: jobCityInput.value.trim(),
       state: jobStateSelect.value,
+      isOnline: jobIsOnline.checked,
+      isNationwide: jobIsNationwide.checked,
       contact,
       ownerId: currentUser.uid,
       ownerName: currentUser.displayName || t("owner_generic"),
@@ -2930,6 +3021,8 @@ function renderGrid() {
   const subcategoryFilter = subcategoryFilterSelect.value;
   const cityFilter = cityFilterInput.value.trim().toLowerCase();
   const shipsOnly = shipsFilterCheckbox.checked;
+  const onlineOnly = onlineFilterCheckbox.checked;
+  const nationwideOnly = nationwideFilterCheckbox.checked;
 
   const filtered = sortWithFeatured(allBusinesses.filter(b => {
     if (showOnlyMine && (!currentUser || b.ownerId !== currentUser.uid)) return false;
@@ -2938,6 +3031,8 @@ function renderGrid() {
     if (subcategoryFilter && b.subcategory !== subcategoryFilter) return false;
     if (cityFilter && !(b.city || "").toLowerCase().includes(cityFilter)) return false;
     if (shipsOnly && !b.shipsAll) return false;
+    if (onlineOnly && !b.isOnline) return false;
+    if (nationwideOnly && !b.isNationwide) return false;
     if (searchTerm) {
       const haystack = `${b.name} ${b.city}`.toLowerCase();
       if (!haystack.includes(searchTerm)) return false;
@@ -2963,6 +3058,10 @@ function renderGrid() {
       ? `<span class="card-rating">★ ${b.ratingAvg.toFixed(1)} <span class="rc">(${b.ratingCount})</span></span>`
       : "";
     const shipsHtml = b.shipsAll ? `<span class="ships-badge">${t("ships_badge")}</span>` : "";
+    const reachHtml = [
+      b.isOnline ? `<span class="ships-badge">${t("online_filter_label")}</span>` : "",
+      b.isNationwide ? `<span class="ships-badge">${t("nationwide_filter_label")}</span>` : ""
+    ].join("");
     const featuredHtml = b.featured ? `<span class="featured-badge">${t("featured_badge")}</span>` : "";
     return `
     <div class="card${b.featured ? " featured-card" : ""}" data-id="${b.id}">
@@ -2974,6 +3073,7 @@ function renderGrid() {
         <div class="card-title">${escapeHtml(b.name)}</div>
         <div class="card-owner">${t("owner_label")} ${escapeHtml(safeOwnerName(b.ownerName))}</div>
         ${shipsHtml}
+        ${reachHtml}
         <div class="card-footer">
           <span class="city">📍 ${escapeHtml(b.city)}, ${escapeHtml(t(stateKey(b.state)))}</span>
           ${ratingHtml}
@@ -3345,6 +3445,10 @@ function showDetail(id) {
     : `<span>${t("member_prefix")}</span>`;
 
   const shipsTagHtml = b.shipsAll ? `<span class="tag">${t("ships_badge")}</span>` : "";
+  const reachTagHtml = [
+    b.isOnline ? `<span class="tag">${t("online_filter_label")}</span>` : "",
+    b.isNationwide ? `<span class="tag">${t("nationwide_filter_label")}</span>` : ""
+  ].join("");
 
   detailCard.innerHTML = `
     <div class="profile-logo ${b.logoUrl ? "zoomable" : ""}" ${b.logoUrl ? `data-group="logo"` : ""} style="${b.logoUrl ? `background-image:url('${b.logoUrl}'); background-size:cover; background-position:center;` : ""}"></div>
@@ -3359,6 +3463,7 @@ function showDetail(id) {
       <span class="tag">${escapeHtml(t(CATEGORY_KEYS[b.category] || "f_services"))}</span>
       ${subcategoryLabel(b.category, b.subcategory) ? `<span class="tag">${escapeHtml(subcategoryLabel(b.category, b.subcategory))}</span>` : ""}
       ${shipsTagHtml}
+      ${reachTagHtml}
     </div>
     <div class="contact-row">${contactButtons.join("") || `<span style='opacity:0.5; font-size:13px;'>${t("no_contact")}</span>`}</div>
     ${ownerActionsHtml}
