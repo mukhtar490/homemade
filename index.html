@@ -2380,7 +2380,7 @@ aiDescHelperBtn.addEventListener("click", async () => {
     return;
   }
   if (!aiModel) {
-    alert(t("ai_error"));
+    alert("DEBUG: aiModel is not initialized (Firebase AI Logic failed to load).");
     return;
   }
 
@@ -2404,7 +2404,9 @@ Rewrite the owner's rough notes into a polished, warm, professional description,
     if (text) bizDescInput.value = text;
   } catch (err) {
     console.error(err);
-    alert(t("ai_error"));
+    // TEMPORARY DEBUG: show the real error on-screen so it's visible on mobile
+    // without needing desktop devtools. Revert to alert(t("ai_error")) once fixed.
+    alert("DEBUG ERROR:\n" + (err?.message || String(err)) + (err?.code ? ("\nCode: " + err.code) : ""));
   } finally {
     aiDescHelperBtn.disabled = false;
     aiDescHelperBtn.textContent = originalLabel;
