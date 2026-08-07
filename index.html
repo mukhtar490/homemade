@@ -151,7 +151,15 @@ html[dir="rtl"] .fab-add{padding:15px 18px 15px 22px;}
 .hero p.sub{font-size:15px; opacity:0.75; max-width:520px;}
 
 /* SEARCH */
-.search-row{display:flex; gap:10px; padding:20px 0; flex-wrap:wrap;}
+.search-row{display:flex; gap:10px; padding:20px 0 0; flex-wrap:wrap;}
+.smart-search-btn{
+  font-size:13.5px; font-weight:700; padding:13px 18px; border-radius:12px; flex-shrink:0;
+  border:1px solid rgba(180,112,58,0.35); background:linear-gradient(135deg, rgba(227,169,60,0.14), rgba(180,112,58,0.14));
+  color:var(--wood); cursor:pointer; white-space:nowrap;
+}
+.smart-search-btn:disabled{opacity:0.6; cursor:default;}
+.smart-search-hint{font-size:12px; opacity:0.5; padding:6px 2px 4px;}
+.smart-search-status{font-size:12.5px; font-weight:700; color:var(--wood); padding:2px 2px 10px;}
 .search-input, .state-select{padding:13px 18px; border-radius:12px; border:1px solid var(--line); background:var(--card-bg); font-family:'Tajawal', sans-serif; font-size:14px;}
 .search-input{flex:1; min-width:200px;}
 .state-select{min-width:140px; width:100%;}
@@ -512,7 +520,10 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
 
     <div class="search-row">
       <input class="search-input" id="searchInput" data-t-placeholder="search_ph" placeholder="Search by business name or city...">
+      <button type="button" class="smart-search-btn" id="smartSearchBtn" data-t="smart_search_btn">✨ Smart search</button>
     </div>
+    <p class="smart-search-hint" data-t="smart_search_hint">Try: "a carpenter near me in Texas"</p>
+    <p class="smart-search-status hidden" id="smartSearchStatus"></p>
 
     <div class="filter-grid">
       <div class="field">
@@ -1135,7 +1146,13 @@ const translations = {
     welcome_skip: "ابدأ الآن واستكشف بسهولة",
     hero_title: "اكتشف مشاريع ومهنيّين بالقرب منك",
     hero_sub: "أطعمة، حرف يدوية، هدايا، خدمات، واستشارات مهنية — جميعها من أصحابها مباشرة. تواصل معهم بالطريقة التي تفضّلها.",
-    search_ph: "ابحث باسم المشروع أو المدينة...",
+    search_ph: "عن ماذا تبحث اليوم...",
+    smart_search_btn: "✨ بحث ذكي",
+    smart_search_hint: "جرّب: \"نجار في مشجن\"، \"أكل يمني في شيكاجو\"، \"محامي هجرة أونلاين\"",
+    smart_search_status_thinking: "جارٍ الفهم…",
+    smart_search_no_match: "اكتب جملتك في خانة البحث فوق الأول، وبعدين دوس \"بحث ذكي\".",
+    smart_search_error: "تعذّر فهم البحث حاليًا. جرّب تاني أو استخدم الفلاتر يدويًا.",
+    smart_search_applied: "تم تطبيق الفلاتر بناءً على بحثك.",
     state_all: "كل الولايات",
     state_al: "ألاباما",
     state_ak: "ألاسكا",
@@ -1400,7 +1417,13 @@ const translations = {
     welcome_skip: "Start exploring now",
     hero_title: "Discover businesses and professionals near you",
     hero_sub: "Baking, crafts, gifts, services, and professional consulting — all run by real people. Reach out directly, however you prefer.",
-    search_ph: "Search by business name or city...",
+    search_ph: "What are you looking for today...",
+    smart_search_btn: "✨ Smart search",
+    smart_search_hint: "Try: \"carpenter in Michigan\", \"Yemeni food in Chicago\", \"immigration lawyer online\"",
+    smart_search_status_thinking: "Understanding your search…",
+    smart_search_no_match: "Type your sentence in the search box above first, then tap \"Smart search\".",
+    smart_search_error: "Couldn't understand that search right now. Try again or use the filters manually.",
+    smart_search_applied: "Filters applied based on your search.",
     state_all: "All States",
     state_al: "Alabama",
     state_ak: "Alaska",
@@ -1869,6 +1892,8 @@ const logoPreviewWrap = document.getElementById("logoPreviewWrap");
 const galleryPreviewWrap = document.getElementById("galleryPreviewWrap");
 
 const searchInput = document.getElementById("searchInput");
+const smartSearchBtn = document.getElementById("smartSearchBtn");
+const smartSearchStatus = document.getElementById("smartSearchStatus");
 const categoryFilterSelect = document.getElementById("categoryFilterSelect");
 const stateSelect = document.getElementById("stateSelect");
 const subcategoryFilterSelect = document.getElementById("subcategoryFilterSelect");
@@ -2380,7 +2405,7 @@ aiDescHelperBtn.addEventListener("click", async () => {
     return;
   }
   if (!aiModel) {
-    alert("DEBUG: aiModel is not initialized (Firebase AI Logic failed to load).");
+    alert(t("ai_error"));
     return;
   }
 
@@ -2404,14 +2429,110 @@ Rewrite the owner's rough notes into a polished, warm, professional description,
     if (text) bizDescInput.value = text;
   } catch (err) {
     console.error(err);
-    // TEMPORARY DEBUG: show the real error on-screen so it's visible on mobile
-    // without needing desktop devtools. Revert to alert(t("ai_error")) once fixed.
-    alert("DEBUG ERROR:\n" + (err?.message || String(err)) + (err?.code ? ("\nCode: " + err.code) : ""));
+    alert(t("ai_error"));
   } finally {
     aiDescHelperBtn.disabled = false;
     aiDescHelperBtn.textContent = originalLabel;
   }
 });
+
+/* ---------------- SMART SEARCH (natural-language search via Gemini) ---------------- */
+function buildSmartSearchSchemaText() {
+  const categoryLines = Object.keys(CATEGORY_KEYS).map(catValue => {
+    const labelAr = translations.ar[CATEGORY_KEYS[catValue]];
+    const labelEn = translations.en[CATEGORY_KEYS[catValue]];
+    const subs = (SUBCATEGORY_OPTIONS[catValue] || []).map(o =>
+      `"${o.value}" (${translations.ar[o.key]} / ${translations.en[o.key]})`
+    ).join(", ");
+    return `- category value "${catValue}" (${labelAr} / ${labelEn})${subs ? ` — specialties: ${subs}` : ""}`;
+  }).join("\n");
+
+  const stateValues = Array.from(stateSelect.options).map(o => o.value).filter(Boolean);
+  const stateLines = stateValues.join(", ");
+
+  return { categoryLines, stateLines };
+}
+
+async function runSmartSearch() {
+  const query = searchInput.value.trim();
+  if (!query) {
+    smartSearchStatus.textContent = t("smart_search_no_match");
+    smartSearchStatus.classList.remove("hidden");
+    return;
+  }
+  if (!aiModel) {
+    smartSearchStatus.textContent = t("smart_search_error");
+    smartSearchStatus.classList.remove("hidden");
+    return;
+  }
+
+  const originalLabel = smartSearchBtn.textContent;
+  smartSearchBtn.disabled = true;
+  smartSearchBtn.textContent = t("smart_search_status_thinking");
+  smartSearchStatus.classList.add("hidden");
+
+  try {
+    const { categoryLines, stateLines } = buildSmartSearchSchemaText();
+    const prompt = `You are a search-intent parser for a bilingual (Arabic/English) business directory app. Given a user's free-text search sentence (in Arabic or English), extract structured filters.
+
+Available categories and their specialty values:
+${categoryLines}
+
+Available state values (use exact spelling): ${stateLines}
+Also allowed for state: "Online" (remote/no physical location) and "Nationwide" (serves all US states).
+
+User's search sentence: "${query}"
+
+Return ONLY a JSON object with this exact shape, no markdown, no commentary:
+{"category": "<one exact category value from the list above, or empty string if unclear>", "subcategory": "<one exact specialty value belonging to that category, or empty string>", "state": "<one exact state value from the list above, or empty string if not mentioned>", "city": "<city name as plain text if mentioned, or empty string>"}
+
+If the sentence doesn't clearly map to a category or state, leave that field as an empty string rather than guessing.`;
+
+    const result = await aiModel.generateContent({
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+      generationConfig: { responseMimeType: "application/json" }
+    });
+    const raw = result.response.text().trim();
+    const parsed = JSON.parse(raw.replace(/^```json\s*|\s*```$/g, ""));
+
+    let applied = false;
+
+    if (parsed.category && CATEGORY_KEYS[parsed.category]) {
+      activeCategory = parsed.category;
+      categoryFilterSelect.value = parsed.category;
+      document.querySelectorAll(".cat-tile").forEach(el => el.classList.toggle("active", el.dataset.cat === parsed.category));
+      populateSubcategoryFilterOptions(parsed.category, false);
+      applied = true;
+
+      if (parsed.subcategory && (SUBCATEGORY_OPTIONS[parsed.category] || []).some(o => o.value === parsed.subcategory)) {
+        subcategoryFilterSelect.value = parsed.subcategory;
+      }
+    }
+
+    const validStateValues = Array.from(stateSelect.options).map(o => o.value);
+    if (parsed.state && validStateValues.includes(parsed.state)) {
+      stateSelect.value = parsed.state;
+      applied = true;
+    }
+
+    if (parsed.city) {
+      cityFilterInput.value = parsed.city;
+      applied = true;
+    }
+
+    renderGrid();
+    smartSearchStatus.textContent = applied ? t("smart_search_applied") : t("smart_search_no_match");
+    smartSearchStatus.classList.remove("hidden");
+  } catch (err) {
+    console.error(err);
+    smartSearchStatus.textContent = t("smart_search_error");
+    smartSearchStatus.classList.remove("hidden");
+  } finally {
+    smartSearchBtn.disabled = false;
+    smartSearchBtn.textContent = originalLabel;
+  }
+}
+smartSearchBtn.addEventListener("click", runSmartSearch);
 
 businessForm.addEventListener("submit", async (e) => {
   e.preventDefault();
