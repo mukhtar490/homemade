@@ -3112,7 +3112,20 @@ function stateKey(state) {
   return map[state] || "state_all";
 }
 
-searchInput.addEventListener("input", renderGrid);
+// Filter only on Enter (not on every keystroke) — this box now doubles as the
+// staging area for "Smart search" sentences, so live per-character filtering
+// would wipe results while the user is still mid-sentence.
+searchInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    renderGrid();
+  }
+});
+// If the box is cleared entirely, refresh immediately so results aren't
+// left stuck on a stale filter with no way to trigger a refresh.
+searchInput.addEventListener("input", () => {
+  if (!searchInput.value) renderGrid();
+});
 stateSelect.addEventListener("change", renderGrid);
 catGrid.addEventListener("click", (e) => {
   const tile = e.target.closest(".cat-tile");
