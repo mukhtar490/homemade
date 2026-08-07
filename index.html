@@ -2495,6 +2495,15 @@ If the sentence doesn't clearly map to a category or state, leave that field as 
     const raw = result.response.text().trim();
     const parsed = JSON.parse(raw.replace(/^```json\s*|\s*```$/g, ""));
 
+    // Reset all filters first — each smart search is a fresh, complete query,
+    // not an addition on top of whatever filters happened to be set before.
+    activeCategory = "";
+    categoryFilterSelect.value = "";
+    document.querySelectorAll(".cat-tile").forEach(el => el.classList.toggle("active", el.dataset.cat === ""));
+    populateSubcategoryFilterOptions("", false);
+    stateSelect.value = "";
+    cityFilterInput.value = "";
+
     let applied = false;
 
     if (parsed.category && CATEGORY_KEYS[parsed.category]) {
@@ -2519,6 +2528,13 @@ If the sentence doesn't clearly map to a category or state, leave that field as 
       cityFilterInput.value = parsed.city;
       applied = true;
     }
+
+    // The raw sentence has now been translated into structured filters above.
+    // Clear it from the plain-text search box so it doesn't ALSO get matched
+    // literally against business names/cities in renderGrid (which would wipe
+    // out otherwise-correct results, since the sentence itself rarely appears
+    // verbatim in any listing).
+    searchInput.value = "";
 
     renderGrid();
     smartSearchStatus.textContent = applied ? t("smart_search_applied") : t("smart_search_no_match");
