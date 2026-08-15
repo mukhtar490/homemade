@@ -891,11 +891,19 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
         <label data-t="field_wa">WhatsApp number — optional</label>
         <input type="tel" id="bizWhatsapp" placeholder="+1 512 555 0100">
       </div>
-      <div class="field">
+      <div class="field" id="bizShowOwnerPhotoField">
         <label class="checkbox-row">
           <input type="checkbox" id="bizShowOwnerPhoto">
           <span data-t="show_owner_photo_label">Show my personal photo next to my name</span>
         </label>
+      </div>
+      <div class="field hidden" id="bizAdminOwnerSection">
+        <label data-t="field_admin_owner_name">Displayed owner name (admin) — optional, leave blank to hide</label>
+        <input type="text" id="bizOwnerNameOverride" data-t-placeholder="field_admin_owner_name_ph" placeholder="e.g. Waleed Othman">
+        <label data-t="field_admin_owner_photo">Displayed owner photo (admin) — optional</label>
+        <input type="file" id="bizOwnerPhotoOverride" accept="image/*">
+        <div id="ownerPhotoPreviewWrap"></div>
+        <p class="ai-helper-hint" data-t="field_admin_owner_hint">This lets you set the name/photo shown for this listing instead of your own admin account.</p>
       </div>
       <div class="field">
         <label class="checkbox-row">
@@ -1369,6 +1377,10 @@ const translations = {
     field_wa: "رقم واتساب — اختياري",
     publish_btn: "نشر المشروع",
     show_owner_photo_label: "إظهار صورتي الشخصية بجانب اسمي في صفحة المشروع",
+    field_admin_owner_name: "اسم صاحب الحساب الظاهر (أدمن) — اختياري، اتركه فارغًا لإخفاء الاسم",
+    field_admin_owner_name_ph: "مثال: وليد عثمان",
+    field_admin_owner_photo: "صورة صاحب الحساب الظاهرة (أدمن) — اختياري",
+    field_admin_owner_hint: "هذا الحقل يسمح لك كأدمن بتحديد الاسم والصورة اللي تظهر لهذا المشروع بدل بيانات حسابك أنت.",
     ships_all_label: "متوفر شحن أمريكا وكندا",
     ships_filter_label: "متوفر شحن أمريكا وكندا فقط",
     is_online_label: "🌐 يقدَّم هذا كخدمة أونلاين أيضًا",
@@ -1646,6 +1658,10 @@ const translations = {
     field_wa: "WhatsApp number — optional",
     publish_btn: "Publish business",
     show_owner_photo_label: "Show my personal photo next to my name",
+    field_admin_owner_name: "Displayed owner name (admin) — optional, leave blank to hide",
+    field_admin_owner_name_ph: "e.g. Waleed Othman",
+    field_admin_owner_photo: "Displayed owner photo (admin) — optional",
+    field_admin_owner_hint: "As admin, this lets you set the name/photo shown for this listing instead of your own account details.",
     ships_all_label: "US & Canada shipping available",
     ships_filter_label: "US & Canada shipping available only",
     is_online_label: "🌐 Also offers this service online",
@@ -1948,6 +1964,10 @@ const bizSubcategoryLabel = document.getElementById("bizSubcategoryLabel");
 const bizSubcategorySelect = document.getElementById("bizSubcategory");
 const bizGalleryInput = document.getElementById("bizGallery");
 const bizShowOwnerPhoto = document.getElementById("bizShowOwnerPhoto");
+const bizAdminOwnerSection = document.getElementById("bizAdminOwnerSection");
+const bizOwnerNameOverrideInput = document.getElementById("bizOwnerNameOverride");
+const bizOwnerPhotoOverrideInput = document.getElementById("bizOwnerPhotoOverride");
+const ownerPhotoPreviewWrap = document.getElementById("ownerPhotoPreviewWrap");
 const bizShipsAll = document.getElementById("bizShipsAll");
 const bizIsOnline = document.getElementById("bizIsOnline");
 const bizIsNationwide = document.getElementById("bizIsNationwide");
@@ -2393,6 +2413,11 @@ function openBusinessModal(business = null) {
   businessForm.reset();
   logoPreviewWrap.innerHTML = "";
   galleryPreviewWrap.innerHTML = "";
+  ownerPhotoPreviewWrap.innerHTML = "";
+
+  const isAdminUser = currentUser && currentUser.uid === ADMIN_UID;
+  bizAdminOwnerSection.classList.toggle("hidden", !isAdminUser);
+  document.getElementById("bizShowOwnerPhotoField").classList.toggle("hidden", isAdminUser);
 
   if (business) {
     editingBusinessId = business.id;
@@ -2403,6 +2428,13 @@ function openBusinessModal(business = null) {
     existingImages = business.images || [];
     businessModalTitle.textContent = t("edit_business_title");
     bizSubmitBtn.textContent = t("update_btn");
+
+    if (isAdminUser) {
+      bizOwnerNameOverrideInput.value = editingBusinessOwnerName;
+      if (editingBusinessOwnerPhotoURL) {
+        ownerPhotoPreviewWrap.innerHTML = `<div class="preview-row"><div class="preview-thumb" style="background-image:url('${editingBusinessOwnerPhotoURL}')"></div></div>`;
+      }
+    }
 
     document.getElementById("bizName").value = business.name || "";
     document.getElementById("bizDesc").value = business.description || "";
@@ -2456,6 +2488,13 @@ bizGalleryInput.addEventListener("change", () => {
   const files = Array.from(bizGalleryInput.files).slice(0, 4);
   if (!files.length) return;
   galleryPreviewWrap.innerHTML = `<div class="preview-row">${files.map(f => `<div class="preview-thumb" style="background-image:url('${URL.createObjectURL(f)}')"></div>`).join("")}</div>`;
+});
+bizOwnerPhotoOverrideInput.addEventListener("change", () => {
+  ownerPhotoPreviewWrap.innerHTML = "";
+  const file = bizOwnerPhotoOverrideInput.files[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  ownerPhotoPreviewWrap.innerHTML = `<div class="preview-row"><div class="preview-thumb" style="background-image:url('${url}')"></div></div>`;
 });
 
 async function uploadImage(file, pathPrefix) {
@@ -2665,9 +2704,24 @@ businessForm.addEventListener("submit", async (e) => {
       images = await Promise.all(galleryFiles.map(f => uploadImage(f, `businesses/${currentUser.uid}/gallery`)));
     }
 
+    const isAdminUser = currentUser && currentUser.uid === ADMIN_UID;
+    let ownerName, ownerPhotoURL, showOwnerPhoto;
+    if (isAdminUser) {
+      ownerName = bizOwnerNameOverrideInput.value.trim();
+      ownerPhotoURL = editingBusinessOwnerPhotoURL || "";
+      if (bizOwnerPhotoOverrideInput.files[0]) {
+        ownerPhotoURL = await uploadImage(bizOwnerPhotoOverrideInput.files[0], `businesses/${currentUser.uid}/owner`);
+      }
+      showOwnerPhoto = !!ownerPhotoURL;
+    } else {
+      ownerName = currentUser.displayName || t("owner_generic");
+      ownerPhotoURL = currentUser.photoURL || "";
+      showOwnerPhoto = bizShowOwnerPhoto.checked;
+    }
+
     const data = {
       ownerId: editingBusinessId ? editingBusinessOwnerId : currentUser.uid,
-      ownerName: editingBusinessId ? editingBusinessOwnerName : (currentUser.displayName || t("owner_generic")),
+      ownerName,
       name: document.getElementById("bizName").value.trim(),
       description: document.getElementById("bizDesc").value.trim(),
       category: document.getElementById("bizCategory").value,
@@ -2677,11 +2731,11 @@ businessForm.addEventListener("submit", async (e) => {
       contact,
       logoUrl,
       images,
-      showOwnerPhoto: bizShowOwnerPhoto.checked,
+      showOwnerPhoto,
       shipsAll: bizShipsAll.checked,
       isOnline: bizIsOnline.checked,
       isNationwide: bizIsNationwide.checked,
-      ownerPhotoURL: editingBusinessId ? editingBusinessOwnerPhotoURL : (currentUser.photoURL || "")
+      ownerPhotoURL
     };
 
     if (editingBusinessId) {
