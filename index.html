@@ -3792,5 +3792,17 @@ if (window.Capacitor && window.Capacitor.getPlatform && window.Capacitor.getPlat
 }
 
 </script>
+
+<script>
+  // Registers a minimal service worker whose only job is to show a clear
+  // "no internet" page instead of a blank/broken screen when the app can't
+  // reach the network on launch. It does not cache the app itself, so every
+  // launch with a connection still loads the latest version as before.
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js").catch(() => {});
+    });
+  }
+</script>
 </body>
 </html>
