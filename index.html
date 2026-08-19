@@ -13,6 +13,13 @@
   --card-bg:#FFFCF6; --line: rgba(33,31,26,0.12); --radius:14px;
 }
 *{box-sizing:border-box; margin:0; padding:0;}
+#offlineBanner{
+  position:fixed; top:0; left:0; right:0; z-index:9999;
+  background:var(--danger); color:#fff; text-align:center;
+  font-family:'Tajawal', sans-serif; font-size:13.5px; font-weight:700;
+  padding:10px 16px; padding-top:calc(10px + env(safe-area-inset-top));
+}
+#offlineBanner.hidden{display:none;}
 html, body{height:100%;}
 body{
   background:var(--paper); color:var(--ink); font-family:'Tajawal', sans-serif; line-height:1.5; min-height:100vh;
@@ -409,6 +416,9 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
 </style>
 </head>
 <body>
+<div id="offlineBanner" class="hidden" role="alert">
+  <span data-t="offline_banner_text">No internet connection</span>
+</div>
 
 <div class="welcome-screen" id="welcomeScreen">
   <div class="welcome-decor circle-1"></div>
@@ -1266,6 +1276,7 @@ const translations = {
     loading: "جارٍ تحميل المشاريع…",
     empty_state: "لا توجد مشاريع في هذا التصنيف بعد — كن أول من يضيف مشروعه.",
     load_error: "تعذّر تحميل المشاريع حاليًا.",
+    offline_banner_text: "لا يوجد اتصال بالإنترنت — تحقق من اتصالك",
     owner_label: "صاحب المشروع:",
     owner_generic: "صاحب المشروع",
     back_link: "← العودة إلى جميع المشاريع",
@@ -1547,6 +1558,7 @@ const translations = {
     loading: "Loading businesses…",
     empty_state: "No businesses match yet — be the first to add one in this category.",
     load_error: "Couldn't load businesses right now.",
+    offline_banner_text: "No internet connection — please check your connection",
     owner_label: "Owner:",
     owner_generic: "Business Owner",
     back_link: "← Back to all businesses",
@@ -2047,6 +2059,22 @@ welcomeSkipBtn.addEventListener("click", () => {
 
 /* ---------------- INITIAL RENDER ---------------- */
 applyStaticTranslations();
+
+/* ---------------- CONNECTIVITY BANNER ---------------- */
+// Works regardless of how the page itself was loaded (cache, service worker,
+// or network) — navigator.onLine + the online/offline events are supported
+// natively in both WKWebView (iOS) and the Android system WebView.
+const offlineBanner = document.getElementById("offlineBanner");
+function updateOnlineStatus() {
+  const isOnline = navigator.onLine;
+  offlineBanner.classList.toggle("hidden", isOnline);
+  if (!isOnline && allBusinesses.length === 0 && businessGrid) {
+    businessGrid.innerHTML = `<div class="empty-state">${t("load_error")}</div>`;
+  }
+}
+window.addEventListener("online", updateOnlineStatus);
+window.addEventListener("offline", updateOnlineStatus);
+updateOnlineStatus();
 
 /* ---------------- SUBCATEGORY (cuisine / profession type) ---------------- */
 function updateSubcategoryField(selectedCategory, presetValue) {
