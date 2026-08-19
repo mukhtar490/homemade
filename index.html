@@ -18,8 +18,14 @@
   background:var(--danger); color:#fff; text-align:center;
   font-family:'Tajawal', sans-serif; font-size:13.5px; font-weight:700;
   padding:10px 16px; padding-top:calc(10px + env(safe-area-inset-top));
+  display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap;
 }
 #offlineBanner.hidden{display:none;}
+#offlineRetryBtn{
+  background:rgba(255,255,255,0.2); color:#fff; border:1px solid rgba(255,255,255,0.5);
+  border-radius:8px; padding:5px 14px; font-family:inherit; font-size:12.5px; font-weight:700; cursor:pointer;
+}
+#offlineRetryBtn:active{background:rgba(255,255,255,0.35);}
 html, body{height:100%;}
 body{
   background:var(--paper); color:var(--ink); font-family:'Tajawal', sans-serif; line-height:1.5; min-height:100vh;
@@ -418,6 +424,7 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
 <body>
 <div id="offlineBanner" class="hidden" role="alert">
   <span data-t="offline_banner_text">No internet connection</span>
+  <button id="offlineRetryBtn" type="button" data-t="retry_btn">Retry</button>
 </div>
 
 <div class="welcome-screen" id="welcomeScreen">
@@ -1277,6 +1284,7 @@ const translations = {
     empty_state: "لا توجد مشاريع في هذا التصنيف بعد — كن أول من يضيف مشروعه.",
     load_error: "تعذّر تحميل المشاريع حاليًا.",
     offline_banner_text: "لا يوجد اتصال بالإنترنت — تحقق من اتصالك",
+    retry_btn: "إعادة المحاولة",
     owner_label: "صاحب المشروع:",
     owner_generic: "صاحب المشروع",
     back_link: "← العودة إلى جميع المشاريع",
@@ -1559,6 +1567,7 @@ const translations = {
     empty_state: "No businesses match yet — be the first to add one in this category.",
     load_error: "Couldn't load businesses right now.",
     offline_banner_text: "No internet connection — please check your connection",
+    retry_btn: "Retry",
     owner_label: "Owner:",
     owner_generic: "Business Owner",
     back_link: "← Back to all businesses",
@@ -2061,20 +2070,42 @@ welcomeSkipBtn.addEventListener("click", () => {
 applyStaticTranslations();
 
 /* ---------------- CONNECTIVITY BANNER ---------------- */
-// Works regardless of how the page itself was loaded (cache, service worker,
-// or network) — navigator.onLine + the online/offline events are supported
-// natively in both WKWebView (iOS) and the Android system WebView.
+// navigator.onLine is unreliable inside embedded WebViews (can report
+// "online" even with no real internet). The real, trustworthy signal is
+// whether Firestore data actually arrives. We show the banner if the first
+// businesses snapshot hasn't arrived within a short timeout, and hide it
+// the moment real data comes in (from onSnapshot, wired up further below).
 const offlineBanner = document.getElementById("offlineBanner");
-function updateOnlineStatus() {
-  const isOnline = navigator.onLine;
-  offlineBanner.classList.toggle("hidden", isOnline);
-  if (!isOnline && allBusinesses.length === 0 && businessGrid) {
+const offlineRetryBtn = document.getElementById("offlineRetryBtn");
+let hasReceivedBusinesses = false;
+let connectivityTimeoutId = null;
+
+function showOfflineState() {
+  offlineBanner.classList.remove("hidden");
+  if (allBusinesses.length === 0 && businessGrid) {
     businessGrid.innerHTML = `<div class="empty-state">${t("load_error")}</div>`;
   }
 }
-window.addEventListener("online", updateOnlineStatus);
-window.addEventListener("offline", updateOnlineStatus);
-updateOnlineStatus();
+function hideOfflineState() {
+  offlineBanner.classList.add("hidden");
+}
+function armConnectivityTimeout() {
+  if (connectivityTimeoutId) clearTimeout(connectivityTimeoutId);
+  connectivityTimeoutId = setTimeout(() => {
+    if (!hasReceivedBusinesses) showOfflineState();
+  }, 3000);
+}
+offlineRetryBtn.addEventListener("click", () => {
+  location.reload();
+});
+// Secondary signal: if the OS/browser explicitly says we're offline, show
+// the banner immediately without waiting for the timeout.
+window.addEventListener("offline", showOfflineState);
+window.addEventListener("online", () => {
+  // Don't hide immediately — wait for real data to confirm, but retry sooner.
+  armConnectivityTimeout();
+});
+armConnectivityTimeout();
 
 /* ---------------- SUBCATEGORY (cuisine / profession type) ---------------- */
 function updateSubcategoryField(selectedCategory, presetValue) {
@@ -3067,6 +3098,9 @@ jobForm.addEventListener("submit", async (e) => {
 const businessesQuery = query(collection(db, "businesses"), orderBy("createdAt", "desc"));
 onSnapshot(businessesQuery, (snapshot) => {
   try {
+    hasReceivedBusinesses = true;
+    if (connectivityTimeoutId) clearTimeout(connectivityTimeoutId);
+    hideOfflineState();
     allBusinesses = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
     renderGrid();
     if (!categoryView.classList.contains("hidden")) {
@@ -3080,7 +3114,7 @@ onSnapshot(businessesQuery, (snapshot) => {
     console.error(renderErr);
   }
 }, (err) => {
-  businessGrid.innerHTML = `<div class="empty-state">${t("load_error")}</div>`;
+  showOfflineState();
   console.error(err);
 });
 
