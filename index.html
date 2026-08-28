@@ -228,6 +228,10 @@ html[dir="rtl"] .fab-add{padding:15px 18px 15px 22px;}
   display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px; flex-shrink:0;
 }
 html[dir="ltr"] .category-back{transform:scaleX(-1);}
+.detail-header{
+  background:var(--ink); color:#fff; padding:calc(16px + env(safe-area-inset-top)) 24px 16px; display:flex; align-items:center;
+  position:sticky; top:0; z-index:40;
+}
 .category-header h2{
   flex:1; text-align:center; font-family:'Cairo', sans-serif; font-weight:900; font-size:19px;
   margin-inline-end:36px;
@@ -729,6 +733,9 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
 
 <!-- ============ DETAIL VIEW ============ -->
 <div id="detailView" class="hidden">
+  <div class="detail-header">
+    <button class="category-back" id="detailBackBtn" aria-label="Back">→</button>
+  </div>
   <div class="wrap">
     <div class="profile-hero" id="detailHero"></div>
     <div class="profile-card" id="detailCard">
@@ -2017,6 +2024,7 @@ const categoryBackBtn = document.getElementById("categoryBackBtn");
 const detailHero = document.getElementById("detailHero");
 const detailCard = document.getElementById("detailCard");
 const backToBrowse = document.getElementById("backToBrowse");
+const detailBackBtn = document.getElementById("detailBackBtn");
 const logoHome = document.getElementById("logoHome");
 const adminBadge = document.getElementById("adminBadge");
 
@@ -3666,6 +3674,7 @@ backToBrowse.addEventListener("click", () => {
     browseView.classList.remove("hidden");
   }
 });
+detailBackBtn.addEventListener("click", () => backToBrowse.click());
 logoHome.addEventListener("click", () => {
   detailView.classList.add("hidden");
   categoryView.classList.add("hidden");
