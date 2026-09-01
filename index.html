@@ -125,6 +125,7 @@ html[dir="rtl"] .fab-add{padding:15px 18px 15px 22px;}
   position:absolute; top:0; right:0; height:100%; width:min(320px, 84vw);
   background:var(--card-bg); box-shadow:-16px 0 40px rgba(0,0,0,0.2);
   overflow-y:auto; animation:drawerIn .2s ease;
+  display:flex; flex-direction:column;
 }
 @keyframes drawerIn{from{transform:translateX(20px); opacity:0;} to{transform:translateX(0); opacity:1;}}
 .drawer-header{background:var(--ink); color:#fff; padding:calc(28px + env(safe-area-inset-top)) 22px 28px; text-align:center; position:relative;}
@@ -147,13 +148,15 @@ html[dir="rtl"] .fab-add{padding:15px 18px 15px 22px;}
 .avatar-edit-btn:disabled{opacity:0.5; cursor:default;}
 .drawer-name{font-family:'Cairo', sans-serif; font-weight:800; font-size:18px; margin-bottom:4px;}
 .drawer-email{font-size:12.5px; opacity:0.75; word-break:break-all;}
-.drawer-menu{padding:10px 0;}
+.drawer-menu{padding:10px 0; display:flex; flex-direction:column; flex:1;}
 .drawer-item{
   display:flex; align-items:center; gap:12px; padding:16px 22px; font-size:14px; font-weight:700; cursor:pointer;
   border-bottom:1px solid var(--line); background:none; border-inline:none; border-top:none; width:100%; text-align:start; color:var(--ink);
 }
 .drawer-item svg{width:19px; height:19px; flex-shrink:0; opacity:0.6;}
 .drawer-item.danger{color:var(--danger);}
+/* Pushes the sign-out / delete-account pair well clear of the regular menu items */
+.drawer-danger-group{margin-top:auto; padding-top:40px;}
 .drawer-footer{padding:24px 22px; text-align:center;}
 
 /* HERO */
@@ -2475,14 +2478,16 @@ function renderDrawer() {
           <span>${t("my_businesses")}</span>
         </button>
         ${commonItemsHtml}
-        <button class="drawer-item danger" id="drawerLogout">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
-          <span>${t("logout")}</span>
-        </button>
-        <button class="drawer-item danger" id="drawerDeleteAccount">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-          <span>${t("drawer_delete_account")}</span>
-        </button>
+        <div class="drawer-danger-group">
+          <button class="drawer-item danger" id="drawerLogout">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+            <span>${t("logout")}</span>
+          </button>
+          <button class="drawer-item danger" id="drawerDeleteAccount">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+            <span>${t("drawer_delete_account")}</span>
+          </button>
+        </div>
       </div>
     `;
     document.getElementById("drawerMyBusinesses").addEventListener("click", () => { closeDrawer(); goToMyBusinesses(); });
