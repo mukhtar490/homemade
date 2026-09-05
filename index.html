@@ -1072,9 +1072,7 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
           <option value="" data-t="employment_any">Not specified</option>
           <option value="FullTime" data-t="employment_fulltime">Full-time</option>
           <option value="PartTime" data-t="employment_parttime">Part-time</option>
-          <option value="CompanyDriver" data-t="employment_company_driver">Company Driver</option>
-          <option value="OwnerOperator" data-t="employment_owner_operator">Owner Operator</option>
-          <option value="LeasePurchase" data-t="employment_lease_purchase">Lease Purchase</option>
+          <option value="Online" data-t="employment_online">Online</option>
         </select>
       </div>
       <div class="field">
@@ -1445,9 +1443,9 @@ const translations = {
     subcat_craft_candles: "شموع ومعطرات",
     subcat_craft_leather: "أعمال جلدية",
     subcat_craft_other: "أخرى",
-    subcat_apparel_men: "رجالي",
-    subcat_apparel_women: "نسائي",
-    subcat_apparel_kids: "أطفال",
+    subcat_apparel_men: "ملابس رجالي",
+    subcat_apparel_women: "ملابس نسائي",
+    subcat_apparel_kids: "ملابس أطفال",
     subcat_apparel_other: "أخرى",
     subcat_prof_electrician: "كهربائي",
     subcat_prof_plumber: "سباك",
@@ -1585,9 +1583,7 @@ const translations = {
     employment_any: "غير محدد",
     employment_fulltime: "دوام كامل",
     employment_parttime: "دوام جزئي",
-    employment_company_driver: "سائق شركة",
-    employment_owner_operator: "سائق مستقل (أوونر أوبريتور)",
-    employment_lease_purchase: "ليز-تو-بيرتشيس",
+    employment_online: "أونلاين",
     job_publish_btn: "نشر",
     jobs_form_disclaimer: "السوق العربي دليل تواصل فقط، ولا يتحقق من صحة إعلانات الوظائف أو المتقدمين.",
     job_empty_state: "لا توجد إعلانات بعد.",
@@ -1748,9 +1744,9 @@ const translations = {
     subcat_craft_candles: "Candles & Fragrance",
     subcat_craft_leather: "Leatherwork",
     subcat_craft_other: "Other",
-    subcat_apparel_men: "Men's",
-    subcat_apparel_women: "Women's",
-    subcat_apparel_kids: "Kids",
+    subcat_apparel_men: "Men's Clothing",
+    subcat_apparel_women: "Women's Clothing",
+    subcat_apparel_kids: "Kids' Clothing",
     subcat_apparel_other: "Other",
     subcat_prof_electrician: "Electrician",
     subcat_prof_plumber: "Plumber",
@@ -1888,9 +1884,7 @@ const translations = {
     employment_any: "Not specified",
     employment_fulltime: "Full-time",
     employment_parttime: "Part-time",
-    employment_company_driver: "Company Driver",
-    employment_owner_operator: "Owner Operator",
-    employment_lease_purchase: "Lease Purchase",
+    employment_online: "Online",
     job_publish_btn: "Post",
     jobs_form_disclaimer: "Al Souq Al Arabi is a contact directory only and does not verify job postings or applicants.",
     job_empty_state: "No job posts yet.",
@@ -3015,9 +3009,7 @@ const JOB_CATEGORY_PRIORITY_ORDER = [
 const EMPLOYMENT_TYPE_KEYS = {
   FullTime: "employment_fulltime",
   PartTime: "employment_parttime",
-  CompanyDriver: "employment_company_driver",
-  OwnerOperator: "employment_owner_operator",
-  LeasePurchase: "employment_lease_purchase"
+  Online: "employment_online"
 };
 
 function getAllSpecialtyOptionsFlat() {
