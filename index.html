@@ -118,6 +118,42 @@ html[dir="rtl"] .fab-add{padding:15px 18px 15px 22px;}
   .logo{font-size:17px;}
   .admin-badge{font-size:10px; padding:4px 8px;}
 }
+.header-actions{display:flex; align-items:center; gap:10px;}
+.notif-bell{position:relative;}
+.notif-badge{
+  position:absolute; top:-4px; inset-inline-end:-4px; min-width:16px; height:16px; padding:0 4px;
+  border-radius:999px; background:var(--danger); color:#fff; font-size:10px; font-weight:700;
+  display:flex; align-items:center; justify-content:center; line-height:1; font-family:'IBM Plex Mono', monospace;
+}
+.notif-overlay{position:fixed; inset:0; background:rgba(15,14,12,0.5); z-index:850; display:flex; justify-content:center; align-items:flex-start; padding:calc(70px + env(safe-area-inset-top)) 16px 16px;}
+.notif-panel{
+  width:100%; max-width:400px; max-height:70vh; overflow-y:auto;
+  background:var(--card-bg); border-radius:16px; box-shadow:0 20px 50px rgba(0,0,0,0.3);
+  animation:drawerIn .15s ease;
+}
+.notif-panel-header{
+  display:flex; align-items:center; justify-content:space-between; padding:16px 18px;
+  font-weight:800; font-size:15px; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--card-bg);
+}
+.notif-panel-header .drawer-close{position:static; background:rgba(33,31,26,0.08); color:var(--ink);}
+.notif-row{display:flex; gap:12px; align-items:flex-start; padding:14px 18px; border-bottom:1px solid var(--line); cursor:pointer;}
+.notif-row:hover{background:rgba(33,31,26,0.03);}
+.notif-row.unread{background:rgba(180,112,58,0.06);}
+.notif-icon{width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;}
+.notif-icon.approved{background:rgba(92,110,78,0.16); color:var(--sage);}
+.notif-icon.rejected{background:rgba(176,67,47,0.16); color:var(--danger);}
+.notif-icon.pending-admin{background:rgba(180,112,58,0.16); color:var(--wood);}
+.notif-icon.like{background:rgba(180,112,58,0.16); color:var(--wood);}
+.notif-icon.review{background:rgba(56,86,107,0.16); color:var(--slate);}
+.notif-body{flex:1; min-width:0;}
+.notif-title{font-size:13.5px; font-weight:700;}
+.notif-sub{font-size:12px; opacity:0.65; margin-top:2px;}
+.notif-time{font-size:11px; opacity:0.45; margin-top:4px;}
+.notif-empty{padding:40px 20px; text-align:center; opacity:0.55; font-size:13px;}
+.drawer-count-badge{
+  display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 5px;
+  border-radius:999px; background:var(--danger); color:#fff; font-size:11px; font-weight:700; margin-inline-start:4px;
+}
 
 /* SIDE DRAWER */
 .drawer-overlay{position:fixed; inset:0; background:rgba(15,14,12,0.5); z-index:800;}
@@ -246,7 +282,9 @@ html[dir="rtl"] .fab-add{padding:15px 18px 15px 22px;}
 .status-note.rejected{background:rgba(176,67,47,0.1); color:var(--danger); border:1px solid rgba(176,67,47,0.25);}
 
 /* Admin moderation queue */
-.mod-row{display:flex; align-items:center; gap:14px; padding:16px; border-bottom:1px solid var(--line);}
+.mod-row{display:flex; align-items:center; gap:14px; padding:16px; border-bottom:1px solid var(--line); cursor:pointer;}
+.mod-row:hover{background:rgba(33,31,26,0.03);}
+.mod-view-hint{font-size:12.5px; opacity:0.55; padding:0 16px 12px;}
 .mod-row-body{flex:1; min-width:0;}
 .mod-row-name{font-weight:700; font-size:15px;}
 .mod-row-meta{font-size:12px; opacity:0.6; margin-top:2px;}
@@ -254,6 +292,8 @@ html[dir="rtl"] .fab-add{padding:15px 18px 15px 22px;}
 .mod-approve-btn, .mod-reject-btn{border:none; border-radius:10px; padding:9px 16px; font-size:13px; font-weight:700; cursor:pointer; color:#fff;}
 .mod-approve-btn{background:var(--sage);}
 .mod-reject-btn{background:var(--danger);}
+.mod-detail-actions{display:flex; gap:10px; margin-bottom:16px;}
+.mod-detail-actions .mod-approve-btn, .mod-detail-actions .mod-reject-btn{flex:1; padding:12px 16px; font-size:14px;}
 
 /* CATEGORY PAGE */
 .category-header{
@@ -365,6 +405,13 @@ html[dir="ltr"] .category-back{transform:scaleX(-1);}
 .star-fixed{color:var(--line); font-size:16px; line-height:1;}
 .star-fixed.filled{color:var(--wood);}
 .rating-count{font-size:12px; opacity:0.6;}
+.like-btn{
+  display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:999px;
+  border:1.5px solid var(--line); background:var(--card-bg); color:var(--ink); font-size:13px; font-weight:700;
+  cursor:pointer; margin-inline-start:auto; transition:background .15s ease, border-color .15s ease, color .15s ease;
+}
+.like-btn.liked{background:rgba(180,112,58,0.12); border-color:var(--wood); color:var(--wood);}
+.like-btn:disabled{opacity:0.6; cursor:default;}
 .rating-form{
   display:flex; flex-direction:column; gap:10px; padding:16px; border-radius:14px;
   background:var(--paper); border:1px solid var(--line);
@@ -498,15 +545,35 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
       <div class="logo" id="logoHome"><span class="chip"></span><span data-t="brand_name">السوق العربي</span></div>
       <span class="admin-badge hidden" id="adminBadge" data-t="admin_badge">Admin</span>
     </div>
-    <button class="lang-toggle" id="langToggle" aria-label="Change language" title="Change language">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="9"/>
-        <path d="M3 12h18"/>
-        <path d="M12 3c2.5 2.5 3.8 5.7 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.7-3.8-9s1.3-6.5 3.8-9z"/>
-      </svg>
-    </button>
+    <div class="header-actions">
+      <button class="lang-toggle notif-bell hidden" id="notifBellBtn" aria-label="Notifications" title="Notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        <span class="notif-badge hidden" id="notifBadge">0</span>
+      </button>
+      <button class="lang-toggle" id="langToggle" aria-label="Change language" title="Change language">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M3 12h18"/>
+          <path d="M12 3c2.5 2.5 3.8 5.7 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.7-3.8-9s1.3-6.5 3.8-9z"/>
+        </svg>
+      </button>
+    </div>
   </div>
 </header>
+
+<!-- ============ NOTIFICATIONS PANEL ============ -->
+<div class="notif-overlay hidden" id="notifOverlay">
+  <div class="notif-panel" id="notifPanel">
+    <div class="notif-panel-header">
+      <span data-t="notif_panel_title">Notifications</span>
+      <button class="drawer-close" id="notifCloseBtn">×</button>
+    </div>
+    <div id="notifList"></div>
+  </div>
+</div>
 
 <!-- ============ SIDE DRAWER ============ -->
 <div class="drawer-overlay hidden" id="drawerOverlay">
@@ -1310,11 +1377,24 @@ const translations = {
     status_rejected_badge: "مرفوض",
     status_pending_note: "⏳ مشروعك قيد المراجعة الآن — سيظهر للعموم بعد الموافقة عليه.",
     status_rejected_note: "❌ لم تتم الموافقة على هذا المشروع. عدّله وأعد الحفظ ليُعاد عرضه للمراجعة.",
+    status_rejected_reason_label: "سبب الرفض:",
     drawer_moderation: "مراجعة المشاريع",
     moderation_title: "مراجعة المشاريع الجديدة",
     moderation_empty: "لا توجد مشاريع بانتظار المراجعة حالياً.",
     mod_approve_btn: "✓ موافقة",
     mod_reject_btn: "✕ رفض",
+    mod_reject_reason_prompt: "سبب الرفض (اختياري، يظهر لصاحب المشروع):",
+    mod_view_hint: "اضغط على المشروع لمراجعة الوصف والصور كاملة",
+    notif_panel_title: "الإشعارات",
+    notif_empty: "لا توجد إشعارات حالياً.",
+    notif_approved_title: "تمت الموافقة على مشروعك",
+    notif_rejected_title: "لم تتم الموافقة على مشروعك",
+    notif_pending_admin_title: "مشاريع بانتظار المراجعة",
+    notif_time_now: "الآن",
+    notif_like_title: "أعجب أحدهم بمشروعك",
+    notif_review_title: "تقييم جديد على مشروعك",
+    like_btn: "إعجاب",
+    liked_btn: "أعجبني",
     nav_add: "أضف مشروعك/مهنتك",
     eyebrow: "دليل الأعمال والخدمات العربية",
     welcome_headline: "تطبيق واحد لكل مشاريعك وخدماتك",
@@ -1611,11 +1691,24 @@ const translations = {
     status_rejected_badge: "Rejected",
     status_pending_note: "⏳ Your listing is pending review — it'll go live once approved.",
     status_rejected_note: "❌ This listing wasn't approved. Edit and resave it to send it back for review.",
+    status_rejected_reason_label: "Reason given:",
     drawer_moderation: "Review listings",
     moderation_title: "Review new listings",
     moderation_empty: "No listings are waiting for review right now.",
     mod_approve_btn: "✓ Approve",
     mod_reject_btn: "✕ Reject",
+    mod_reject_reason_prompt: "Rejection reason (optional, shown to the owner):",
+    mod_view_hint: "Tap a listing to review its full description and photos",
+    notif_panel_title: "Notifications",
+    notif_empty: "No notifications yet.",
+    notif_approved_title: "Your listing was approved",
+    notif_rejected_title: "Your listing wasn't approved",
+    notif_pending_admin_title: "Listings awaiting review",
+    notif_time_now: "Just now",
+    notif_like_title: "Someone liked your listing",
+    notif_review_title: "New review on your listing",
+    like_btn: "Like",
+    liked_btn: "Liked",
     nav_add: "Add your business/profession",
     eyebrow: "A directory of Arabic businesses & services",
     welcome_headline: "One app for all your businesses and services",
@@ -2175,6 +2268,11 @@ const backToBrowse = document.getElementById("backToBrowse");
 const detailBackBtn = document.getElementById("detailBackBtn");
 const logoHome = document.getElementById("logoHome");
 const adminBadge = document.getElementById("adminBadge");
+const notifBellBtn = document.getElementById("notifBellBtn");
+const notifBadge = document.getElementById("notifBadge");
+const notifOverlay = document.getElementById("notifOverlay");
+const notifCloseBtn = document.getElementById("notifCloseBtn");
+const notifList = document.getElementById("notifList");
 
 const jobsView = document.getElementById("jobsView");
 const jobsBackBtn = document.getElementById("jobsBackBtn");
@@ -2430,11 +2528,133 @@ function friendlyAuthError(code) {
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
   adminBadge.classList.toggle("hidden", !(user && user.uid === ADMIN_UID));
+  notifBellBtn.classList.toggle("hidden", !user);
+  setupNotificationsListener(user ? user.uid : null);
   if (!drawerOverlay.classList.contains("hidden")) renderDrawer();
   // Re-render the open detail view (if any) so owner actions appear/disappear correctly.
   if (!detailView.classList.contains("hidden") && detailCard.dataset.currentId) {
     showDetail(detailCard.dataset.currentId);
   }
+});
+
+/* ---------------- NOTIFICATIONS ---------------- */
+let allNotifications = [];
+let notificationsUnsubscribe = null;
+
+function setupNotificationsListener(uid) {
+  if (notificationsUnsubscribe) {
+    notificationsUnsubscribe();
+    notificationsUnsubscribe = null;
+  }
+  allNotifications = [];
+  if (!uid) {
+    updateNotifBadge();
+    return;
+  }
+  const q = query(collection(db, "notifications"), where("userId", "==", uid), orderBy("createdAt", "desc"));
+  notificationsUnsubscribe = onSnapshot(q, (snapshot) => {
+    allNotifications = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    updateNotifBadge();
+    if (!notifOverlay.classList.contains("hidden")) renderNotifPanel();
+  }, (err) => console.error(err));
+}
+
+function pendingReviewCount() {
+  return allBusinesses.filter(b => (b.moderationStatus || "approved") === "pending").length;
+}
+
+function updateNotifBadge() {
+  const isAdminUser = currentUser && currentUser.uid === ADMIN_UID;
+  const unread = allNotifications.filter(n => !n.read).length + (isAdminUser ? pendingReviewCount() : 0);
+  notifBadge.textContent = unread > 9 ? "9+" : String(unread);
+  notifBadge.classList.toggle("hidden", unread === 0);
+}
+
+function formatNotifTime(ts) {
+  if (!ts || !ts.toDate) return t("notif_time_now");
+  try {
+    return ts.toDate().toLocaleDateString(currentLang === "ar" ? "ar" : "en-US", { month: "short", day: "numeric" });
+  } catch (err) {
+    return "";
+  }
+}
+
+function renderNotifPanel() {
+  const isAdminUser = currentUser && currentUser.uid === ADMIN_UID;
+  const pendingCount = isAdminUser ? pendingReviewCount() : 0;
+
+  const adminRowHtml = (isAdminUser && pendingCount > 0)
+    ? `<div class="notif-row" id="notifAdminPendingRow">
+         <div class="notif-icon pending-admin">📋</div>
+         <div class="notif-body">
+           <div class="notif-title">${pendingCount} ${t("notif_pending_admin_title")}</div>
+         </div>
+       </div>`
+    : "";
+
+  const NOTIF_META = {
+    approved: { icon: "✓", cls: "approved", titleKey: "notif_approved_title" },
+    rejected: { icon: "✕", cls: "rejected", titleKey: "notif_rejected_title" },
+    like: { icon: "👍", cls: "like", titleKey: "notif_like_title" },
+    review: { icon: "★", cls: "review", titleKey: "notif_review_title" }
+  };
+  const personalRowsHtml = allNotifications.map(n => {
+    const meta = NOTIF_META[n.type] || NOTIF_META.approved;
+    const subParts = [n.businessName || ""];
+    if (n.type === "rejected" && n.reason) subParts.push(n.reason);
+    if (n.type === "review") {
+      if (n.actorName) subParts.push(n.actorName);
+      if (n.comment) subParts.push(n.comment);
+    }
+    if (n.type === "like" && n.actorName) subParts.push(n.actorName);
+    return `
+    <div class="notif-row${n.read ? "" : " unread"}" data-business-id="${n.businessId || ""}">
+      <div class="notif-icon ${meta.cls}">${meta.icon}</div>
+      <div class="notif-body">
+        <div class="notif-title">${t(meta.titleKey)}</div>
+        <div class="notif-sub">${subParts.filter(Boolean).map(escapeHtml).join(" — ")}</div>
+        <div class="notif-time">${formatNotifTime(n.createdAt)}</div>
+      </div>
+    </div>`;
+  }).join("");
+
+  const combined = adminRowHtml + personalRowsHtml;
+  notifList.innerHTML = combined || `<div class="notif-empty">${t("notif_empty")}</div>`;
+
+  const adminRow = document.getElementById("notifAdminPendingRow");
+  if (adminRow) {
+    adminRow.addEventListener("click", () => {
+      closeNotifPanel();
+      closeDrawer();
+      goToModeration();
+    });
+  }
+  notifList.querySelectorAll("[data-business-id]").forEach(row => {
+    if (!row.dataset.businessId) return;
+    row.addEventListener("click", () => {
+      closeNotifPanel();
+      showDetail(row.dataset.businessId);
+    });
+  });
+
+  // Mark whatever's currently unread as seen now that the panel is open.
+  const unreadIds = allNotifications.filter(n => !n.read).map(n => n.id);
+  unreadIds.forEach(id => {
+    updateDoc(doc(db, "notifications", id), { read: true }).catch(err => console.error(err));
+  });
+}
+
+function openNotifPanel() {
+  renderNotifPanel();
+  notifOverlay.classList.remove("hidden");
+}
+function closeNotifPanel() {
+  notifOverlay.classList.add("hidden");
+}
+notifBellBtn.addEventListener("click", openNotifPanel);
+notifCloseBtn.addEventListener("click", closeNotifPanel);
+notifOverlay.addEventListener("click", (e) => {
+  if (e.target === notifOverlay) closeNotifPanel();
 });
 
 closeInfoModal.addEventListener("click", () => infoModal.classList.add("hidden"));
@@ -2561,7 +2781,7 @@ function renderDrawer() {
         ${currentUser.uid === ADMIN_UID ? `
         <button class="drawer-item" id="drawerModeration">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-          <span>${t("drawer_moderation")}</span>
+          <span>${t("drawer_moderation")}${pendingReviewCount() > 0 ? ` <span class="drawer-count-badge">${pendingReviewCount()}</span>` : ""}</span>
         </button>` : ""}
         ${commonItemsHtml}
         <div class="drawer-danger-group">
@@ -3284,6 +3504,7 @@ onSnapshot(businessesQuery, (snapshot) => {
     allBusinesses = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
     renderGrid();
     updateCategoryCounts();
+    updateNotifBadge();
     if (!categoryView.classList.contains("hidden")) {
       renderCategoryList();
     }
@@ -3547,6 +3768,31 @@ function closeModerationView() {
 }
 moderationBackBtn.addEventListener("click", closeModerationView);
 
+// Shared by both the moderation list's quick-action buttons and the matching
+// action bar on the full detail page, so approving/rejecting behaves the same
+// no matter where the admin does it from.
+async function approveBusinessListing(id) {
+  const b = allBusinesses.find(x => x.id === id);
+  await updateDoc(doc(db, "businesses", id), { moderationStatus: "approved", rejectionReason: "" });
+  if (b && b.ownerId) {
+    await addDoc(collection(db, "notifications"), {
+      userId: b.ownerId, businessId: id, businessName: b.name || "",
+      type: "approved", read: false, createdAt: serverTimestamp()
+    });
+  }
+}
+async function rejectBusinessListing(id) {
+  const reason = (prompt(t("mod_reject_reason_prompt")) || "").trim();
+  const b = allBusinesses.find(x => x.id === id);
+  await updateDoc(doc(db, "businesses", id), { moderationStatus: "rejected", rejectionReason: reason });
+  if (b && b.ownerId) {
+    await addDoc(collection(db, "notifications"), {
+      userId: b.ownerId, businessId: id, businessName: b.name || "",
+      type: "rejected", reason, read: false, createdAt: serverTimestamp()
+    });
+  }
+}
+
 function renderModerationList() {
   const pending = allBusinesses.filter(b => (b.moderationStatus || "approved") === "pending");
 
@@ -3555,7 +3801,7 @@ function renderModerationList() {
     return;
   }
 
-  moderationList.innerHTML = pending.map(b => {
+  moderationList.innerHTML = `<p class="mod-view-hint">${t("mod_view_hint")}</p>` + pending.map(b => {
     const initial = (b.name || "?").trim().charAt(0).toUpperCase();
     const avatarStyle = b.logoUrl
       ? `background-image:url('${b.logoUrl}'); background-size:cover; background-position:center;`
@@ -3574,11 +3820,18 @@ function renderModerationList() {
     </div>`;
   }).join("");
 
+  // Tapping the row (but not the action buttons) opens the normal, full
+  // detail page — same description/photos/contact info anyone else sees —
+  // so the admin can actually review what they're approving.
+  moderationList.querySelectorAll(".mod-row").forEach(row => {
+    row.addEventListener("click", () => showDetail(row.dataset.id));
+  });
   moderationList.querySelectorAll("[data-approve]").forEach(btn => {
-    btn.addEventListener("click", async () => {
+    btn.addEventListener("click", async (e) => {
+      e.stopPropagation();
       btn.disabled = true;
       try {
-        await updateDoc(doc(db, "businesses", btn.dataset.approve), { moderationStatus: "approved" });
+        await approveBusinessListing(btn.dataset.approve);
         renderModerationList();
       } catch (err) {
         console.error(err);
@@ -3587,10 +3840,11 @@ function renderModerationList() {
     });
   });
   moderationList.querySelectorAll("[data-reject]").forEach(btn => {
-    btn.addEventListener("click", async () => {
+    btn.addEventListener("click", async (e) => {
+      e.stopPropagation();
       btn.disabled = true;
       try {
-        await updateDoc(doc(db, "businesses", btn.dataset.reject), { moderationStatus: "rejected" });
+        await rejectBusinessListing(btn.dataset.reject);
         renderModerationList();
       } catch (err) {
         console.error(err);
@@ -3618,6 +3872,75 @@ async function recomputeRatingAggregate(businessId) {
   snap.forEach(d => { total += (d.data().stars || 0); count++; });
   const avg = count ? total / count : 0;
   await updateDoc(doc(db, "businesses", businessId), { ratingAvg: avg, ratingCount: count });
+}
+
+/* ---------------- LIKES ---------------- */
+async function recomputeLikesAggregate(businessId) {
+  const snap = await getDocs(collection(db, "businesses", businessId, "likes"));
+  await updateDoc(doc(db, "businesses", businessId), { likesCount: snap.size });
+}
+
+// Notifies the owner about a like or a new/updated review — skipped when the
+// owner is the one triggering it (e.g. an admin browsing their own listing).
+async function notifyOwner(business, type, extra = {}) {
+  if (!business || !business.ownerId || !currentUser || business.ownerId === currentUser.uid) return;
+  try {
+    await addDoc(collection(db, "notifications"), {
+      userId: business.ownerId, businessId: business.id, businessName: business.name || "",
+      type, actorName: currentUser.displayName || currentUser.email || "",
+      read: false, createdAt: serverTimestamp(), ...extra
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function attachLikeHandler(business, isOwner) {
+  const btn = document.getElementById("likeBtn");
+  if (!btn) return;
+  const iconEl = document.getElementById("likeBtnIcon");
+  const labelEl = document.getElementById("likeBtnLabel");
+  const countEl = document.getElementById("likeBtnCount");
+
+  function paint(liked) {
+    btn.dataset.liked = liked ? "true" : "false";
+    btn.classList.toggle("liked", liked);
+    iconEl.textContent = "👍";
+    labelEl.textContent = liked ? t("liked_btn") : t("like_btn");
+  }
+
+  if (isOwner) {
+    btn.disabled = true;
+    return;
+  }
+  if (!currentUser) {
+    btn.addEventListener("click", () => openAuthModal("login"));
+    return;
+  }
+
+  const likeRef = doc(db, "businesses", business.id, "likes", currentUser.uid);
+  getDoc(likeRef).then(snap => paint(snap.exists())).catch(err => console.error(err));
+
+  btn.addEventListener("click", async () => {
+    btn.disabled = true;
+    const currentlyLiked = btn.dataset.liked === "true";
+    try {
+      if (currentlyLiked) {
+        await deleteDoc(likeRef);
+      } else {
+        await setDoc(likeRef, { createdAt: serverTimestamp() });
+        notifyOwner(business, "like");
+      }
+      await recomputeLikesAggregate(business.id);
+      const freshCount = allBusinesses.find(x => x.id === business.id)?.likesCount;
+      paint(!currentlyLiked);
+      countEl.textContent = typeof freshCount === "number" ? freshCount : (currentlyLiked ? Math.max(0, (business.likesCount || 1) - 1) : (business.likesCount || 0) + 1);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      btn.disabled = false;
+    }
+  });
 }
 
 async function loadReviews(businessId) {
@@ -3712,6 +4035,8 @@ async function submitRating(businessId, stars, comment) {
     err.step = "aggregate-update";
     throw err;
   }
+  const business = allBusinesses.find(x => x.id === businessId);
+  notifyOwner(business, "review", { stars, comment: (comment || "").slice(0, 140) });
 }
 
 function attachRatingHandlers(businessId, isOwner) {
@@ -3841,7 +4166,12 @@ function showDetail(id) {
     : "";
   const ratingBlockHtml = `
     <div class="rating-block">
-      <div class="rating-avg">${starsDisplay(b.ratingAvg)} <span class="rating-count">(${b.ratingCount || 0})</span></div>
+      <div class="rating-avg">
+        ${starsDisplay(b.ratingAvg)} <span class="rating-count">(${b.ratingCount || 0})</span>
+        <button type="button" class="like-btn" id="likeBtn" data-liked="false">
+          <span id="likeBtnIcon">👍</span> <span id="likeBtnLabel">${t("like_btn")}</span> <span id="likeBtnCount">${b.likesCount || 0}</span>
+        </button>
+      </div>
       ${ratingInputHtml}
     </div>`;
 
@@ -3863,8 +4193,16 @@ function showDetail(id) {
   const statusNoteHtml = modStatus === "pending"
     ? `<div class="status-note pending">${t("status_pending_note")}</div>`
     : modStatus === "rejected"
-      ? `<div class="status-note rejected">${t("status_rejected_note")}</div>`
+      ? `<div class="status-note rejected">${t("status_rejected_note")}${b.rejectionReason ? `<br><strong>${t("status_rejected_reason_label")}</strong> ${escapeHtml(b.rejectionReason)}` : ""}</div>`
       : "";
+  // Lets the admin approve/reject right from the full detail page (with the
+  // real description and photos in view) instead of only from the list row.
+  const modActionBarHtml = (isAdmin && modStatus === "pending")
+    ? `<div class="mod-detail-actions">
+         <button class="mod-approve-btn" id="detailApproveBtn">${t("mod_approve_btn")}</button>
+         <button class="mod-reject-btn" id="detailRejectBtn">${t("mod_reject_btn")}</button>
+       </div>`
+    : "";
 
   detailCard.innerHTML = `
     <div class="profile-logo ${b.logoUrl ? "zoomable" : ""}" ${b.logoUrl ? `data-group="logo"` : ""} style="${b.logoUrl ? `background-image:url('${b.logoUrl}'); background-size:cover; background-position:center;` : ""}"></div>
@@ -3874,6 +4212,7 @@ function showDetail(id) {
       <span>📍 ${escapeHtml(b.city)}, ${escapeHtml(t(stateKey(b.state)))}</span>
     </div>
     ${isOwner ? statusNoteHtml : ""}
+    ${modActionBarHtml}
     <p class="profile-desc">${escapeHtml(b.description || "")}</p>
     ${ratingBlockHtml}
     <div class="profile-tags">
@@ -3898,6 +4237,7 @@ function showDetail(id) {
   `;
 
   attachRatingHandlers(b.id, isOwner);
+  attachLikeHandler(b, isOwner);
   attachZoomHandlers();
   loadReviews(b.id);
   attachShareHandler(b);
@@ -3931,10 +4271,37 @@ function showDetail(id) {
         }
       });
     }
+    const detailApproveBtn = document.getElementById("detailApproveBtn");
+    const detailRejectBtn = document.getElementById("detailRejectBtn");
+    if (detailApproveBtn) {
+      detailApproveBtn.addEventListener("click", async () => {
+        detailApproveBtn.disabled = true;
+        try {
+          await approveBusinessListing(b.id);
+          goToModeration();
+        } catch (err) {
+          console.error(err);
+          detailApproveBtn.disabled = false;
+        }
+      });
+    }
+    if (detailRejectBtn) {
+      detailRejectBtn.addEventListener("click", async () => {
+        detailRejectBtn.disabled = true;
+        try {
+          await rejectBusinessListing(b.id);
+          goToModeration();
+        } catch (err) {
+          console.error(err);
+          detailRejectBtn.disabled = false;
+        }
+      });
+    }
   }
 
   browseView.classList.add("hidden");
   categoryView.classList.add("hidden");
+  moderationView.classList.add("hidden");
   detailReturnScreen = currentScreen === "detail" ? detailReturnScreen : currentScreen;
   currentScreen = "detail";
   detailView.classList.remove("hidden");
@@ -3946,6 +4313,8 @@ backToBrowse.addEventListener("click", () => {
   if (detailReturnScreen === "category") {
     currentScreen = "category";
     categoryView.classList.remove("hidden");
+  } else if (detailReturnScreen === "moderation") {
+    goToModeration();
   } else {
     currentScreen = "browse";
     browseView.classList.remove("hidden");
@@ -4138,6 +4507,8 @@ if (window.Capacitor && window.Capacitor.getPlatform && window.Capacitor.getPlat
   window.Capacitor.Plugins.App.addListener("backButton", () => {
     if (!lightbox.classList.contains("hidden")) {
       closeLightbox();
+    } else if (!notifOverlay.classList.contains("hidden")) {
+      closeNotifPanel();
     } else if (!infoModal.classList.contains("hidden")) {
       infoModal.classList.add("hidden");
     } else if (!drawerOverlay.classList.contains("hidden")) {
@@ -4155,6 +4526,8 @@ if (window.Capacitor && window.Capacitor.getPlatform && window.Capacitor.getPlat
       if (detailReturnScreen === "category") {
         currentScreen = "category";
         categoryView.classList.remove("hidden");
+      } else if (detailReturnScreen === "moderation") {
+        goToModeration();
       } else {
         currentScreen = "browse";
         browseView.classList.remove("hidden");
