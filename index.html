@@ -136,9 +136,15 @@ html[dir="rtl"] .fab-add{padding:15px 18px 15px 22px;}
   font-weight:800; font-size:15px; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--card-bg);
 }
 .notif-panel-header .drawer-close{position:static; background:rgba(33,31,26,0.08); color:var(--ink);}
-.notif-row{display:flex; gap:12px; align-items:flex-start; padding:14px 18px; border-bottom:1px solid var(--line); cursor:pointer;}
+.notif-row{display:flex; gap:12px; align-items:flex-start; padding:14px 18px; border-bottom:1px solid var(--line); cursor:pointer; position:relative;}
 .notif-row:hover{background:rgba(33,31,26,0.03);}
-.notif-row.unread{background:rgba(180,112,58,0.06);}
+.notif-row.unread{background:rgba(180,112,58,0.09); border-inline-start:3px solid var(--wood);}
+.notif-row.unread .notif-title{font-weight:800;}
+.notif-row.unread::after{
+  content:""; position:absolute; top:16px; inset-inline-end:16px;
+  width:8px; height:8px; border-radius:50%; background:var(--wood);
+}
+.notif-row:not(.unread){opacity:0.75;}
 .notif-icon{width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;}
 .notif-icon.approved{background:rgba(92,110,78,0.16); color:var(--sage);}
 .notif-icon.rejected{background:rgba(176,67,47,0.16); color:var(--danger);}
@@ -2564,8 +2570,11 @@ function pendingReviewCount() {
 }
 
 function updateNotifBadge() {
-  const isAdminUser = currentUser && currentUser.uid === ADMIN_UID;
-  const unread = allNotifications.filter(n => !n.read).length + (isAdminUser ? pendingReviewCount() : 0);
+  // Deliberately personal-notifications only: pending-review count is a live
+  // "action needed" total (only shrinks once items are actually approved or
+  // rejected), not a read/unread notification — mixing it in here made the
+  // badge look stuck even after every personal notification was opened.
+  const unread = allNotifications.filter(n => !n.read).length;
   notifBadge.textContent = unread > 9 ? "9+" : String(unread);
   notifBadge.classList.toggle("hidden", unread === 0);
 }
@@ -2584,7 +2593,7 @@ function renderNotifPanel() {
   const pendingCount = isAdminUser ? pendingReviewCount() : 0;
 
   const adminRowHtml = (isAdminUser && pendingCount > 0)
-    ? `<div class="notif-row" id="notifAdminPendingRow">
+    ? `<div class="notif-row unread" id="notifAdminPendingRow">
          <div class="notif-icon pending-admin">📋</div>
          <div class="notif-body">
            <div class="notif-title">${pendingCount} ${t("notif_pending_admin_title")}</div>
@@ -3775,10 +3784,14 @@ async function approveBusinessListing(id) {
   const b = allBusinesses.find(x => x.id === id);
   await updateDoc(doc(db, "businesses", id), { moderationStatus: "approved", rejectionReason: "" });
   if (b && b.ownerId) {
-    await addDoc(collection(db, "notifications"), {
-      userId: b.ownerId, businessId: id, businessName: b.name || "",
-      type: "approved", read: false, createdAt: serverTimestamp()
-    });
+    try {
+      await addDoc(collection(db, "notifications"), {
+        userId: b.ownerId, businessId: id, businessName: b.name || "",
+        type: "approved", read: false, createdAt: serverTimestamp()
+      });
+    } catch (notifErr) {
+      console.error("[notification-write-error]", notifErr);
+    }
   }
 }
 async function rejectBusinessListing(id) {
@@ -3786,10 +3799,17 @@ async function rejectBusinessListing(id) {
   const b = allBusinesses.find(x => x.id === id);
   await updateDoc(doc(db, "businesses", id), { moderationStatus: "rejected", rejectionReason: reason });
   if (b && b.ownerId) {
-    await addDoc(collection(db, "notifications"), {
-      userId: b.ownerId, businessId: id, businessName: b.name || "",
-      type: "rejected", reason, read: false, createdAt: serverTimestamp()
-    });
+    try {
+      await addDoc(collection(db, "notifications"), {
+        userId: b.ownerId, businessId: id, businessName: b.name || "",
+        type: "rejected", reason, read: false, createdAt: serverTimestamp()
+      });
+    } catch (notifErr) {
+      // The rejection itself already saved successfully above — a failure
+      // here only means the owner won't see a notification about it, so it's
+      // logged distinctly rather than surfaced as if the whole action failed.
+      console.error("[notification-write-error]", notifErr);
+    }
   }
 }
 
