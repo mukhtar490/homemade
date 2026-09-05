@@ -9,7 +9,7 @@
 <style>
 :root{
   --paper:#F4F0E6; --ink:#211F1A; --wood:#B4703A; --sage:#5C6E4E; --slate:#38566B;
-  --sms:#38566B; --call:#5C6E4E; --insta:#B4703A; --wa:#3D7A5C; --danger:#B0432F;
+  --sms:#38566B; --call:#5C6E4E; --insta:#B4703A; --wa:#3D7A5C; --danger:#B0432F; --share:#6E5A8C;
   --card-bg:#FFFCF6; --line: rgba(33,31,26,0.12); --radius:14px;
 }
 *{box-sizing:border-box; margin:0; padding:0;}
@@ -236,6 +236,25 @@ html[dir="rtl"] .fab-add{padding:15px 18px 15px 22px;}
 .filter-banner span[id]{text-decoration:underline; cursor:pointer;}
 .ships-badge{font-size:11px; font-weight:700; background:rgba(92,110,78,0.14); color:var(--sage); padding:4px 10px; border-radius:999px; display:inline-flex; align-items:center; gap:4px;}
 
+/* Moderation status badges — shown on a listing's own card/detail page so the
+   owner knows where their submission stands; never shown to other browsers. */
+.status-badge{position:absolute; top:12px; inset-inline-end:12px; font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px; z-index:2;}
+.status-badge.pending{background:rgba(180,112,58,0.92); color:#fff;}
+.status-badge.rejected{background:rgba(176,67,47,0.92); color:#fff;}
+.status-note{font-size:13px; font-weight:700; padding:10px 14px; border-radius:12px; margin-bottom:14px;}
+.status-note.pending{background:rgba(180,112,58,0.1); color:var(--wood); border:1px solid rgba(180,112,58,0.25);}
+.status-note.rejected{background:rgba(176,67,47,0.1); color:var(--danger); border:1px solid rgba(176,67,47,0.25);}
+
+/* Admin moderation queue */
+.mod-row{display:flex; align-items:center; gap:14px; padding:16px; border-bottom:1px solid var(--line);}
+.mod-row-body{flex:1; min-width:0;}
+.mod-row-name{font-weight:700; font-size:15px;}
+.mod-row-meta{font-size:12px; opacity:0.6; margin-top:2px;}
+.mod-row-actions{display:flex; gap:8px; flex-shrink:0;}
+.mod-approve-btn, .mod-reject-btn{border:none; border-radius:10px; padding:9px 16px; font-size:13px; font-weight:700; cursor:pointer; color:#fff;}
+.mod-approve-btn{background:var(--sage);}
+.mod-reject-btn{background:var(--danger);}
+
 /* CATEGORY PAGE */
 .category-header{
   background:var(--ink); color:#fff; padding:calc(20px + env(safe-area-inset-top)) 24px 20px; display:flex; align-items:center; gap:16px;
@@ -321,7 +340,7 @@ html[dir="ltr"] .category-back{transform:scaleX(-1);}
 .tag{font-size:12px; font-weight:700; padding:6px 14px; border-radius:999px; background:rgba(180,112,58,0.12); color:var(--wood);}
 .contact-row{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:8px;}
 .contact-btn{display:inline-flex; align-items:center; gap:8px; color:#fff; font-size:14px; font-weight:700; padding:12px 20px; border-radius:12px; border:none; cursor:pointer;}
-.icon-sms{background:var(--sms);} .icon-call{background:var(--call);} .icon-insta{background:var(--insta);} .icon-wa{background:var(--wa);}
+.icon-sms{background:var(--sms);} .icon-call{background:var(--call);} .icon-insta{background:var(--insta);} .icon-wa{background:var(--wa);} .icon-share{background:var(--share);}
 .disclaimer{font-size:11px; opacity:0.5; margin-top:18px; max-width:560px; line-height:1.6;}
 .back-link{display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; opacity:0.7; margin-top:20px; cursor:pointer;}
 .gallery{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:24px;}
@@ -586,10 +605,10 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
           <span class="cat-label" data-t="f_gifts">Gifts</span>
           <span class="cat-count" data-count-cat="Gifts">0</span>
         </div>
-        <div class="cat-tile" data-more="true">
-          <div class="cat-icon slate">➕</div>
-          <span class="cat-label" data-t="f_more">More</span>
-          <span class="cat-count">···</span>
+        <div class="cat-tile" data-cat="Travel Agency">
+          <div class="cat-icon slate">✈️</div>
+          <span class="cat-label" data-t="f_travel">Travel Agency</span>
+          <span class="cat-count" data-count-cat="Travel Agency">0</span>
         </div>
       </div>
 
@@ -617,6 +636,7 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
           <option value="Handmade Crafts" data-t="f_crafts">Handmade Crafts</option>
           <option value="Gifts" data-t="f_gifts">Gifts</option>
           <option value="Apparel & Accessories" data-t="f_apparel">Apparel &amp; Accessories</option>
+          <option value="Travel Agency" data-t="f_travel">Travel Agency</option>
         </select>
       </div>
       <div class="field">
@@ -728,6 +748,17 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
   </div>
   <div class="wrap">
     <div class="category-list" id="categoryList"></div>
+  </div>
+</div>
+
+<!-- ============ ADMIN MODERATION VIEW ============ -->
+<div id="moderationView" class="hidden">
+  <div class="category-header">
+    <button class="category-back" id="moderationBackBtn" aria-label="Back">→</button>
+    <h2 data-t="moderation_title">Review new listings</h2>
+  </div>
+  <div class="wrap">
+    <div id="moderationList"></div>
   </div>
 </div>
 
@@ -886,6 +917,7 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
           <option value="Handmade Crafts" data-t="f_crafts">Handmade Crafts</option>
           <option value="Gifts" data-t="f_gifts">Gifts</option>
           <option value="Apparel & Accessories" data-t="f_apparel">Apparel & Accessories</option>
+          <option value="Travel Agency" data-t="f_travel">Travel Agency</option>
         </select>
       </div>
       <div class="field hidden" id="bizSubcategoryField">
@@ -1272,6 +1304,19 @@ const translations = {
     featured_badge: "⭐ مميز",
     admin_feature_btn: "⭐ تثبيت في الأعلى",
     admin_unfeature_btn: "إلغاء التثبيت",
+    share_btn: "🔗 مشاركة",
+    share_seen_on: "تعرّف عليه عبر تطبيق السوق العربي",
+    share_download_cta: "حمّله من هنا:",
+    share_copied_msg: "تم نسخ رسالة المشاركة — الصقها بأي مكان",
+    status_pending_badge: "قيد المراجعة",
+    status_rejected_badge: "مرفوض",
+    status_pending_note: "⏳ مشروعك قيد المراجعة الآن — سيظهر للعموم بعد الموافقة عليه.",
+    status_rejected_note: "❌ لم تتم الموافقة على هذا المشروع. عدّله وأعد الحفظ ليُعاد عرضه للمراجعة.",
+    drawer_moderation: "مراجعة المشاريع",
+    moderation_title: "مراجعة المشاريع الجديدة",
+    moderation_empty: "لا توجد مشاريع بانتظار المراجعة حالياً.",
+    mod_approve_btn: "✓ موافقة",
+    mod_reject_btn: "✕ رفض",
     nav_add: "أضف مشروعك/مهنتك",
     eyebrow: "دليل الأعمال والخدمات العربية",
     welcome_headline: "تطبيق واحد لكل مشاريعك وخدماتك",
@@ -1341,7 +1386,7 @@ const translations = {
     cat_section_label: "تصفح حسب التصنيف",
     f_all: "الكل", f_food: "أطعمة وحلويات", f_crafts: "حرف يدوية", f_gifts: "هدايا", f_services: "خدمات", f_apparel: "ملابس وإكسسوارات",
     f_legal: "محاماة", f_legal_translation: "ترجمة قانونية", f_tax: "خدمات الضرائب", f_jobs: "فرص عمل",
-    f_beauty: "العناية الشخصية والتجميل", f_education: "التعليم والتدريب",
+    f_beauty: "العناية الشخصية والتجميل", f_education: "التعليم والتدريب", f_travel: "وكالة سفر",
     f_more: "المزيد",
     loading: "جارٍ تحميل المشاريع…",
     empty_state: "لا توجد مشاريع في هذا التصنيف بعد — كن أول من يضيف مشروعه.",
@@ -1377,6 +1422,7 @@ const translations = {
     field_subcategory_tax: "نوع الخدمة الضريبية",
     field_subcategory_beauty: "نوع الخدمة",
     field_subcategory_education: "نوع التعليم",
+    field_subcategory_travel: "نوع خدمة السفر",
     select_subcategory: "اختر خيارًا",
     field_subcategory_filter: "التخصص / نوع المهنة",
     filter_category_label: "التصنيف",
@@ -1452,6 +1498,11 @@ const translations = {
     subcat_edu_preschool: "روضة أطفال",
     subcat_edu_arabic: "لغة عربية",
     subcat_edu_other: "أخرى",
+    subcat_travel_flights: "حجز وإصدار تذاكر طيران",
+    subcat_travel_visa: "خدمات التأشيرات (الفيزا)",
+    subcat_travel_passport: "تجديد جواز السفر",
+    subcat_travel_tours: "باقات وبرامج سياحية",
+    subcat_travel_other: "أخرى",
     field_city: "المدينة", field_state: "الولاية", select_state: "اختر ولاية",
     field_sms: "رقم الرسائل النصية — اختياري",
     field_call: "رقم الهاتف — اختياري",
@@ -1556,6 +1607,19 @@ const translations = {
     featured_badge: "⭐ Featured",
     admin_feature_btn: "⭐ Pin to top",
     admin_unfeature_btn: "Unpin",
+    share_btn: "🔗 Share",
+    share_seen_on: "Found via the Al Souq Al Arabi app",
+    share_download_cta: "Download it here:",
+    share_copied_msg: "Share message copied — paste it anywhere",
+    status_pending_badge: "Pending review",
+    status_rejected_badge: "Rejected",
+    status_pending_note: "⏳ Your listing is pending review — it'll go live once approved.",
+    status_rejected_note: "❌ This listing wasn't approved. Edit and resave it to send it back for review.",
+    drawer_moderation: "Review listings",
+    moderation_title: "Review new listings",
+    moderation_empty: "No listings are waiting for review right now.",
+    mod_approve_btn: "✓ Approve",
+    mod_reject_btn: "✕ Reject",
     nav_add: "Add your business/profession",
     eyebrow: "A directory of Arabic businesses & services",
     welcome_headline: "One app for all your businesses and services",
@@ -1625,7 +1689,7 @@ const translations = {
     cat_section_label: "Browse by category",
     f_all: "All", f_food: "Food & Baking", f_crafts: "Handmade Crafts", f_gifts: "Gifts", f_services: "Services", f_apparel: "Apparel & Accessories",
     f_legal: "Legal Services", f_legal_translation: "Legal Translation", f_tax: "Tax Services", f_jobs: "Jobs",
-    f_beauty: "Beauty & Personal Care", f_education: "Education & Tutoring",
+    f_beauty: "Beauty & Personal Care", f_education: "Education & Tutoring", f_travel: "Travel Agency",
     f_more: "More",
     loading: "Loading businesses…",
     empty_state: "No businesses match yet — be the first to add one in this category.",
@@ -1661,6 +1725,7 @@ const translations = {
     field_subcategory_tax: "Tax service type",
     field_subcategory_beauty: "Service type",
     field_subcategory_education: "Education type",
+    field_subcategory_travel: "Travel service type",
     select_subcategory: "Select an option",
     field_subcategory_filter: "Specialty / profession type",
     filter_category_label: "Category",
@@ -1736,6 +1801,11 @@ const translations = {
     subcat_edu_preschool: "Preschool / Daycare",
     subcat_edu_arabic: "Arabic Language",
     subcat_edu_other: "Other",
+    subcat_travel_flights: "Flight Booking & Ticketing",
+    subcat_travel_visa: "Visa Services",
+    subcat_travel_passport: "Passport Renewal",
+    subcat_travel_tours: "Tour Packages",
+    subcat_travel_other: "Other",
     field_city: "City", field_state: "State", select_state: "Select a state",
     field_sms: "Text (SMS) number — optional",
     field_call: "Phone number — optional",
@@ -1900,6 +1970,7 @@ let editingBusinessId = null;
 let editingBusinessOwnerId = null;
 let editingBusinessOwnerName = "";
 let editingBusinessOwnerPhotoURL = "";
+let editingBusinessModerationStatus = "";
 let existingLogoUrl = "";
 let existingImages = [];
 
@@ -1913,7 +1984,8 @@ const CATEGORY_KEYS = {
   "Legal Translation": "f_legal_translation",
   "Tax Services": "f_tax",
   "Beauty & Personal Care": "f_beauty",
-  "Education & Tutoring": "f_education"
+  "Education & Tutoring": "f_education",
+  "Travel Agency": "f_travel"
 };
 const CATEGORY_GRADIENTS = {
   "Food & Baking": "linear-gradient(135deg,#D9A15C,#9C6A2E)",
@@ -1925,7 +1997,8 @@ const CATEGORY_GRADIENTS = {
   "Legal Translation": "linear-gradient(135deg,#C98849,#8A5427)",
   "Tax Services": "linear-gradient(135deg,#7A9A6E,#455E3D)",
   "Beauty & Personal Care": "linear-gradient(135deg,#D08FA0,#8A4A5C)",
-  "Education & Tutoring": "linear-gradient(135deg,#5A87A3,#2E4A5C)"
+  "Education & Tutoring": "linear-gradient(135deg,#5A87A3,#2E4A5C)",
+  "Travel Agency": "linear-gradient(135deg,#4FA8D8,#2A6B94)"
 };
 
 const SUBCATEGORY_OPTIONS = {
@@ -2013,6 +2086,13 @@ const SUBCATEGORY_OPTIONS = {
     { value: "Preschool", key: "subcat_edu_preschool" },
     { value: "ArabicLanguage", key: "subcat_edu_arabic" },
     { value: "Other", key: "subcat_edu_other" }
+  ],
+  "Travel Agency": [
+    { value: "FlightBooking", key: "subcat_travel_flights" },
+    { value: "VisaServices", key: "subcat_travel_visa" },
+    { value: "PassportRenewal", key: "subcat_travel_passport" },
+    { value: "TourPackages", key: "subcat_travel_tours" },
+    { value: "Other", key: "subcat_travel_other" }
   ]
 };
 const SUBCATEGORY_LABEL_KEY = {
@@ -2024,7 +2104,8 @@ const SUBCATEGORY_LABEL_KEY = {
   "Legal Translation": "field_subcategory_translation",
   "Tax Services": "field_subcategory_tax",
   "Beauty & Personal Care": "field_subcategory_beauty",
-  "Education & Tutoring": "field_subcategory_education"
+  "Education & Tutoring": "field_subcategory_education",
+  "Travel Agency": "field_subcategory_travel"
 };
 
 /* ---------------- DOM REFS ---------------- */
@@ -2104,6 +2185,9 @@ const adminBadge = document.getElementById("adminBadge");
 const jobsView = document.getElementById("jobsView");
 const jobsBackBtn = document.getElementById("jobsBackBtn");
 const jobList = document.getElementById("jobList");
+const moderationView = document.getElementById("moderationView");
+const moderationBackBtn = document.getElementById("moderationBackBtn");
+const moderationList = document.getElementById("moderationList");
 const addJobBtn = document.getElementById("addJobBtn");
 const jobSpecialtyFilterSelect = document.getElementById("jobSpecialtyFilterSelect");
 const jobStateFilterSelect = document.getElementById("jobStateFilterSelect");
@@ -2382,6 +2466,7 @@ function goHome() {
   detailView.classList.add("hidden");
   categoryView.classList.add("hidden");
   jobsView.classList.add("hidden");
+  moderationView.classList.add("hidden");
   currentScreen = "browse";
   browseView.classList.remove("hidden");
   document.querySelectorAll(".cat-tile").forEach(el => el.classList.toggle("active", el.dataset.cat === ""));
@@ -2394,6 +2479,7 @@ function goToMyBusinesses() {
   detailView.classList.add("hidden");
   categoryView.classList.add("hidden");
   jobsView.classList.add("hidden");
+  moderationView.classList.add("hidden");
   currentScreen = "browse";
   browseView.classList.remove("hidden");
   renderGrid();
@@ -2404,6 +2490,7 @@ function goToSearch() {
   detailView.classList.add("hidden");
   categoryView.classList.add("hidden");
   jobsView.classList.add("hidden");
+  moderationView.classList.add("hidden");
   currentScreen = "browse";
   browseView.classList.remove("hidden");
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -2477,6 +2564,11 @@ function renderDrawer() {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
           <span>${t("my_businesses")}</span>
         </button>
+        ${currentUser.uid === ADMIN_UID ? `
+        <button class="drawer-item" id="drawerModeration">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <span>${t("drawer_moderation")}</span>
+        </button>` : ""}
         ${commonItemsHtml}
         <div class="drawer-danger-group">
           <button class="drawer-item danger" id="drawerLogout">
@@ -2491,6 +2583,9 @@ function renderDrawer() {
       </div>
     `;
     document.getElementById("drawerMyBusinesses").addEventListener("click", () => { closeDrawer(); goToMyBusinesses(); });
+    if (currentUser.uid === ADMIN_UID) {
+      document.getElementById("drawerModeration").addEventListener("click", () => { closeDrawer(); goToModeration(); });
+    }
     document.getElementById("drawerDeleteAccount").addEventListener("click", handleDeleteAccount);
     document.getElementById("drawerLogout").addEventListener("click", () => { closeDrawer(); signOut(auth); });
     document.getElementById("avatarEditBtn").addEventListener("click", () => {
@@ -2566,6 +2661,7 @@ function openBusinessModal(business = null) {
     editingBusinessOwnerId = business.ownerId || null;
     editingBusinessOwnerName = business.ownerName || "";
     editingBusinessOwnerPhotoURL = business.ownerPhotoURL || "";
+    editingBusinessModerationStatus = business.moderationStatus || "approved";
     existingLogoUrl = business.logoUrl || "";
     existingImages = business.images || [];
     businessModalTitle.textContent = t("edit_business_title");
@@ -2604,6 +2700,7 @@ function openBusinessModal(business = null) {
     editingBusinessOwnerId = null;
     editingBusinessOwnerName = "";
     editingBusinessOwnerPhotoURL = "";
+    editingBusinessModerationStatus = "";
     existingLogoUrl = "";
     existingImages = [];
     businessModalTitle.textContent = t("nav_add");
@@ -2877,7 +2974,13 @@ businessForm.addEventListener("submit", async (e) => {
       shipsAll: bizShipsAll.checked,
       isOnline: bizIsOnline.checked,
       isNationwide: bizIsNationwide.checked,
-      ownerPhotoURL
+      ownerPhotoURL,
+      // New listings wait for manual approval before they're publicly visible.
+      // Resubmitting a previously-rejected listing sends it back for review;
+      // an already-approved listing simply stays approved while it's edited.
+      moderationStatus: editingBusinessId
+        ? (editingBusinessModerationStatus === "rejected" ? "pending" : editingBusinessModerationStatus)
+        : "pending"
     };
 
     if (editingBusinessId) {
@@ -2970,6 +3073,7 @@ function goToJobs() {
   browseView.classList.add("hidden");
   categoryView.classList.add("hidden");
   detailView.classList.add("hidden");
+  moderationView.classList.add("hidden");
   jobsView.classList.remove("hidden");
   currentScreen = "jobs";
   renderJobs();
@@ -3191,6 +3295,9 @@ onSnapshot(businessesQuery, (snapshot) => {
     if (!categoryView.classList.contains("hidden")) {
       renderCategoryList();
     }
+    if (!moderationView.classList.contains("hidden")) {
+      renderModerationList();
+    }
     // Keep an open detail view in sync with live data (e.g. after an edit).
     if (!detailView.classList.contains("hidden") && detailCard.dataset.currentId) {
       showDetail(detailCard.dataset.currentId);
@@ -3232,7 +3339,13 @@ function renderGrid() {
   const nationwideOnly = nationwideFilterCheckbox.checked;
 
   const filtered = sortWithFeatured(allBusinesses.filter(b => {
-    if (showOnlyMine && (!currentUser || b.ownerId !== currentUser.uid)) return false;
+    if (showOnlyMine) {
+      if (!currentUser || b.ownerId !== currentUser.uid) return false;
+    } else if ((b.moderationStatus || "approved") !== "approved") {
+      // Public browsing only ever shows approved listings; an owner's own
+      // pending/rejected listings are visible only in their "My listings" view.
+      return false;
+    }
     if (activeCategory && b.category !== activeCategory) return false;
     if (stateFilter && b.state !== stateFilter) return false;
     if (subcategoryFilter && b.subcategory !== subcategoryFilter) return false;
@@ -3270,11 +3383,18 @@ function renderGrid() {
       b.isNationwide ? `<span class="ships-badge">${t("nationwide_filter_label")}</span>` : ""
     ].join("");
     const featuredHtml = b.featured ? `<span class="featured-badge">${t("featured_badge")}</span>` : "";
+    const modStatus = b.moderationStatus || "approved";
+    const statusBadgeHtml = modStatus === "pending"
+      ? `<span class="status-badge pending">${t("status_pending_badge")}</span>`
+      : modStatus === "rejected"
+        ? `<span class="status-badge rejected">${t("status_rejected_badge")}</span>`
+        : "";
     return `
     <div class="card${b.featured ? " featured-card" : ""}" data-id="${b.id}">
       <div class="card-media" style="${mediaStyle}">
         <span class="card-tag">${escapeHtml(t(CATEGORY_KEYS[b.category] || "f_services"))}</span>
         ${featuredHtml}
+        ${statusBadgeHtml}
       </div>
       <div class="card-body">
         <div class="card-title">${escapeHtml(b.name)}</div>
@@ -3373,7 +3493,7 @@ function openCategoryPage(cat) {
 }
 
 function renderCategoryList() {
-  const items = sortWithFeatured(allBusinesses.filter(b => b.category === activeCategory));
+  const items = sortWithFeatured(allBusinesses.filter(b => b.category === activeCategory && (b.moderationStatus || "approved") === "approved"));
 
   if (items.length === 0) {
     categoryList.innerHTML = `<div class="empty-state">${t("empty_state")}</div>`;
@@ -3415,6 +3535,78 @@ function closeCategoryPage() {
   renderGrid();
 }
 categoryBackBtn.addEventListener("click", closeCategoryPage);
+
+/* ---------------- ADMIN MODERATION ---------------- */
+function goToModeration() {
+  detailView.classList.add("hidden");
+  categoryView.classList.add("hidden");
+  jobsView.classList.add("hidden");
+  browseView.classList.add("hidden");
+  currentScreen = "moderation";
+  moderationView.classList.remove("hidden");
+  renderModerationList();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+function closeModerationView() {
+  moderationView.classList.add("hidden");
+  currentScreen = "browse";
+  browseView.classList.remove("hidden");
+  renderGrid();
+}
+moderationBackBtn.addEventListener("click", closeModerationView);
+
+function renderModerationList() {
+  const pending = allBusinesses.filter(b => (b.moderationStatus || "approved") === "pending");
+
+  if (pending.length === 0) {
+    moderationList.innerHTML = `<div class="empty-state">${t("moderation_empty")}</div>`;
+    return;
+  }
+
+  moderationList.innerHTML = pending.map(b => {
+    const initial = (b.name || "?").trim().charAt(0).toUpperCase();
+    const avatarStyle = b.logoUrl
+      ? `background-image:url('${b.logoUrl}'); background-size:cover; background-position:center;`
+      : `background:${CATEGORY_GRADIENTS[b.category] || CATEGORY_GRADIENTS["Services"]};`;
+    return `
+    <div class="mod-row" data-id="${b.id}">
+      <div class="category-row-avatar" style="${avatarStyle}">${b.logoUrl ? "" : initial}</div>
+      <div class="mod-row-body">
+        <div class="mod-row-name">${escapeHtml(b.name)}</div>
+        <div class="mod-row-meta">${escapeHtml(t(CATEGORY_KEYS[b.category] || "f_services"))} — 📍 ${escapeHtml(b.city)}, ${escapeHtml(t(stateKey(b.state)))}</div>
+      </div>
+      <div class="mod-row-actions">
+        <button class="mod-approve-btn" data-approve="${b.id}">${t("mod_approve_btn")}</button>
+        <button class="mod-reject-btn" data-reject="${b.id}">${t("mod_reject_btn")}</button>
+      </div>
+    </div>`;
+  }).join("");
+
+  moderationList.querySelectorAll("[data-approve]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      btn.disabled = true;
+      try {
+        await updateDoc(doc(db, "businesses", btn.dataset.approve), { moderationStatus: "approved" });
+        renderModerationList();
+      } catch (err) {
+        console.error(err);
+        btn.disabled = false;
+      }
+    });
+  });
+  moderationList.querySelectorAll("[data-reject]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      btn.disabled = true;
+      try {
+        await updateDoc(doc(db, "businesses", btn.dataset.reject), { moderationStatus: "rejected" });
+        renderModerationList();
+      } catch (err) {
+        console.error(err);
+        btn.disabled = false;
+      }
+    });
+  });
+}
 
 /* ---------------- RATINGS ---------------- */
 let selectedRatingStars = 0;
@@ -3672,6 +3864,16 @@ function showDetail(id) {
     b.isNationwide ? `<span class="tag">${t("nationwide_filter_label")}</span>` : ""
   ].join("");
 
+  // Only the owner (or admin) ever sees this — a pending/rejected listing is
+  // already invisible to everyone else since renderGrid/renderCategoryList
+  // filter it out of public view entirely.
+  const modStatus = b.moderationStatus || "approved";
+  const statusNoteHtml = modStatus === "pending"
+    ? `<div class="status-note pending">${t("status_pending_note")}</div>`
+    : modStatus === "rejected"
+      ? `<div class="status-note rejected">${t("status_rejected_note")}</div>`
+      : "";
+
   detailCard.innerHTML = `
     <div class="profile-logo ${b.logoUrl ? "zoomable" : ""}" ${b.logoUrl ? `data-group="logo"` : ""} style="${b.logoUrl ? `background-image:url('${b.logoUrl}'); background-size:cover; background-position:center;` : ""}"></div>
     <h2 class="profile-name">${escapeHtml(b.name)}</h2>
@@ -3679,6 +3881,7 @@ function showDetail(id) {
       <span class="owner-line">${ownerAvatarHtml} ${escapeHtml(safeOwnerName(b.ownerName))}</span>
       <span>📍 ${escapeHtml(b.city)}, ${escapeHtml(t(stateKey(b.state)))}</span>
     </div>
+    ${isOwner ? statusNoteHtml : ""}
     <p class="profile-desc">${escapeHtml(b.description || "")}</p>
     ${ratingBlockHtml}
     <div class="profile-tags">
@@ -3687,7 +3890,9 @@ function showDetail(id) {
       ${shipsTagHtml}
       ${reachTagHtml}
     </div>
-    <div class="contact-row">${contactButtons.join("") || `<span style='opacity:0.5; font-size:13px;'>${t("no_contact")}</span>`}</div>
+    <div class="contact-row">${contactButtons.join("") || `<span style='opacity:0.5; font-size:13px;'>${t("no_contact")}</span>`}
+      <button type="button" class="contact-btn icon-share" id="shareBizBtn">${t("share_btn")}</button>
+    </div>
     ${ownerActionsHtml}
     ${featureToggleHtml}
     <p class="disclaimer">${t("disclaimer")}</p>
@@ -3703,6 +3908,7 @@ function showDetail(id) {
   attachRatingHandlers(b.id, isOwner);
   attachZoomHandlers();
   loadReviews(b.id);
+  attachShareHandler(b);
 
   if (isOwner) {
     document.getElementById("editBizBtn").addEventListener("click", () => openBusinessModal(b));
@@ -3758,6 +3964,7 @@ logoHome.addEventListener("click", () => {
   detailView.classList.add("hidden");
   categoryView.classList.add("hidden");
   jobsView.classList.add("hidden");
+  moderationView.classList.add("hidden");
   currentScreen = "browse";
   browseView.classList.remove("hidden");
 });
@@ -3869,6 +4076,44 @@ lightbox.addEventListener("touchend", (e) => {
   else showPrevImage();
 }, { passive: true });
 
+// Builds a plain-text share message (name, short description, city/state,
+// plus both store links) rather than a deep link to the listing itself —
+// someone without the app installed lands on a download page either way,
+// so the message carries the context instead of a link that can't resolve
+// to anything useful for them yet.
+function attachShareHandler(b) {
+  const btn = document.getElementById("shareBizBtn");
+  if (!btn) return;
+  btn.addEventListener("click", async () => {
+    const lines = [
+      b.name,
+      b.description ? b.description.slice(0, 140) : "",
+      `📍 ${b.city}, ${t(stateKey(b.state))}`,
+      "",
+      t("share_seen_on"),
+      t("share_download_cta"),
+      "Google Play: https://play.google.com/store/apps/details?id=com.mukhtar.alsouqalarabi",
+      "App Store: https://apps.apple.com/app/id6797300610"
+    ].filter(Boolean);
+    const shareText = lines.join("\n");
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: b.name, text: shareText });
+      } catch (err) {
+        // User cancelled the native share sheet — not an error worth surfacing.
+      }
+    } else if (navigator.clipboard) {
+      try {
+        await navigator.clipboard.writeText(shareText);
+        alert(t("share_copied_msg"));
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  });
+}
+
 function attachZoomHandlers() {
   document.querySelectorAll(".zoomable").forEach(el => {
     el.addEventListener("click", (e) => {
@@ -3924,6 +4169,8 @@ if (window.Capacitor && window.Capacitor.getPlatform && window.Capacitor.getPlat
       }
     } else if (!categoryView.classList.contains("hidden")) {
       closeCategoryPage();
+    } else if (!moderationView.classList.contains("hidden")) {
+      closeModerationView();
     } else if (!jobsView.classList.contains("hidden")) {
       closeJobsView();
     } else if (showOnlyMine) {
