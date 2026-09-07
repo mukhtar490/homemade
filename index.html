@@ -2619,11 +2619,12 @@ function pendingReviewCount() {
 }
 
 function updateNotifBadge() {
-  // Deliberately personal-notifications only: pending-review count is a live
-  // "action needed" total (only shrinks once items are actually approved or
-  // rejected), not a read/unread notification — mixing it in here made the
-  // badge look stuck even after every personal notification was opened.
-  const unread = allNotifications.filter(n => !n.read).length;
+  // Combines two different things on purpose: personal unread notifications
+  // (cleared just by opening the panel) plus, for the admin, the live count
+  // of listings still awaiting review (only drops once those are actually
+  // approved or rejected — opening the panel alone won't reduce that part).
+  const isAdminUser = currentUser && currentUser.uid === ADMIN_UID;
+  const unread = allNotifications.filter(n => !n.read).length + (isAdminUser ? pendingReviewCount() : 0);
   notifBadge.textContent = unread > 9 ? "9+" : String(unread);
   notifBadge.classList.toggle("hidden", unread === 0);
 }
