@@ -156,6 +156,20 @@ html[dir="rtl"] .fab-add{padding:15px 18px 15px 22px;}
 .notif-sub{font-size:12px; opacity:0.65; margin-top:2px;}
 .notif-time{font-size:11px; opacity:0.45; margin-top:4px;}
 .notif-empty{padding:40px 20px; text-align:center; opacity:0.55; font-size:13px;}
+#submissionNoticeOverlay{align-items:center; padding:16px;}
+.submission-notice-panel{
+  width:100%; max-width:360px; background:var(--card-bg); border-radius:18px;
+  padding:32px 26px 26px; text-align:center; box-shadow:0 20px 50px rgba(0,0,0,0.3);
+  animation:drawerIn .15s ease;
+}
+.submission-notice-icon{
+  width:64px; height:64px; border-radius:50%; margin:0 auto 18px;
+  background:rgba(180,112,58,0.14); color:var(--wood);
+  display:flex; align-items:center; justify-content:center; font-size:30px;
+}
+.submission-notice-panel h3{font-size:17px; font-weight:800; margin-bottom:10px;}
+.submission-notice-panel p{font-size:13.5px; line-height:1.7; opacity:0.75; margin-bottom:22px;}
+.submission-notice-panel .btn{width:100%;}
 .drawer-count-badge{
   display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 5px;
   border-radius:999px; background:var(--danger); color:#fff; font-size:11px; font-weight:700; margin-inline-start:4px;
@@ -386,7 +400,7 @@ html[dir="ltr"] .category-back{transform:scaleX(-1);}
 .tag{font-size:12px; font-weight:700; padding:6px 14px; border-radius:999px; background:rgba(180,112,58,0.12); color:var(--wood);}
 .contact-row{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:8px;}
 .contact-btn{display:inline-flex; align-items:center; gap:8px; color:#fff; font-size:14px; font-weight:700; padding:12px 20px; border-radius:12px; border:none; cursor:pointer;}
-.icon-sms{background:var(--sms);} .icon-call{background:var(--call);} .icon-insta{background:var(--insta);} .icon-wa{background:var(--wa);} .icon-share{background:var(--share);}
+.icon-sms{background:var(--sms);} .icon-call{background:var(--call);} .icon-insta{background:var(--insta);} .icon-wa{background:var(--wa);} .icon-share{background:var(--share);} .icon-web{background:var(--slate);}
 .disclaimer{font-size:11px; opacity:0.5; margin-top:18px; max-width:560px; line-height:1.6;}
 .back-link{display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; opacity:0.7; margin-top:20px; cursor:pointer;}
 .gallery{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:24px;}
@@ -578,6 +592,16 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
       <button class="drawer-close" id="notifCloseBtn">×</button>
     </div>
     <div id="notifList"></div>
+  </div>
+</div>
+
+<!-- ============ SUBMISSION NOTICE MODAL ============ -->
+<div class="notif-overlay hidden" id="submissionNoticeOverlay">
+  <div class="submission-notice-panel">
+    <div class="submission-notice-icon">⏳</div>
+    <h3 data-t="submission_pending_title">Submitted for review</h3>
+    <p data-t="submission_pending_message">Your listing has been submitted and is pending review. It'll go live once approved — you can check its status anytime from "My listings".</p>
+    <button class="btn btn-primary" id="submissionNoticeOkBtn" data-t="ok_btn">OK</button>
   </div>
 </div>
 
@@ -1075,6 +1099,10 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
         <label data-t="field_wa">WhatsApp number — optional</label>
         <input type="tel" id="bizWhatsapp" placeholder="+1 512 555 0100">
       </div>
+      <div class="field">
+        <label data-t="field_website">Website — optional</label>
+        <input type="text" id="bizWebsite" placeholder="www.example.com">
+      </div>
       <div class="field" id="bizShowOwnerPhotoField">
         <label class="checkbox-row">
           <input type="checkbox" id="bizShowOwnerPhoto">
@@ -1391,6 +1419,9 @@ const translations = {
     mod_reject_btn: "✕ رفض",
     mod_reject_reason_prompt: "سبب الرفض (اختياري، يظهر لصاحب المشروع):",
     mod_view_hint: "اضغط على المشروع لمراجعة الوصف والصور كاملة",
+    submission_pending_title: "تم إرسال مشروعك للمراجعة",
+    submission_pending_message: "مشروعك الآن قيد المراجعة، وسيظهر للعموم بمجرد الموافقة عليه. تقدر تتابع حالته في أي وقت من صفحة \"مشاريعي\".",
+    ok_btn: "حسناً",
     notif_panel_title: "الإشعارات",
     notif_empty: "لا توجد إشعارات حالياً.",
     notif_approved_title: "تمت الموافقة على مشروعك",
@@ -1484,7 +1515,7 @@ const translations = {
     exit_toast_msg: "اضغط زر الرجوع مرة أخرى للخروج",
     disclaimer: "السوق العربي دليل تواصل فقط. جميع الطلبات وعمليات الدفع وسلامة الطعام مسؤولية مباشرة بين الزائر وصاحب المشروع.",
     no_contact: "لا توجد وسيلة تواصل مضافة بعد.",
-    contact_sms: "✉ رسالة نصية", contact_call: "☎ اتصال", contact_insta: "📷 إنستغرام", contact_wa: "💬 واتساب",
+    contact_sms: "✉ رسالة نصية", contact_call: "☎ اتصال", contact_insta: "📷 إنستغرام", contact_wa: "💬 واتساب", contact_web: "🌐 الموقع الإلكتروني",
     tab_login: "تسجيل الدخول", tab_signup: "إنشاء حساب",
     auth_title_login: "تسجيل الدخول", auth_title_signup: "إنشاء حساب",
     auth_submit_login: "تسجيل الدخول", auth_submit_signup: "إنشاء الحساب",
@@ -1592,6 +1623,7 @@ const translations = {
     field_call: "رقم الهاتف — اختياري",
     field_insta: "حساب إنستغرام — اختياري",
     field_wa: "رقم واتساب — اختياري",
+    field_website: "الموقع الإلكتروني — اختياري",
     publish_btn: "نشر المشروع",
     show_owner_photo_label: "إظهار صورتي الشخصية بجانب اسمي في صفحة المشروع",
     field_admin_owner_name: "اسم صاحب الحساب الظاهر (أدمن) — اختياري، اتركه فارغًا لإخفاء الاسم",
@@ -1647,7 +1679,7 @@ const translations = {
     terms_body: "باستخدامك تطبيق السوق العربي فإنك توافق على الآتي:\n\n١. المنصة دليل تواصل فقط بين أصحاب الأعمال والخدمات والزوار — لا تدير المنصة أي عمليات بيع أو دفع أو توصيل.\n\n٢. تتم جميع الطلبات والتعاملات المالية والاتفاقات مباشرة بين الزائر وصاحب المشروع، وتحت مسؤوليتهما الكاملة.\n\n٣. يتحمّل صاحب المشروع مسؤولية الالتزام بأي قوانين محلية أو ولائية أو مهنية تخص نشاطه (مثل قوانين سلامة الأغذية المنزلية، أو تراخيص المهن المنظّمة كالمحاماة والاستشارات الضريبية والترجمة القانونية).\n\n٤. يحتفظ التطبيق بحق إزالة أي مشروع يخالف هذه الشروط أو يحتوي على معلومات مضللة.\n\nهذا النص عام وقد يُحدَّث لاحقًا.",
     privacy_title: "سياسة الخصوصية",
     privacy_body: "نحرص على خصوصية بياناتك:\n\n١. تُستخدم بيانات الحساب (الاسم والبريد الإلكتروني) فقط لتسجيل الدخول وربط المشاريع بأصحابها.\n\n٢. تكون بيانات المشروع (الاسم، الوصف، الصور، معلومات التواصل) ظاهرة للعموم بشكل مقصود ضمن الدليل.\n\n٣. لا تُباع بياناتك لأي طرف ثالث.\n\n٤. يمكنك طلب حذف حسابك وبياناته في أي وقت من هذه القائمة.\n\nهذا النص عام وقد يُحدَّث لاحقًا.",
-    confirm_delete_account: "هل أنت متأكد من رغبتك في حذف حسابك؟ هذا الإجراء نهائي ولا يمكن التراجع عنه. ستبقى المشاريع التي نشرتها ظاهرة للعموم دون ارتباطها بحساب.",
+    confirm_delete_account: "هل أنت متأكد من رغبتك في حذف حسابك؟ هذا الإجراء نهائي ولا يمكن التراجع عنه. سيتم حذف جميع المشاريع التي نشرتها وتقييماتك وإعجاباتك بشكل كامل.",
     delete_account_relogin: "لحماية حسابك، يجب تسجيل الدخول مرة أخرى قبل حذفه. يُرجى تسجيل الدخول والمحاولة مرة أخرى.",
     delete_account_success: "تم حذف حسابك بنجاح.",
     showing_mine_label: "يتم عرض مشاريعك فقط",
@@ -1705,6 +1737,9 @@ const translations = {
     mod_reject_btn: "✕ Reject",
     mod_reject_reason_prompt: "Rejection reason (optional, shown to the owner):",
     mod_view_hint: "Tap a listing to review its full description and photos",
+    submission_pending_title: "Submitted for review",
+    submission_pending_message: "Your listing is now pending review and will go live once approved. You can check its status anytime from \"My listings\".",
+    ok_btn: "OK",
     notif_panel_title: "Notifications",
     notif_empty: "No notifications yet.",
     notif_approved_title: "Your listing was approved",
@@ -1798,7 +1833,7 @@ const translations = {
     exit_toast_msg: "Press back again to exit",
     disclaimer: "Al Souq Al Arabi is a directory only. All orders, payments, and food safety are handled directly between you and the business owner.",
     no_contact: "No contact info provided yet.",
-    contact_sms: "✉ Text", contact_call: "☎ Call", contact_insta: "📷 Instagram", contact_wa: "💬 WhatsApp",
+    contact_sms: "✉ Text", contact_call: "☎ Call", contact_insta: "📷 Instagram", contact_wa: "💬 WhatsApp", contact_web: "🌐 Website",
     tab_login: "Log in", tab_signup: "Sign up",
     auth_title_login: "Log in", auth_title_signup: "Sign up",
     auth_submit_login: "Log in", auth_submit_signup: "Create account",
@@ -1906,6 +1941,7 @@ const translations = {
     field_call: "Phone number — optional",
     field_insta: "Instagram handle — optional",
     field_wa: "WhatsApp number — optional",
+    field_website: "Website — optional",
     publish_btn: "Publish business",
     show_owner_photo_label: "Show my personal photo next to my name",
     field_admin_owner_name: "Displayed owner name (admin) — optional, leave blank to hide",
@@ -1961,7 +1997,7 @@ const translations = {
     terms_body: "By using Al Souq Al Arabi, you agree to the following:\n\n1. This platform is a contact directory only, connecting business and service owners with visitors. It does not process sales, payments, or deliveries.\n\n2. All orders, payments, and agreements happen directly between the visitor and the business owner, at their own responsibility.\n\n3. Business owners are responsible for complying with any local, state, or professional licensing laws relevant to their activity (e.g. cottage food laws, or licensing requirements for regulated professions such as law, tax consulting, and legal translation).\n\n4. The platform reserves the right to remove any listing that violates these terms or contains misleading information.\n\nThis is general placeholder text and may be updated later.",
     privacy_title: "Privacy Policy",
     privacy_body: "We care about your privacy:\n\n1. Account data (name and email) is used only for sign-in and to link listings to their owner.\n\n2. Business listing data (name, description, photos, contact info) is intentionally public as part of the directory.\n\n3. We do not sell your data to third parties.\n\n4. You can request to delete your account and its data at any time from this menu.\n\nThis is general placeholder text and may be updated later.",
-    confirm_delete_account: "Are you sure you want to delete your account? This can't be undone. Any businesses you've published will remain publicly listed without an account attached.",
+    confirm_delete_account: "Are you sure you want to delete your account? This can't be undone. All businesses you've published, along with your reviews and likes, will be permanently deleted.",
     delete_account_relogin: "For your security, please log in again before deleting your account, then try again.",
     delete_account_success: "Your account has been deleted.",
     showing_mine_label: "Showing your businesses only",
@@ -2283,6 +2319,15 @@ const notifBadge = document.getElementById("notifBadge");
 const notifOverlay = document.getElementById("notifOverlay");
 const notifCloseBtn = document.getElementById("notifCloseBtn");
 const notifList = document.getElementById("notifList");
+const submissionNoticeOverlay = document.getElementById("submissionNoticeOverlay");
+const submissionNoticeOkBtn = document.getElementById("submissionNoticeOkBtn");
+function showSubmissionPendingNotice() {
+  submissionNoticeOverlay.classList.remove("hidden");
+}
+submissionNoticeOkBtn.addEventListener("click", () => submissionNoticeOverlay.classList.add("hidden"));
+submissionNoticeOverlay.addEventListener("click", (e) => {
+  if (e.target === submissionNoticeOverlay) submissionNoticeOverlay.classList.add("hidden");
+});
 
 const jobsView = document.getElementById("jobsView");
 const jobsBackBtn = document.getElementById("jobsBackBtn");
@@ -2724,9 +2769,61 @@ function goToSearch() {
   setTimeout(() => searchInput.focus(), 250);
 }
 
+async function deleteAllUserContent(uid) {
+  // Businesses the user owns: wipe each one's own ratings/likes subcollections
+  // first (Firestore doesn't cascade-delete subcollections on its own), then
+  // the business document itself. Each subcollection doc is deleted
+  // individually with its own catch — a rating left by a different user has
+  // a different document ID than this account, so it only succeeds under the
+  // security-rule update that lets a business owner clear their own
+  // business's subcollections; a permission error there shouldn't abort the
+  // rest of account deletion.
+  const ownBusinessesSnap = await getDocs(query(collection(db, "businesses"), where("ownerId", "==", uid)));
+  for (const bizDoc of ownBusinessesSnap.docs) {
+    const [ratingsSnap, likesSnap] = await Promise.all([
+      getDocs(collection(db, "businesses", bizDoc.id, "ratings")),
+      getDocs(collection(db, "businesses", bizDoc.id, "likes"))
+    ]);
+    await Promise.all([
+      ...ratingsSnap.docs.map(d => deleteDoc(d.ref).catch(err => console.error("[account-delete] rating cleanup", err))),
+      ...likesSnap.docs.map(d => deleteDoc(d.ref).catch(err => console.error("[account-delete] like cleanup", err)))
+    ]);
+    await deleteDoc(bizDoc.ref).catch(err => console.error("[account-delete] business doc", err));
+  }
+
+  // Ratings/likes the user left on OTHER people's businesses — the document
+  // ID is always the rater's uid, so we can target these directly without a
+  // collection-group query, then refresh that business's aggregate numbers.
+  const otherBusinesses = allBusinesses.filter(b => b.ownerId !== uid);
+  await Promise.all(otherBusinesses.map(async (b) => {
+    const ratingRef = doc(db, "businesses", b.id, "ratings", uid);
+    const likeRef = doc(db, "businesses", b.id, "likes", uid);
+    try {
+      const [ratingSnap, likeSnap] = await Promise.all([getDoc(ratingRef), getDoc(likeRef)]);
+      const tasks = [];
+      if (ratingSnap.exists()) tasks.push(deleteDoc(ratingRef).then(() => recomputeRatingAggregate(b.id)));
+      if (likeSnap.exists()) tasks.push(deleteDoc(likeRef).then(() => recomputeLikesAggregate(b.id)));
+      await Promise.all(tasks);
+    } catch (err) {
+      console.error("[account-delete] own rating/like on other business", err);
+    }
+  }));
+
+  // The user's own job posts and their notification history.
+  const [jobsSnap, notifsSnap] = await Promise.all([
+    getDocs(query(collection(db, "jobPosts"), where("ownerId", "==", uid))),
+    getDocs(query(collection(db, "notifications"), where("userId", "==", uid)))
+  ]);
+  await Promise.all([
+    ...jobsSnap.docs.map(d => deleteDoc(d.ref).catch(err => console.error("[account-delete] job post", err))),
+    ...notifsSnap.docs.map(d => deleteDoc(d.ref).catch(err => console.error("[account-delete] notification", err)))
+  ]);
+}
+
 async function handleDeleteAccount() {
   if (!confirm(t("confirm_delete_account"))) return;
   try {
+    await deleteAllUserContent(currentUser.uid);
     await deleteUser(currentUser);
     closeDrawer();
     alert(t("delete_account_success"));
@@ -2910,6 +3007,7 @@ function openBusinessModal(business = null) {
     document.getElementById("bizCall").value = business.contact?.call || "";
     document.getElementById("bizInsta").value = business.contact?.instagram || "";
     document.getElementById("bizWhatsapp").value = business.contact?.whatsapp || "";
+    document.getElementById("bizWebsite").value = business.contact?.website || "";
     bizShowOwnerPhoto.checked = !!business.showOwnerPhoto;
     bizShipsAll.checked = !!business.shipsAll;
     bizIsOnline.checked = !!business.isOnline;
@@ -3145,10 +3243,11 @@ businessForm.addEventListener("submit", async (e) => {
     sms: document.getElementById("bizSms").value.trim(),
     call: document.getElementById("bizCall").value.trim(),
     instagram: document.getElementById("bizInsta").value.trim().replace(/^@/, ""),
-    whatsapp: document.getElementById("bizWhatsapp").value.trim()
+    whatsapp: document.getElementById("bizWhatsapp").value.trim(),
+    website: document.getElementById("bizWebsite").value.trim()
   };
 
-  if (!contact.sms && !contact.call && !contact.instagram && !contact.whatsapp) {
+  if (!contact.sms && !contact.call && !contact.instagram && !contact.whatsapp && !contact.website) {
     bizError.textContent = t("biz_error_contact");
     bizError.classList.remove("hidden");
     return;
@@ -3219,6 +3318,9 @@ businessForm.addEventListener("submit", async (e) => {
     }
 
     businessModal.classList.add("hidden");
+    if (data.moderationStatus === "pending") {
+      showSubmissionPendingNotice();
+    }
   } catch (err) {
     bizError.textContent = t("biz_error_generic");
     bizError.classList.remove("hidden");
@@ -4152,6 +4254,10 @@ function showDetail(id) {
     const digits = b.contact.whatsapp.replace(/[^\d]/g, "");
     contactButtons.push(`<a class="contact-btn icon-wa" href="javascript:void(0)" data-external-url="https://wa.me/${digits}">${t("contact_wa")}</a>`);
   }
+  if (b.contact?.website) {
+    const url = /^https?:\/\//i.test(b.contact.website) ? b.contact.website : `https://${b.contact.website}`;
+    contactButtons.push(`<a class="contact-btn icon-web" href="javascript:void(0)" data-external-url="${escapeHtml(url)}">${t("contact_web")}</a>`);
+  }
 
   const galleryHtml = (b.images && b.images.length)
     ? `<div class="gallery">${b.images.map((u, i) => `<div class="gallery-item zoomable" data-group="gallery" data-index="${i}" style="background-image:url('${u}')"></div>`).join("")}</div>`
@@ -4177,7 +4283,7 @@ function showDetail(id) {
        </div>`
     : "";
 
-  const ratingInputHtml = !isOwner
+  const ratingInputHtml = !isRealOwner
     ? `<div class="rating-form" id="ratingForm">
          <div class="rating-hint">${currentUser ? t("rate_prompt") : t("rate_login_prompt")}</div>
          <div class="rating-input" id="ratingInput">
@@ -4260,8 +4366,8 @@ function showDetail(id) {
     </div>
   `;
 
-  attachRatingHandlers(b.id, isOwner);
-  attachLikeHandler(b, isOwner);
+  attachRatingHandlers(b.id, isRealOwner);
+  attachLikeHandler(b, isRealOwner);
   attachZoomHandlers();
   loadReviews(b.id);
   attachShareHandler(b);
@@ -4531,6 +4637,8 @@ if (window.Capacitor && window.Capacitor.getPlatform && window.Capacitor.getPlat
   window.Capacitor.Plugins.App.addListener("backButton", () => {
     if (!lightbox.classList.contains("hidden")) {
       closeLightbox();
+    } else if (!submissionNoticeOverlay.classList.contains("hidden")) {
+      submissionNoticeOverlay.classList.add("hidden");
     } else if (!notifOverlay.classList.contains("hidden")) {
       closeNotifPanel();
     } else if (!infoModal.classList.contains("hidden")) {
