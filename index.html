@@ -1315,6 +1315,7 @@ import {
   query,
   where,
   orderBy,
+  limit,
   serverTimestamp,
   onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
@@ -2606,7 +2607,7 @@ function setupNotificationsListener(uid) {
     updateNotifBadge();
     return;
   }
-  const q = query(collection(db, "notifications"), where("userId", "==", uid), orderBy("createdAt", "desc"));
+  const q = query(collection(db, "notifications"), where("userId", "==", uid), orderBy("createdAt", "desc"), limit(10));
   notificationsUnsubscribe = onSnapshot(q, (snapshot) => {
     allNotifications = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
     updateNotifBadge();
