@@ -2047,13 +2047,17 @@ let allBusinesses = [];
 // Safe to call from either the businesses or jobs snapshot listener since it
 // only touches the counts that source actually owns.
 function updateCategoryCounts() {
+  // Only count publicly-visible (approved) listings — a pending or rejected
+  // business shouldn't inflate a category's number when it isn't actually
+  // showing up in that category's grid.
+  const approvedBusinesses = allBusinesses.filter(b => (b.moderationStatus || "approved") === "approved");
   const counts = {};
-  allBusinesses.forEach(b => { counts[b.category] = (counts[b.category] || 0) + 1; });
+  approvedBusinesses.forEach(b => { counts[b.category] = (counts[b.category] || 0) + 1; });
   document.querySelectorAll("[data-count-cat]").forEach(el => {
     el.textContent = counts[el.dataset.countCat] || 0;
   });
   const allEl = document.querySelector("[data-count-all]");
-  if (allEl) allEl.textContent = allBusinesses.length;
+  if (allEl) allEl.textContent = approvedBusinesses.length;
   const jobsEl = document.querySelector("[data-count-jobs]");
   if (jobsEl) jobsEl.textContent = (typeof allJobs !== "undefined" ? allJobs.length : 0);
 }
