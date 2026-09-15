@@ -277,11 +277,22 @@ html[dir="rtl"] .fab-add{padding:15px 18px 15px 22px;}
 .card-media{height:130px; position:relative;}
 .card-tag{position:absolute; top:12px; inset-inline-start:12px; font-family:'IBM Plex Mono', monospace; font-size:11px; background:rgba(255,255,255,0.92); padding:4px 10px; border-radius:999px;}
 .featured-badge{position:absolute; top:12px; inset-inline-end:12px; font-size:11px; font-weight:700; background:linear-gradient(135deg,#E3A93C,#B4703A); color:#fff; padding:4px 10px; border-radius:999px; box-shadow:0 3px 8px rgba(180,112,58,0.35);}
+.verified-badge{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:17px; height:17px; margin-inline-start:5px; vertical-align:middle;
+  background:linear-gradient(135deg,#D4A537,#9C7A1F); color:#fff;
+  border-radius:50%; font-size:10px; font-weight:900; line-height:1;
+}
+.profile-name .verified-badge{width:21px; height:21px; font-size:12px;}
 .featured-card{border-color:rgba(227,169,60,0.5); box-shadow:0 0 0 1px rgba(227,169,60,0.3), 0 10px 22px rgba(180,112,58,0.12);}
 .card-body{padding:16px 18px 18px; display:flex; flex-direction:column; gap:8px;}
 .card-title{font-size:16px; font-weight:700;}
 .card-owner{font-size:12px; opacity:0.6;}
 .card-footer{display:flex; align-items:center; justify-content:space-between; padding-top:10px; border-top:1px solid var(--line); flex-wrap:wrap; gap:8px;}
+.card-upgrade-btn{
+  width:100%; margin-top:10px; padding:9px 12px; border:none; border-radius:10px;
+  background:linear-gradient(135deg,#D4A537,#9C7A1F); color:#fff; font-size:12.5px; font-weight:800; cursor:pointer;
+}
 .city{font-size:12px; opacity:0.65;}
 .empty-state{grid-column:1/-1; text-align:center; padding:60px 20px; opacity:0.6;}
 .filter-banner{
@@ -426,10 +437,11 @@ html[dir="ltr"] .category-back{transform:scaleX(-1);}
   border:none; border-radius:8px; padding:7px 14px; font-size:12.5px; font-weight:700;
   background:var(--wood); color:#fff; cursor:pointer; margin-inline-start:auto;
 }
-.feature-toggle-row .feature-btn, .feature-toggle-row .unfeature-btn{
-  font-size:13px; font-weight:700; padding:9px 16px; border-radius:10px; border:1px solid; cursor:pointer; width:100%;
+.feature-toggle-row .feature-btn, .feature-toggle-row .unfeature-btn, .feature-toggle-row .pro-activate-btn{
+  font-size:13px; font-weight:700; padding:9px 16px; border-radius:10px; border:1px solid; cursor:pointer; width:100%; margin-bottom:8px;
 }
 .feature-toggle-row .feature-btn{background:linear-gradient(135deg,#E3A93C,#B4703A); color:#fff; border-color:#B4703A;}
+.feature-toggle-row .pro-activate-btn{background:linear-gradient(135deg,#D4A537,#9C7A1F); color:#fff; border-color:#9C7A1F;}
 .feature-toggle-row .unfeature-btn{background:var(--card-bg); color:var(--ink); border-color:var(--line);}
 
 /* RATINGS */
@@ -999,7 +1011,7 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
         <div id="logoPreviewWrap"></div>
       </div>
       <div class="field">
-        <label data-t="field_gallery">Photos — optional (up to 4)</label>
+        <label id="bizGalleryLabel" data-t="field_gallery">Photos — optional (up to 4)</label>
         <input type="file" id="bizGallery" accept="image/*" multiple>
         <div id="galleryPreviewWrap"></div>
       </div>
@@ -1420,6 +1432,12 @@ const translations = {
     admin_featured_order_label: "ترتيب الظهور بين المثبّتة",
     admin_featured_order_ph: "مثال: 1، 2، 3...",
     admin_featured_order_save: "حفظ الترتيب",
+    pro_verified_label: "مشترك Pro — موثّق",
+    admin_pro_activate_btn: "👑 تفعيل Pro",
+    admin_pro_deactivate_btn: "إلغاء Pro",
+    upgrade_to_pro_btn: "رقّي لـ Pro",
+    upgrade_request_sent_msg: "تم إرسال طلب الترقية إلى فريقنا، بنتواصل معك قريباً لإتمام الاشتراك.",
+    notif_pro_request_title: "طلب ترقية إلى Pro",
     share_btn: "🔗 مشاركة",
     share_seen_on: "تعرّف عليه عبر تطبيق السوق العربي",
     share_download_cta: "حمّله من هنا:",
@@ -1544,6 +1562,7 @@ const translations = {
     ai_empty_input: "اكتب كام كلمة عن مشروعك الأول في الحقل فوق.",
     ai_error: "تعذّر إنشاء الوصف حاليًا. يُرجى المحاولة مرة أخرى.",
     field_logo: "الشعار — اختياري", field_gallery: "صور المشروع — اختياري (حتى 4 صور)",
+    field_gallery_pro: "👑 صور المشروع — اختياري (حتى 10 صور مع Pro)",
     field_category: "التصنيف", select_category: "اختر تصنيفًا",
     field_subcategory_food: "نوع المطبخ",
     field_subcategory_crafts: "نوع الحرفة",
@@ -1741,6 +1760,12 @@ const translations = {
     admin_featured_order_label: "Order among pinned listings",
     admin_featured_order_ph: "e.g. 1, 2, 3...",
     admin_featured_order_save: "Save order",
+    pro_verified_label: "Pro subscriber — verified",
+    admin_pro_activate_btn: "👑 Activate Pro",
+    admin_pro_deactivate_btn: "Deactivate Pro",
+    upgrade_to_pro_btn: "Upgrade to Pro",
+    upgrade_request_sent_msg: "Your upgrade request has been sent to our team — we'll reach out shortly to complete the subscription.",
+    notif_pro_request_title: "Pro upgrade request",
     share_btn: "🔗 Share",
     share_seen_on: "Found via the Al Souq Al Arabi app",
     share_download_cta: "Download it here:",
@@ -1865,6 +1890,7 @@ const translations = {
     ai_empty_input: "Write a few words about your business first.",
     ai_error: "Couldn't generate a description right now. Please try again.",
     field_logo: "Logo — optional", field_gallery: "Photos — optional (up to 4)",
+    field_gallery_pro: "👑 Photos — optional (up to 10 with Pro)",
     field_category: "Category", select_category: "Select a category",
     field_subcategory_food: "Cuisine type",
     field_subcategory_crafts: "Craft type",
@@ -2124,6 +2150,7 @@ let editingBusinessOwnerId = null;
 let editingBusinessOwnerName = "";
 let editingBusinessOwnerPhotoURL = "";
 let editingBusinessModerationStatus = "";
+let editingBusinessIsPro = false;
 let existingLogoUrl = "";
 let existingImages = [];
 
@@ -2297,6 +2324,10 @@ const bizSubcategoryField = document.getElementById("bizSubcategoryField");
 const bizSubcategoryLabel = document.getElementById("bizSubcategoryLabel");
 const bizSubcategorySelect = document.getElementById("bizSubcategory");
 const bizGalleryInput = document.getElementById("bizGallery");
+// Pro listings get a bigger photo gallery — free listings stay capped at 4.
+function maxGalleryImages() {
+  return editingBusinessIsPro ? 10 : 4;
+}
 const bizShowOwnerPhoto = document.getElementById("bizShowOwnerPhoto");
 const bizAdminOwnerSection = document.getElementById("bizAdminOwnerSection");
 const bizOwnerNameOverrideInput = document.getElementById("bizOwnerNameOverride");
@@ -2675,7 +2706,8 @@ function renderNotifPanel() {
     approved: { icon: "✓", cls: "approved", titleKey: "notif_approved_title" },
     rejected: { icon: "✕", cls: "rejected", titleKey: "notif_rejected_title" },
     like: { icon: "👍", cls: "like", titleKey: "notif_like_title" },
-    review: { icon: "★", cls: "review", titleKey: "notif_review_title" }
+    review: { icon: "★", cls: "review", titleKey: "notif_review_title" },
+    pro_request: { icon: "👑", cls: "pending-admin", titleKey: "notif_pro_request_title" }
   };
   const personalRowsHtml = allNotifications.map(n => {
     const meta = NOTIF_META[n.type] || NOTIF_META.approved;
@@ -2686,6 +2718,7 @@ function renderNotifPanel() {
       if (n.comment) subParts.push(n.comment);
     }
     if (n.type === "like" && n.actorName) subParts.push(n.actorName);
+    if (n.type === "pro_request" && n.actorName) subParts.push(n.actorName);
     return `
     <div class="notif-row${n.read ? "" : " unread"}" data-business-id="${n.businessId || ""}">
       <div class="notif-icon ${meta.cls}">${meta.icon}</div>
@@ -3007,6 +3040,7 @@ function openBusinessModal(business = null) {
     editingBusinessOwnerName = business.ownerName || "";
     editingBusinessOwnerPhotoURL = business.ownerPhotoURL || "";
     editingBusinessModerationStatus = business.moderationStatus || "approved";
+    editingBusinessIsPro = !!business.isPro;
     existingLogoUrl = business.logoUrl || "";
     existingImages = business.images || [];
     businessModalTitle.textContent = t("edit_business_title");
@@ -3047,12 +3081,19 @@ function openBusinessModal(business = null) {
     editingBusinessOwnerName = "";
     editingBusinessOwnerPhotoURL = "";
     editingBusinessModerationStatus = "";
+    editingBusinessIsPro = false;
     existingLogoUrl = "";
     existingImages = [];
     businessModalTitle.textContent = t("nav_add");
     bizSubmitBtn.textContent = t("publish_btn");
     document.getElementById("bizCity").required = true;
     updateSubcategoryField("", "");
+  }
+
+  const galleryLabelEl = document.getElementById("bizGalleryLabel");
+  if (galleryLabelEl) {
+    galleryLabelEl.dataset.t = editingBusinessIsPro ? "field_gallery_pro" : "field_gallery";
+    galleryLabelEl.textContent = t(galleryLabelEl.dataset.t);
   }
 
   businessModal.classList.remove("hidden");
@@ -3070,7 +3111,7 @@ bizLogoInput.addEventListener("change", () => {
 });
 bizGalleryInput.addEventListener("change", () => {
   galleryPreviewWrap.innerHTML = "";
-  const files = Array.from(bizGalleryInput.files).slice(0, 4);
+  const files = Array.from(bizGalleryInput.files).slice(0, maxGalleryImages());
   if (!files.length) return;
   galleryPreviewWrap.innerHTML = `<div class="preview-row">${files.map(f => `<div class="preview-thumb" style="background-image:url('${URL.createObjectURL(f)}')"></div>`).join("")}</div>`;
 });
@@ -3285,7 +3326,7 @@ businessForm.addEventListener("submit", async (e) => {
     }
 
     let images = existingImages;
-    const galleryFiles = Array.from(bizGalleryInput.files).slice(0, 4);
+    const galleryFiles = Array.from(bizGalleryInput.files).slice(0, maxGalleryImages());
     if (galleryFiles.length) {
       images = await Promise.all(galleryFiles.map(f => uploadImage(f, `businesses/${currentUser.uid}/gallery`)));
     }
@@ -3746,6 +3787,9 @@ function renderGrid() {
       : modStatus === "rejected"
         ? `<span class="status-badge rejected">${t("status_rejected_badge")}</span>`
         : "";
+    const upgradeBtnHtml = (showOnlyMine && currentUser && b.ownerId === currentUser.uid && !b.isPro)
+      ? `<button class="card-upgrade-btn" data-upgrade-id="${b.id}">👑 ${t("upgrade_to_pro_btn")}</button>`
+      : "";
     return `
     <div class="card${b.featured ? " featured-card" : ""}" data-id="${b.id}">
       <div class="card-media" style="${mediaStyle}">
@@ -3754,7 +3798,7 @@ function renderGrid() {
         ${statusBadgeHtml}
       </div>
       <div class="card-body">
-        <div class="card-title">${escapeHtml(b.name)}</div>
+        <div class="card-title">${escapeHtml(b.name)}${b.isPro ? `<span class="verified-badge" title="${t("pro_verified_label")}">✓</span>` : ""}</div>
         <div class="card-owner">${t("owner_label")} ${escapeHtml(safeOwnerName(b.ownerName))}</div>
         ${shipsHtml}
         ${reachHtml}
@@ -3762,6 +3806,7 @@ function renderGrid() {
           <span class="city">📍 ${escapeHtml(b.city)}, ${escapeHtml(t(stateKey(b.state)))}</span>
           ${ratingHtml}
         </div>
+        ${upgradeBtnHtml}
       </div>
     </div>
   `;
@@ -3770,7 +3815,31 @@ function renderGrid() {
   document.querySelectorAll(".card").forEach(card => {
     card.addEventListener("click", () => showDetail(card.dataset.id));
   });
+  document.querySelectorAll("[data-upgrade-id]").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      requestProUpgrade(btn.dataset.upgradeId);
+    });
+  });
   attachBannerHandler();
+}
+
+// The owner asks; the admin still activates Pro manually after handling
+// payment outside the app — this just puts the request in front of them via
+// the same notification system already used for approvals/likes/reviews.
+async function requestProUpgrade(businessId) {
+  const b = allBusinesses.find(x => x.id === businessId);
+  if (!b) return;
+  try {
+    await addDoc(collection(db, "notifications"), {
+      userId: ADMIN_UID, businessId, businessName: b.name || "",
+      type: "pro_request", actorName: currentUser.displayName || currentUser.email || "",
+      read: false, createdAt: serverTimestamp()
+    });
+    alert(t("upgrade_request_sent_msg"));
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 function attachBannerHandler() {
@@ -4306,6 +4375,9 @@ function showDetail(id) {
   const isAdmin = currentUser && currentUser.uid === ADMIN_UID;
   const featureToggleHtml = isAdmin
     ? `<div class="feature-toggle-row">
+         <button id="togglePro" class="${b.isPro ? "unfeature-btn" : "pro-activate-btn"}">
+           ${b.isPro ? t("admin_pro_deactivate_btn") : t("admin_pro_activate_btn")}
+         </button>
          <button id="toggleFeaturedBtn" class="${b.featured ? "unfeature-btn" : "feature-btn"}">
            ${b.featured ? t("admin_unfeature_btn") : t("admin_feature_btn")}
          </button>
@@ -4371,7 +4443,7 @@ function showDetail(id) {
 
   detailCard.innerHTML = `
     <div class="profile-logo ${b.logoUrl ? "zoomable" : ""}" ${b.logoUrl ? `data-group="logo"` : ""} style="${b.logoUrl ? `background-image:url('${b.logoUrl}'); background-size:cover; background-position:center;` : ""}"></div>
-    <h2 class="profile-name">${escapeHtml(b.name)}</h2>
+    <h2 class="profile-name">${escapeHtml(b.name)}${b.isPro ? `<span class="verified-badge" title="${t("pro_verified_label")}">✓</span>` : ""}</h2>
     <div class="profile-meta">
       <span class="owner-line">${ownerAvatarHtml} ${escapeHtml(safeOwnerName(b.ownerName))}</span>
       <span>📍 ${escapeHtml(b.city)}, ${escapeHtml(t(stateKey(b.state)))}</span>
@@ -4422,6 +4494,25 @@ function showDetail(id) {
   }
 
   if (isAdmin) {
+    const toggleProBtn = document.getElementById("togglePro");
+    if (toggleProBtn) {
+      toggleProBtn.addEventListener("click", async () => {
+        toggleProBtn.disabled = true;
+        try {
+          if (b.isPro) {
+            // Bundled with the pin: turning Pro off also unpins it, since the
+            // top-of-list placement was part of the same subscription.
+            await updateDoc(doc(db, "businesses", b.id), { isPro: false, featured: false });
+          } else {
+            await updateDoc(doc(db, "businesses", b.id), { isPro: true, featured: true, featuredAt: serverTimestamp() });
+          }
+        } catch (err) {
+          console.error(err);
+        } finally {
+          toggleProBtn.disabled = false;
+        }
+      });
+    }
     const toggleBtn = document.getElementById("toggleFeaturedBtn");
     if (toggleBtn) {
       toggleBtn.addEventListener("click", async () => {
