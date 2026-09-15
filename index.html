@@ -170,6 +170,22 @@ html[dir="rtl"] .fab-add{padding:15px 18px 15px 22px;}
 .submission-notice-panel h3{font-size:17px; font-weight:800; margin-bottom:10px;}
 .submission-notice-panel p{font-size:13.5px; line-height:1.7; opacity:0.75; margin-bottom:22px;}
 .submission-notice-panel .btn{width:100%;}
+.submission-notice-cancel{
+  width:100%; background:none; border:none; font-size:12.5px; opacity:0.55; font-weight:700;
+  cursor:pointer; padding-top:10px;
+}
+#proUpgradeOverlay{align-items:center; padding:16px;}
+.pro-crown-icon{background:linear-gradient(135deg,#D4A537,#9C7A1F); color:#fff;}
+.pro-modal-sub{font-size:12.5px; opacity:0.65; margin-bottom:18px;}
+.pro-price-row{display:flex; align-items:baseline; justify-content:center; gap:4px; margin-bottom:20px;}
+.pro-price-amount{font-size:30px; font-weight:900; color:var(--wood);}
+.pro-price-period{font-size:12.5px; opacity:0.6;}
+.pro-benefits{text-align:start; margin-bottom:20px; display:flex; flex-direction:column; gap:10px;}
+.pro-benefit{display:flex; align-items:center; gap:10px; font-size:12.5px; font-weight:700;}
+.pro-benefit .pro-tick{
+  width:19px; height:19px; border-radius:50%; background:rgba(92,110,78,0.16); color:var(--sage);
+  display:flex; align-items:center; justify-content:center; font-size:10px; flex-shrink:0;
+}
 .drawer-count-badge{
   display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 5px;
   border-radius:999px; background:var(--danger); color:#fff; font-size:11px; font-weight:700; margin-inline-start:4px;
@@ -443,6 +459,7 @@ html[dir="ltr"] .category-back{transform:scaleX(-1);}
 .feature-toggle-row .feature-btn{background:linear-gradient(135deg,#E3A93C,#B4703A); color:#fff; border-color:#B4703A;}
 .feature-toggle-row .pro-activate-btn{background:linear-gradient(135deg,#D4A537,#9C7A1F); color:#fff; border-color:#9C7A1F;}
 .feature-toggle-row .unfeature-btn{background:var(--card-bg); color:var(--ink); border-color:var(--line);}
+.pro-expiry-note{font-size:11.5px; opacity:0.6; text-align:center; margin:-2px 0 8px;}
 
 /* RATINGS */
 .rating-block{margin:6px 0 16px; display:flex; flex-direction:column; gap:12px;}
@@ -627,6 +644,27 @@ footer{border-top:1px solid var(--line); padding:24px 0 40px; font-size:13px; op
     <h3 data-t="submission_pending_title">Submitted for review</h3>
     <p data-t="submission_pending_message">Your listing has been submitted and is pending review. It'll go live once approved — you can check its status anytime from "My listings".</p>
     <button class="btn btn-primary" id="submissionNoticeOkBtn" data-t="ok_btn">OK</button>
+  </div>
+</div>
+
+<!-- ============ PRO UPGRADE MODAL ============ -->
+<div class="notif-overlay hidden" id="proUpgradeOverlay">
+  <div class="submission-notice-panel pro-upgrade-panel">
+    <div class="submission-notice-icon pro-crown-icon">👑</div>
+    <h3 data-t="pro_modal_title">Highlight your listing</h3>
+    <p class="pro-modal-sub" data-t="pro_modal_sub">Make your listing the first thing visitors see for a full month</p>
+    <div class="pro-price-row">
+      <span class="pro-price-amount">$4.99</span>
+      <span class="pro-price-period" data-t="pro_price_period">for one month</span>
+    </div>
+    <div class="pro-benefits">
+      <div class="pro-benefit"><span class="pro-tick">✓</span> <span data-t="pro_benefit_top">Top placement in your category for a full month</span></div>
+      <div class="pro-benefit"><span class="pro-tick">✓</span> <span data-t="pro_benefit_badge">A distinguishing "Verified" badge on your listing</span></div>
+      <div class="pro-benefit"><span class="pro-tick">✓</span> <span data-t="pro_benefit_photos">Up to 10 photos instead of 4</span></div>
+      <div class="pro-benefit"><span class="pro-tick">✓</span> <span data-t="pro_benefit_cancel">One-time payment, no auto-renewal</span></div>
+    </div>
+    <button class="btn btn-primary" id="proUpgradeConfirmBtn" data-t="pro_modal_confirm_btn">Send highlight request</button>
+    <button class="submission-notice-cancel" id="proUpgradeCancelBtn" data-t="pro_modal_cancel_btn">Not now</button>
   </div>
 </div>
 
@@ -1429,36 +1467,46 @@ const translations = {
     featured_badge: "⭐ مميز",
     admin_feature_btn: "⭐ تثبيت في الأعلى",
     admin_unfeature_btn: "إلغاء التثبيت",
-    admin_featured_order_label: "ترتيب الظهور بين المثبّتة",
+    admin_featured_order_label: "ترتيب الظهور بين المثبتة",
     admin_featured_order_ph: "مثال: 1، 2، 3...",
     admin_featured_order_save: "حفظ الترتيب",
-    pro_verified_label: "مشترك Pro — موثّق",
-    admin_pro_activate_btn: "👑 تفعيل Pro",
-    admin_pro_deactivate_btn: "إلغاء Pro",
-    upgrade_to_pro_btn: "رقّي لـ Pro",
-    upgrade_request_sent_msg: "تم إرسال طلب الترقية إلى فريقنا، بنتواصل معك قريباً لإتمام الاشتراك.",
-    notif_pro_request_title: "طلب ترقية إلى Pro",
+    pro_verified_label: "مشروع مميز — موثق",
+    admin_pro_activate_btn: "👑 تفعيل التمييز",
+    admin_pro_deactivate_btn: "إلغاء التمييز",
+    admin_pro_expires_label: "ينتهي بتاريخ:",
+    upgrade_to_pro_btn: "تمييز المشروع",
+    upgrade_request_sent_msg: "تم إرسال طلبك إلى فريقنا، وسنتواصل معك قريبا لإتمام الدفع.",
+    notif_pro_request_title: "طلب تمييز مشروع",
+    pro_modal_title: "تمييز مشروعك",
+    pro_modal_sub: "اجعل مشروعك أول ما يراه الزوار لمدة شهر كامل",
+    pro_price_period: "لمدة شهر واحد",
+    pro_benefit_top: "ظهور في أعلى تصنيفك لمدة شهر كامل",
+    pro_benefit_badge: "شارة \"موثق\" مميزة على مشروعك",
+    pro_benefit_photos: "حتى 10 صور بدلا من 4",
+    pro_benefit_cancel: "دفعة واحدة، بدون تجديد تلقائي",
+    pro_modal_confirm_btn: "إرسال طلب التمييز",
+    pro_modal_cancel_btn: "ليس الآن",
     share_btn: "🔗 مشاركة",
-    share_seen_on: "تعرّف عليه عبر تطبيق السوق العربي",
-    share_download_cta: "حمّله من هنا:",
+    share_seen_on: "تعرف عليه عبر تطبيق السوق العربي",
+    share_download_cta: "حمله من هنا:",
     share_copied_msg: "تم نسخ رسالة المشاركة — الصقها بأي مكان",
     status_pending_badge: "قيد المراجعة",
     status_rejected_badge: "مرفوض",
     status_pending_note: "⏳ مشروعك قيد المراجعة الآن — سيظهر للعموم بعد الموافقة عليه.",
-    status_rejected_note: "❌ لم تتم الموافقة على هذا المشروع. عدّله وأعد الحفظ ليُعاد عرضه للمراجعة.",
+    status_rejected_note: "❌ لم تتم الموافقة على هذا المشروع. عدله وأعد الحفظ ليعاد عرضه للمراجعة.",
     status_rejected_reason_label: "سبب الرفض:",
     drawer_moderation: "مراجعة المشاريع",
     moderation_title: "مراجعة المشاريع الجديدة",
-    moderation_empty: "لا توجد مشاريع بانتظار المراجعة حالياً.",
+    moderation_empty: "لا توجد مشاريع بانتظار المراجعة حاليا.",
     mod_approve_btn: "✓ موافقة",
     mod_reject_btn: "✕ رفض",
     mod_reject_reason_prompt: "سبب الرفض (اختياري، يظهر لصاحب المشروع):",
     mod_view_hint: "اضغط على المشروع لمراجعة الوصف والصور كاملة",
     submission_pending_title: "تم إرسال مشروعك للمراجعة",
-    submission_pending_message: "مشروعك الآن قيد المراجعة، وسيظهر للعموم بمجرد الموافقة عليه. تقدر تتابع حالته في أي وقت من صفحة \"مشاريعي\".",
-    ok_btn: "حسناً",
+    submission_pending_message: "مشروعك الآن قيد المراجعة، وسيظهر للعموم بمجرد الموافقة عليه. يمكنك متابعة حالته في أي وقت من صفحة \"مشاريعي\".",
+    ok_btn: "حسنا",
     notif_panel_title: "الإشعارات",
-    notif_empty: "لا توجد إشعارات حالياً.",
+    notif_empty: "لا توجد إشعارات حاليا.",
     notif_approved_title: "تمت الموافقة على مشروعك",
     notif_rejected_title: "لم تتم الموافقة على مشروعك",
     notif_pending_admin_title: "مشاريع بانتظار المراجعة",
@@ -1562,7 +1610,7 @@ const translations = {
     ai_empty_input: "اكتب كام كلمة عن مشروعك الأول في الحقل فوق.",
     ai_error: "تعذّر إنشاء الوصف حاليًا. يُرجى المحاولة مرة أخرى.",
     field_logo: "الشعار — اختياري", field_gallery: "صور المشروع — اختياري (حتى 4 صور)",
-    field_gallery_pro: "👑 صور المشروع — اختياري (حتى 10 صور مع Pro)",
+    field_gallery_pro: "👑 صور المشروع — اختياري (حتى 10 صور مع التمييز)",
     field_category: "التصنيف", select_category: "اختر تصنيفًا",
     field_subcategory_food: "نوع المطبخ",
     field_subcategory_crafts: "نوع الحرفة",
@@ -1760,12 +1808,22 @@ const translations = {
     admin_featured_order_label: "Order among pinned listings",
     admin_featured_order_ph: "e.g. 1, 2, 3...",
     admin_featured_order_save: "Save order",
-    pro_verified_label: "Pro subscriber — verified",
-    admin_pro_activate_btn: "👑 Activate Pro",
-    admin_pro_deactivate_btn: "Deactivate Pro",
-    upgrade_to_pro_btn: "Upgrade to Pro",
-    upgrade_request_sent_msg: "Your upgrade request has been sent to our team — we'll reach out shortly to complete the subscription.",
-    notif_pro_request_title: "Pro upgrade request",
+    pro_verified_label: "Highlighted listing — verified",
+    admin_pro_activate_btn: "👑 Activate Highlight",
+    admin_pro_deactivate_btn: "Remove Highlight",
+    admin_pro_expires_label: "Expires on:",
+    upgrade_to_pro_btn: "Highlight this listing",
+    upgrade_request_sent_msg: "Your request has been sent to our team — we'll reach out shortly to complete payment.",
+    notif_pro_request_title: "Listing highlight request",
+    pro_modal_title: "Highlight your listing",
+    pro_modal_sub: "Make your listing the first thing visitors see for a full month",
+    pro_price_period: "for one month",
+    pro_benefit_top: "Top placement in your category for a full month",
+    pro_benefit_badge: "A distinguishing \"Verified\" badge on your listing",
+    pro_benefit_photos: "Up to 10 photos instead of 4",
+    pro_benefit_cancel: "One-time payment, no auto-renewal",
+    pro_modal_confirm_btn: "Send highlight request",
+    pro_modal_cancel_btn: "Not now",
     share_btn: "🔗 Share",
     share_seen_on: "Found via the Al Souq Al Arabi app",
     share_download_cta: "Download it here:",
@@ -1890,7 +1948,7 @@ const translations = {
     ai_empty_input: "Write a few words about your business first.",
     ai_error: "Couldn't generate a description right now. Please try again.",
     field_logo: "Logo — optional", field_gallery: "Photos — optional (up to 4)",
-    field_gallery_pro: "👑 Photos — optional (up to 10 with Pro)",
+    field_gallery_pro: "👑 Photos — optional (up to 10 with Highlight)",
     field_category: "Category", select_category: "Select a category",
     field_subcategory_food: "Cuisine type",
     field_subcategory_crafts: "Craft type",
@@ -2379,6 +2437,9 @@ submissionNoticeOkBtn.addEventListener("click", () => submissionNoticeOverlay.cl
 submissionNoticeOverlay.addEventListener("click", (e) => {
   if (e.target === submissionNoticeOverlay) submissionNoticeOverlay.classList.add("hidden");
 });
+const proUpgradeOverlay = document.getElementById("proUpgradeOverlay");
+const proUpgradeConfirmBtn = document.getElementById("proUpgradeConfirmBtn");
+const proUpgradeCancelBtn = document.getElementById("proUpgradeCancelBtn");
 
 const jobsView = document.getElementById("jobsView");
 const jobsBackBtn = document.getElementById("jobsBackBtn");
@@ -3818,11 +3879,38 @@ function renderGrid() {
   document.querySelectorAll("[data-upgrade-id]").forEach(btn => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
-      requestProUpgrade(btn.dataset.upgradeId);
+      openProUpgradeModal(btn.dataset.upgradeId);
     });
   });
   attachBannerHandler();
 }
+
+let pendingProUpgradeBusinessId = null;
+function openProUpgradeModal(businessId) {
+  pendingProUpgradeBusinessId = businessId;
+  proUpgradeOverlay.classList.remove("hidden");
+}
+function closeProUpgradeModal() {
+  proUpgradeOverlay.classList.add("hidden");
+  pendingProUpgradeBusinessId = null;
+}
+proUpgradeCancelBtn.addEventListener("click", closeProUpgradeModal);
+proUpgradeOverlay.addEventListener("click", (e) => {
+  if (e.target === proUpgradeOverlay) closeProUpgradeModal();
+});
+proUpgradeConfirmBtn.addEventListener("click", async () => {
+  if (!pendingProUpgradeBusinessId) return;
+  proUpgradeConfirmBtn.disabled = true;
+  try {
+    await requestProUpgrade(pendingProUpgradeBusinessId);
+    closeProUpgradeModal();
+    alert(t("upgrade_request_sent_msg"));
+  } catch (err) {
+    console.error(err);
+  } finally {
+    proUpgradeConfirmBtn.disabled = false;
+  }
+});
 
 // The owner asks; the admin still activates Pro manually after handling
 // payment outside the app — this just puts the request in front of them via
@@ -3830,16 +3918,11 @@ function renderGrid() {
 async function requestProUpgrade(businessId) {
   const b = allBusinesses.find(x => x.id === businessId);
   if (!b) return;
-  try {
-    await addDoc(collection(db, "notifications"), {
-      userId: ADMIN_UID, businessId, businessName: b.name || "",
-      type: "pro_request", actorName: currentUser.displayName || currentUser.email || "",
-      read: false, createdAt: serverTimestamp()
-    });
-    alert(t("upgrade_request_sent_msg"));
-  } catch (err) {
-    console.error(err);
-  }
+  await addDoc(collection(db, "notifications"), {
+    userId: ADMIN_UID, businessId, businessName: b.name || "",
+    type: "pro_request", actorName: currentUser.displayName || currentUser.email || "",
+    read: false, createdAt: serverTimestamp()
+  });
 }
 
 function attachBannerHandler() {
@@ -4373,11 +4456,15 @@ function showDetail(id) {
     : "";
 
   const isAdmin = currentUser && currentUser.uid === ADMIN_UID;
+  const proExpiryHtml = (b.isPro && b.proExpiresAt)
+    ? `<div class="pro-expiry-note">${t("admin_pro_expires_label")} ${new Date(b.proExpiresAt).toLocaleDateString(currentLang === "ar" ? "ar" : "en-US", { year: "numeric", month: "long", day: "numeric" })}</div>`
+    : "";
   const featureToggleHtml = isAdmin
     ? `<div class="feature-toggle-row">
          <button id="togglePro" class="${b.isPro ? "unfeature-btn" : "pro-activate-btn"}">
            ${b.isPro ? t("admin_pro_deactivate_btn") : t("admin_pro_activate_btn")}
          </button>
+         ${proExpiryHtml}
          <button id="toggleFeaturedBtn" class="${b.featured ? "unfeature-btn" : "feature-btn"}">
            ${b.featured ? t("admin_unfeature_btn") : t("admin_feature_btn")}
          </button>
@@ -4500,11 +4587,18 @@ function showDetail(id) {
         toggleProBtn.disabled = true;
         try {
           if (b.isPro) {
-            // Bundled with the pin: turning Pro off also unpins it, since the
-            // top-of-list placement was part of the same subscription.
-            await updateDoc(doc(db, "businesses", b.id), { isPro: false, featured: false });
+            // Bundled with the pin: turning the highlight off also unpins it,
+            // since the top-of-list placement was part of the same package.
+            await updateDoc(doc(db, "businesses", b.id), { isPro: false, featured: false, proExpiresAt: null });
           } else {
-            await updateDoc(doc(db, "businesses", b.id), { isPro: true, featured: true, featuredAt: serverTimestamp() });
+            // One-time payment covering 30 days — not an auto-renewing
+            // subscription, so this is only an informational expiry date for
+            // the admin; nothing removes the highlight automatically at 30
+            // days, it still has to be turned off manually here.
+            await updateDoc(doc(db, "businesses", b.id), {
+              isPro: true, featured: true, featuredAt: serverTimestamp(),
+              proExpiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000
+            });
           }
         } catch (err) {
           console.error(err);
@@ -4781,6 +4875,8 @@ if (window.Capacitor && window.Capacitor.getPlatform && window.Capacitor.getPlat
       closeLightbox();
     } else if (!submissionNoticeOverlay.classList.contains("hidden")) {
       submissionNoticeOverlay.classList.add("hidden");
+    } else if (!proUpgradeOverlay.classList.contains("hidden")) {
+      closeProUpgradeModal();
     } else if (!notifOverlay.classList.contains("hidden")) {
       closeNotifPanel();
     } else if (!infoModal.classList.contains("hidden")) {
