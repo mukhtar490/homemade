@@ -413,6 +413,19 @@ html[dir="ltr"] .category-back{transform:scaleX(-1);}
 .owner-actions.admin-mode .delete-action{background:var(--danger); color:#fff; border-color:var(--danger);}
 .admin-mode-label{font-size:11px; font-weight:700; color:#7A2A1C; width:100%; display:block; margin-bottom:2px;}
 .feature-toggle-row{margin-top:10px;}
+.featured-order-row{
+  display:flex; align-items:center; gap:8px; margin-top:10px; padding:10px 12px;
+  background:var(--paper); border:1px solid var(--line); border-radius:12px;
+}
+.featured-order-row label{font-size:12px; font-weight:700; opacity:0.75; flex-shrink:0;}
+.featured-order-row input{
+  width:70px; padding:6px 8px; border:1px solid var(--line); border-radius:8px;
+  font-size:13px; background:var(--card-bg); color:var(--ink);
+}
+.featured-order-row button{
+  border:none; border-radius:8px; padding:7px 14px; font-size:12.5px; font-weight:700;
+  background:var(--wood); color:#fff; cursor:pointer; margin-inline-start:auto;
+}
 .feature-toggle-row .feature-btn, .feature-toggle-row .unfeature-btn{
   font-size:13px; font-weight:700; padding:9px 16px; border-radius:10px; border:1px solid; cursor:pointer; width:100%;
 }
@@ -1404,6 +1417,9 @@ const translations = {
     featured_badge: "⭐ مميز",
     admin_feature_btn: "⭐ تثبيت في الأعلى",
     admin_unfeature_btn: "إلغاء التثبيت",
+    admin_featured_order_label: "ترتيب الظهور بين المثبّتة",
+    admin_featured_order_ph: "مثال: 1، 2، 3...",
+    admin_featured_order_save: "حفظ الترتيب",
     share_btn: "🔗 مشاركة",
     share_seen_on: "تعرّف عليه عبر تطبيق السوق العربي",
     share_download_cta: "حمّله من هنا:",
@@ -1722,6 +1738,9 @@ const translations = {
     featured_badge: "⭐ Featured",
     admin_feature_btn: "⭐ Pin to top",
     admin_unfeature_btn: "Unpin",
+    admin_featured_order_label: "Order among pinned listings",
+    admin_featured_order_ph: "e.g. 1, 2, 3...",
+    admin_featured_order_save: "Save order",
     share_btn: "🔗 Share",
     share_seen_on: "Found via the Al Souq Al Arabi app",
     share_download_cta: "Download it here:",
@@ -3651,6 +3670,14 @@ function sortWithFeatured(list) {
     const bf = b.featured ? 1 : 0;
     if (af !== bf) return bf - af;
     if (af && bf) {
+      // An explicit admin-set rank always wins (lower number = higher up the
+      // list); featured items without one fall back to most-recently-pinned
+      // first, same as before — so pinning something new no longer bumps a
+      // manually-ordered item out of its place.
+      const aHasOrder = a.featuredOrder != null;
+      const bHasOrder = b.featuredOrder != null;
+      if (aHasOrder && bHasOrder) return a.featuredOrder - b.featuredOrder;
+      if (aHasOrder !== bHasOrder) return aHasOrder ? -1 : 1;
       const at = a.featuredAt?.seconds || 0;
       const bt = b.featuredAt?.seconds || 0;
       return bt - at;
@@ -4282,6 +4309,12 @@ function showDetail(id) {
          <button id="toggleFeaturedBtn" class="${b.featured ? "unfeature-btn" : "feature-btn"}">
            ${b.featured ? t("admin_unfeature_btn") : t("admin_feature_btn")}
          </button>
+         ${b.featured ? `
+         <div class="featured-order-row">
+           <label for="featuredOrderInput">${t("admin_featured_order_label")}</label>
+           <input type="number" id="featuredOrderInput" value="${b.featuredOrder != null ? b.featuredOrder : ""}" placeholder="${t("admin_featured_order_ph")}">
+           <button type="button" id="saveFeaturedOrderBtn">${t("admin_featured_order_save")}</button>
+         </div>` : ""}
        </div>`
     : "";
 
@@ -4400,6 +4433,22 @@ function showDetail(id) {
           }
         } catch (err) {
           console.error(err);
+        }
+      });
+    }
+    const saveFeaturedOrderBtn = document.getElementById("saveFeaturedOrderBtn");
+    if (saveFeaturedOrderBtn) {
+      saveFeaturedOrderBtn.addEventListener("click", async () => {
+        const input = document.getElementById("featuredOrderInput");
+        const raw = input.value.trim();
+        const value = raw === "" ? null : parseInt(raw, 10);
+        saveFeaturedOrderBtn.disabled = true;
+        try {
+          await updateDoc(doc(db, "businesses", b.id), { featuredOrder: Number.isNaN(value) ? null : value });
+        } catch (err) {
+          console.error(err);
+        } finally {
+          saveFeaturedOrderBtn.disabled = false;
         }
       });
     }
